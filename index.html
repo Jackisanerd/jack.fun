@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" href="https://yt3.googleusercontent.com/bu29B2Crvfklt8nXuKZe6ekhRZvgCn2orZltPE2Z2sAvoqNsIJ21Ggjedl9oOqWzmx88X-pMaQ=s900-c-k-c0x00ffffff-no-rj" type="image/png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jack.fun</title>
+    <style>
+        body {
+            font-family: Comic Sans MS, sans-serif;
+            text-align: center;
+            position: relative;
+            transition: background-color 0.3s, color 0.3s;
+            min-height: 100vh;
+            --theme-color: #4CAF50;
+        }
+        
+        /* Rainbow text animation */
+        .rainbow-text {
+            animation: rainbow 3s linear infinite;
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            background-image: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff);
+            background-size: 400% 100%;
+        }
+        
+        @keyframes rainbow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 400% 50%; }
+        }
+        
+        body.dark-mode {
+            background-color: #121212;
+            color: #ffffff;
+        }
+        
+        .logo {
+            width: 300px;
+            margin: 20px auto;
+            transition: filter 0.3s;
+        }
+        
+        /* Invert logo in dark mode to make it visible on dark background */
+        body.dark-mode .logo {
+            filter: invert(1);
+        }
+        
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            max-width: 800px;
+            margin: auto;
+        }
+        
+        .button {
+            width: 300px;
+            height: 120px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        /* Auth modal styles */
+        .auth-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .auth-content, .profile-content, .settings-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 320px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        body.dark-mode .auth-content,
+        body.dark-mode .profile-content,
+        body.dark-mode .settings-content {
+            background-color: #1e1e1e;
+            color: white;
+        }
+        
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        body.dark-mode input {
+            background-color: #2d2d2d;
+            color: white;
+            border-color: #444;
+        }
+        
+        button {
+            background-color: var(--theme-color);
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            opacity: 0.9;
+        }
+        
+        /* XP display */
+        .xp-container {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(255,255,255,0.8);
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            z-index: 100;
+            width: 200px;
+            backdrop-filter: blur(10px);
+        }
+        
+        body.dark-mode .xp-container {
+            background-color: rgba(30,30,30,0.8);
+            color: white;
+        }
+        
+        .xp-bar {
+            height: 20px;
+            background-color: #ddd;
+            border-radius: 10px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        
+        body.dark-mode .xp-bar {
+            background-color: #444;
+        }
+        
+        .xp-progress {
+            height: 100%;
+            background-color: var(--theme-color);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        /* Auth buttons (shown when NOT logged in) */
+        .auth-buttons {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+        
+        .auth-button {
+            padding: 8px 15px;
+            background-color: var(--theme-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        /* Profile section (shown when logged in) */
+        .profile-section {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 100;
+        }
+        
+        .profile-button {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: var(--theme-color);
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .profile-button:hover {
+            opacity: 0.9;
+        }
+        
+        .profile-pic {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+            background-color: #ddd;
+        }
+        
+        .username {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        /* Profile modal */
+        .profile-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        body.dark-mode .profile-header {
+            border-bottom-color: #444;
+        }
+        
+        .profile-pic-large {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--theme-color);
+            background-color: #ddd;
+        }
+        
+        .profile-info {
+            text-align: left;
+            flex: 1;
+        }
+        
+        .profile-level {
+            color: var(--theme-color);
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        
+        .profile-actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .close-button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        body.dark-mode .close-button {
+            color: #aaa;
+        }
+        
+        /* Settings modal */
+        .settings-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        /* Mouse cursor effect */
+        .jackyboi-cursor {
+            display: none;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            width: 32px;
+            height: 32px;
+            transform: translate(-50%, -50%);
+        }
+        
+        /* Music player */
+        #backgroundMusic {
+            display: none;
+        }
+        
+        /* Toggle switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--theme-color);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        /* Profile picture upload */
+        .profile-pic-upload {
+            margin: 15px 0;
+            text-align: center;
+        }
+        
+        .profile-pic-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 10px auto;
+            border: 3px solid #ddd;
+            display: block;
+        }
+        
+        body.dark-mode .profile-pic-preview {
+            border-color: #444;
+        }
+        
+        .file-input-label {
+            display: inline-block;
+            background-color: var(--theme-color);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .file-input-label:hover {
+            opacity: 0.9;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .profile-pic-note {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        body.dark-mode .profile-pic-note {
+            color: #aaa;
+        }
+        
+        /* Top icons */
+        .top-icons {
+            position: fixed;
+            top: 60px;
+            right: 10px;
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+        
+        .icon-button {
+            font-size: 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(76, 175, 80, 0.1);
+            transition: background-color 0.3s;
+        }
+        
+        .icon-button:hover {
+            background-color: rgba(76, 175, 80, 0.3);
+        }
+        
+        .settings-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px 0;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        body.dark-mode .settings-option {
+            border-bottom-color: #444;
+        }
+        
+        /* Admin input in profile */
+        .admin-input {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .admin-input input {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Music Player -->
+    <audio id="backgroundMusic" loop>
+        <source src="main.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    
+    <!-- Jackyboi Mouse Cursor -->
+    <img class="jackyboi-cursor" id="jackyboiCursor" src="jack.png" alt="Jackyboi cursor">
+    
+    <!-- Modals -->
+    <div class="auth-modal" id="authModal">
+        <div class="auth-content">
+            <button class="close-button" onclick="hideAuthModal()">×</button>
+            <div id="loginForm">
+                <h3>Login</h3>
+                <input type="text" id="loginUsername" placeholder="Username">
+                <input type="password" id="loginPassword" placeholder="Password">
+                <button onclick="login()">Login</button>
+                <p id="loginError" style="color:red;"></p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="auth-modal" id="signupModal">
+        <div class="auth-content">
+            <button class="close-button" onclick="hideSignupModal()">×</button>
+            <div id="signupForm">
+                <h3>Sign Up</h3>
+                <input type="text" id="signupUsername" placeholder="Username">
+                <input type="password" id="signupPassword" placeholder="Password">
+                <input type="password" id="signupConfirmPassword" placeholder="Confirm Password">
+                <button onclick="signup()">Sign Up</button>
+                <p id="signupError" style="color:red;"></p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Profile Modal -->
+    <div class="profile-modal" id="profileModal">
+        <div class="profile-content">
+            <button class="close-button" onclick="hideProfileModal()">×</button>
+            <div class="profile-header">
+                <img id="profilePicLarge" src="" alt="Profile Picture" class="profile-pic-large">
+                <div class="profile-info">
+                    <h3 id="profileUsername"></h3>
+                    <div class="profile-level">Level <span id="profileLevel">1</span></div>
+                    <div><span id="profileXP">0</span>/100 XP</div>
+                </div>
+            </div>
+            
+            <div class="profile-pic-upload">
+                <h4>Profile Picture</h4>
+                <img id="profilePicPreview" src="" alt="Preview" class="profile-pic-preview">
+                <label class="file-input-label">
+                    Upload Picture
+                    <input type="file" id="profilePicInput" class="file-input" accept="image/*">
+                </label>
+                <p class="profile-pic-note">Max 2MB. Image will be cropped to circle.</p>
+                <button onclick="saveProfilePicture()" style="margin-top: 10px;">Save Picture</button>
+                <p id="profilePicError" style="color:red; margin-top: 5px;"></p>
+            </div>
+            
+            <!-- Admin password input -->
+            <div class="admin-input">
+                <input type="password" id="jackssupersecretcode" placeholder="Admin Code">
+                <button onclick="applyAdminCode()">Apply</button>
+            </div>
+            <p id="adminMessage" style="color:green; margin-top: 10px;"></p>
+            
+            <div class="profile-actions">
+                <button onclick="logout()" style="background-color: #f44336;">Logout</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Settings Modal -->
+    <div class="settings-modal" id="settingsModal">
+        <div class="settings-content">
+            <button class="close-button" onclick="hideSettingsModal()">×</button>
+            <h3>Settings</h3>
+            
+            <div class="settings-option">
+                <span>Dark Mode</span>
+                <label class="switch">
+                    <input type="checkbox" id="darkModeToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="settings-option">
+                <span>Background Music</span>
+                <label class="switch">
+                    <input type="checkbox" id="musicToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="settings-option">
+                <span>Jackyboi Cursor</span>
+                <label class="switch">
+                    <input type="checkbox" id="cursorToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <button onclick="saveSettings()" style="margin-top: 20px;">Save Settings</button>
+        </div>
+    </div>
+    
+    <!-- Top UI Elements -->
+    <!-- Login/Signup buttons (shown when NOT logged in) -->
+    <div class="auth-buttons" id="authButtons">
+        <button class="auth-button" onclick="showLoginModal()">Login</button>
+        <button class="auth-button" onclick="showSignupModal()">Sign Up</button>
+    </div>
+    
+    <!-- Profile button (shown when logged in) -->
+    <div class="profile-section" id="profileSection" style="display: none;">
+        <div class="profile-button" onclick="showProfileModal()">
+            <img id="profilePicSmall" src="" alt="Profile" class="profile-pic">
+            <span class="username" id="profileUsernameSmall"></span>
+        </div>
+    </div>
+    
+    <div class="xp-container" id="xpContainer">
+        <div>Level <span id="levelValue">1</span></div>
+        <div><span id="xpValue">0</span>/100 XP</div>
+        <div class="xp-bar">
+            <div class="xp-progress" id="xpProgress"></div>
+        </div>
+    </div>
+    
+    <!-- Top icons (always shown when logged in) -->
+    <div class="top-icons" id="topIcons" style="display: none;">
+        <button class="icon-button" onclick="showSettingsModal()">⚙️</button>
+    </div>
+    
+    <!-- Main Content -->
+    <img src="Shane.Fun.png" alt="Shane.fun Logo" class="logo">
+    
+    <div class="container">
+        <!-- Yo Mama Game -->
+        <div class="button" style="background-image: url('jackle.png');" onclick="playGame('yomom', 'Yo Mama')"></div>
+        
+        <!-- Infinite Scroll -->
+        <div class="button" style="background-image: url('HIGH.png');" onclick="playGame('infinitescroll', 'Infinite Scroll')"></div>
+        
+        <!-- Of The Day -->
+        <div class="button" style="background-image: url('halloffame.png');" onclick="playGame('oftheday', 'Of The Day')"></div>
+        
+        <!-- Tic Tac Toe -->
+        <div class="button" style="background-image: url('hallofsh.png');" onclick="playGame('tictactoe', 'Tic Tac Toe')"></div>
+        
+        <!-- Credits -->
+        <div class="button" style="background-image: url('CRDS.png');" onclick="playGame('credits', 'Credits')"></div>
+    </div>
+    
+    <script>
+        // User data storage
+        let users = JSON.parse(localStorage.getItem('shaneFunUsers')) || {};
+        let currentUser = null;
+        let backgroundMusic = document.getElementById('backgroundMusic');
+        let jackyboiCursor = document.getElementById('jackyboiCursor');
+        let cursorActive = false;
+        let currentProfilePic = null;
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const loggedInUser = localStorage.getItem('shaneFunCurrentUser');
+            if (loggedInUser && users[loggedInUser]) {
+                currentUser = loggedInUser;
+                updateAuthUI();
+                startXPTimer();
+                loadUserSettings();
+                loadProfilePicture();
+            }
+            
+            // Setup mouse movement tracking for jackyboi cursor
+            document.addEventListener('mousemove', function(e) {
+                if (cursorActive && jackyboiCursor.style.display === 'block') {
+                    jackyboiCursor.style.left = e.pageX + 'px';
+                    jackyboiCursor.style.top = e.pageY + 'px';
+                }
+            });
+            
+            // Hide cursor when leaving window
+            document.addEventListener('mouseleave', function() {
+                jackyboiCursor.style.display = 'none';
+            });
+            
+            document.addEventListener('mouseenter', function() {
+                if (cursorActive) {
+                    jackyboiCursor.style.display = 'block';
+                }
+            });
+            
+            // Profile picture upload preview
+            document.getElementById('profilePicInput').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    if (file.size > 2 * 1024 * 1024) { // 2MB limit
+                        document.getElementById('profilePicError').textContent = 'File too large! Max 2MB.';
+                        return;
+                    }
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        currentProfilePic = e.target.result;
+                        document.getElementById('profilePicPreview').src = currentProfilePic;
+                        document.getElementById('profilePicLarge').src = currentProfilePic;
+                    };
+                    reader.readAsDataURL(file);
+                    document.getElementById('profilePicError').textContent = '';
+                }
+            });
+            
+            // Settings toggle listeners
+            document.getElementById('darkModeToggle').addEventListener('change', function() {
+                saveSettings();
+            });
+            
+            document.getElementById('musicToggle').addEventListener('change', function() {
+                saveSettings();
+            });
+            
+            document.getElementById('cursorToggle').addEventListener('change', function() {
+                saveSettings();
+            });
+        });
+        
+        // Game playing function
+        function playGame(gameId, gameName) {
+            // Track that user played this game
+            if (currentUser) {
+                const user = users[currentUser];
+                if (!user.playedGames) user.playedGames = [];
+                if (!user.playedGames.includes(gameId)) {
+                    user.playedGames.push(gameId);
+                    localStorage.setItem('shaneFunUsers', JSON.stringify(users));
+                }
+            }
+            
+            // Navigate to the game
+            const gameLinks = {
+                'yomom': 'https://jackisanerd.github.io/Jackle/',
+                'infinitescroll': 'https://jackisanerd.github.io/HigherOrLower/',
+                'oftheday': 'JHOF.html',
+                'tictactoe': 'JHOS.html',
+                'credits': 'Credits.html'
+            };
+            
+            if (gameLinks[gameId]) {
+                window.location.href = gameLinks[gameId];
+            }
+        }
+        
+        // Profile functions
+        function showProfileModal() {
+            if (!currentUser) {
+                showLoginModal();
+                return;
+            }
+            
+            document.getElementById('profileModal').style.display = 'flex';
+            loadProfileData();
+        }
+        
+        function hideProfileModal() {
+            document.getElementById('profileModal').style.display = 'none';
+        }
+        
+        function loadProfileData() {
+            if (!currentUser) return;
+            
+            const user = users[currentUser];
+            
+            // Update username
+            document.getElementById('profileUsername').textContent = currentUser;
+            
+            // Update level and XP
+            const currentXP = calculateCurrentLevelXP(user.xp);
+            const level = user.level || 1;
+            
+            document.getElementById('profileLevel').textContent = level;
+            document.getElementById('profileXP').textContent = currentXP;
+            
+            // Load profile picture
+            loadProfilePicture();
+        }
+        
+        function loadProfilePicture() {
+            if (!currentUser) return;
+            
+            const user = users[currentUser];
+            const profilePic = user.profilePicture || '';
+            
+            // Update all profile picture elements
+            const profilePicElements = [
+                document.getElementById('profilePicSmall'),
+                document.getElementById('profilePicLarge'),
+                document.getElementById('profilePicPreview')
+            ];
+            
+            profilePicElements.forEach(element => {
+                if (element) {
+                    if (profilePic) {
+                        element.src = profilePic;
+                        element.style.display = 'block';
+                    } else {
+                        // Default profile icon
+                        element.src = '';
+                        element.style.backgroundColor = '#4CAF50';
+                        element.style.display = 'flex';
+                        element.style.alignItems = 'center';
+                        element.style.justifyContent = 'center';
+                        element.style.color = 'white';
+                        element.style.fontSize = '16px';
+                        element.textContent = currentUser.charAt(0).toUpperCase();
+                    }
+                }
+            });
+            
+            // Update small profile username
+            document.getElementById('profileUsernameSmall').textContent = currentUser;
+        }
+        
+        function saveProfilePicture() {
+            if (!currentUser || !currentProfilePic) return;
+            
+            const user = users[currentUser];
+            user.profilePicture = currentProfilePic;
+            localStorage.setItem('shaneFunUsers', JSON.stringify(users));
+            
+            // Update UI
+            loadProfilePicture();
+            document.getElementById('profilePicError').textContent = 'Profile picture saved!';
+            document.getElementById('profilePicError').style.color = 'green';
+            
+            // Clear error after 3 seconds
+            setTimeout(() => {
+                document.getElementById('profilePicError').textContent = '';
+            }, 3000);
+        }
+        
+        // Settings functions
+        function showSettingsModal() {
+            document.getElementById('settingsModal').style.display = 'flex';
+            loadSettingsToUI();
+        }
+        
+        function hideSettingsModal() {
+            document.getElementById('settingsModal').style.display = 'none';
+        }
+        
+        function loadSettingsToUI() {
+            if (currentUser) {
+                const user = users[currentUser];
+                const settings = user.settings || {};
+                
+                // Dark mode
+                document.getElementById('darkModeToggle').checked = settings.darkMode || false;
+                
+                // Music
+                document.getElementById('musicToggle').checked = settings.musicEnabled || false;
+                
+                // Jackyboi cursor
+                document.getElementById('cursorToggle').checked = settings.jackyboiCursor || false;
+                
+                // Apply settings
+                if (settings.darkMode) {
+                    document.body.classList.add('dark-mode');
+                }
+                
+                if (settings.musicEnabled) {
+                    backgroundMusic.play().catch(e => console.log("Audio play failed:", e));
+                }
+                
+                if (settings.jackyboiCursor) {
+                    activateJackyboiCursor();
+                }
+            }
+        }
+        
+        function saveSettings() {
+            if (!currentUser) return;
+            
+            const user = users[currentUser];
+            if (!user.settings) user.settings = {};
+            
+            user.settings.darkMode = document.getElementById('darkModeToggle').checked;
+            user.settings.musicEnabled = document.getElementById('musicToggle').checked;
+            user.settings.jackyboiCursor = document.getElementById('cursorToggle').checked;
+            
+            localStorage.setItem('shaneFunUsers', JSON.stringify(users));
+            
+            // Apply settings immediately
+            if (user.settings.darkMode) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+            
+            if (user.settings.musicEnabled) {
+                backgroundMusic.play().catch(e => console.log("Audio play failed:", e));
+            } else {
+                backgroundMusic.pause();
+            }
+            
+            if (user.settings.jackyboiCursor) {
+                activateJackyboiCursor();
+            } else {
+                deactivateJackyboiCursor();
+            }
+        }
+        
+        function loadUserSettings() {
+            if (!currentUser) return;
+            
+            const user = users[currentUser];
+            const settings = user.settings || {};
+            
+            // Apply dark mode
+            if (settings.darkMode) {
+                document.body.classList.add('dark-mode');
+            }
+            
+            // Apply music
+            if (settings.musicEnabled) {
+                backgroundMusic.play().catch(e => console.log("Audio autoplay blocked"));
+            }
+            
+            // Apply jackyboi cursor if enabled
+            if (settings.jackyboiCursor) {
+                activateJackyboiCursor();
+            }
+        }
+        
+        function activateJackyboiCursor() {
+            cursorActive = true;
+            jackyboiCursor.style.display = 'block';
+            document.body.style.cursor = 'none';
+        }
+        
+        function deactivateJackyboiCursor() {
+            cursorActive = false;
+            jackyboiCursor.style.display = 'none';
+            document.body.style.cursor = 'default';
+        }
+        
+        // Fixed XP calculation functions
+        function calculateLevel(xp) {
+            return Math.floor(xp / 100) + 1;
+        }
+        
+        function calculateCurrentLevelXP(xp) {
+            return xp % 100;
+        }
+        
+        function updateUserLevel(user) {
+            const newLevel = calculateLevel(user.xp);
+            const oldLevel = user.level || 1;
+            user.level = newLevel;
+            
+            if (newLevel > oldLevel) {
+                alert(`Level Up! You're now level ${user.level}!`);
+            } else if (newLevel < oldLevel) {
+                alert(`Level Down! You're now level ${user.level}!`);
+            }
+        }
+        
+        // Admin code function - PASSWORD FEATURE ADDED BACK
+        function applyAdminCode() {
+            const adminCode = document.getElementById('adminCode').value;
+            const adminMessage = document.getElementById('adminMessage');
+            
+            if (adminCode === 'A1B2' && currentUser) {
+                const user = users[currentUser];
+                user.xp = 9900;
+                updateUserLevel(user);
+                
+                localStorage.setItem('shaneFunUsers', JSON.stringify(users));
+                adminMessage.textContent = 'Admin code applied! You are now level 100!';
+                adminMessage.style.color = 'green';
+                
+                updateAuthUI();
+                loadProfileData();
+                setTimeout(() => {
+                    adminMessage.textContent = '';
+                }, 3000);
+            } else {
+                adminMessage.textContent = 'Invalid admin code';
+                adminMessage.style.color = 'red';
+                setTimeout(() => {
+                    adminMessage.textContent = '';
+                }, 3000);
+            }
+            
+            document.getElementById('adminCode').value = '';
+        }
+        
+        // Auth modal functions
+        function showLoginModal() {
+            document.getElementById('authModal').style.display = 'flex';
+        }
+        
+        function showSignupModal() {
+            document.getElementById('signupModal').style.display = 'flex';
+        }
+        
+        function hideAuthModal() {
+            document.getElementById('authModal').style.display = 'none';
+            document.getElementById('loginError').textContent = '';
+        }
+        
+        function hideSignupModal() {
+            document.getElementById('signupModal').style.display = 'none';
+            document.getElementById('signupError').textContent = '';
+        }
+        
+        // Auth functions
+        function login() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!username || !password) {
+                document.getElementById('loginError').textContent = 'Please enter both username and password';
+                return;
+            }
+            
+            if (!users[username] || users[username].password !== password) {
+                document.getElementById('loginError').textContent = 'Invalid username or password';
+                return;
+            }
+            
+            currentUser = username;
+            localStorage.setItem('shaneFunCurrentUser', username);
+            updateAuthUI();
+            hideAuthModal();
+            startXPTimer();
+            loadUserSettings();
+            loadProfilePicture();
+        }
+        
+        function signup() {
+            const username = document.getElementById('signupUsername').value;
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('signupConfirmPassword').value;
+            
+            if (!username || !password || !confirmPassword) {
+                document.getElementById('signupError').textContent = 'Please fill all fields';
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                document.getElementById('signupError').textContent = 'Passwords do not match';
+                return;
+            }
+            
+            if (users[username]) {
+                document.getElementById('signupError').textContent = 'Username already exists';
+                return;
+            }
+            
+            users[username] = {
+                password: password,
+                xp: 0,
+                level: 1,
+                lastXPTimestamp: null,
+                playedGames: [],
+                profilePicture: '',
+                settings: {
+                    darkMode: false,
+                    musicEnabled: false,
+                    jackyboiCursor: false
+                }
+            };
+            
+            localStorage.setItem('shaneFunUsers', JSON.stringify(users));
+            currentUser = username;
+            localStorage.setItem('shaneFunCurrentUser', username);
+            updateAuthUI();
+            hideSignupModal();
+            startXPTimer();
+            loadProfilePicture();
+        }
+        
+        function logout() {
+            // Save settings before logout
+            saveSettings();
+            
+            // Pause music
+            backgroundMusic.pause();
+            
+            // Reset everything
+            currentUser = null;
+            localStorage.removeItem('shaneFunCurrentUser');
+            updateAuthUI();
+            stopXPTimer();
+            
+            // Reset UI
+            document.body.classList.remove('dark-mode');
+            deactivateJackyboiCursor();
+            
+            // Hide profile modal if open
+            hideProfileModal();
+        }
+        
+        function updateAuthUI() {
+            const authButtons = document.getElementById('authButtons');
+            const profileSection = document.getElementById('profileSection');
+            const xpContainer = document.getElementById('xpContainer');
+            const topIcons = document.getElementById('topIcons');
+            
+            if (currentUser) {
+                const user = users[currentUser];
+                
+                // Show profile section and hide auth buttons
+                authButtons.style.display = 'none';
+                profileSection.style.display = 'flex';
+                topIcons.style.display = 'flex';
+                xpContainer.style.display = 'block';
+                
+                // Update XP display
+                const currentXP = calculateCurrentLevelXP(user.xp);
+                const level = user.level || 1;
+                
+                document.getElementById('xpValue').textContent = currentXP;
+                document.getElementById('levelValue').textContent = level;
+                document.getElementById('xpProgress').style.width = `${currentXP}%`;
+                
+                // Update profile username
+                document.getElementById('profileUsernameSmall').textContent = currentUser;
+                
+                // Load profile picture
+                loadProfilePicture();
+            } else {
+                // Show auth buttons and hide profile section
+                authButtons.style.display = 'flex';
+                profileSection.style.display = 'none';
+                topIcons.style.display = 'none';
+                xpContainer.style.display = 'none';
+            }
+        }
+        
+        // XP System - ONLY OVERTIME XP
+        let xpInterval;
+        
+        function startXPTimer() {
+            stopXPTimer();
+            xpInterval = setInterval(awardXP, 30000);
+            awardXP();
+        }
+        
+        function stopXPTimer() {
+            if (xpInterval) {
+                clearInterval(xpInterval);
+            }
+        }
+        
+        function awardXP() {
+            if (!currentUser) return;
+            
+            const now = Date.now();
+            const user = users[currentUser];
+            
+            // Check if we've already awarded XP in the last 30 seconds
+            if (user.lastXPTimestamp && (now - user.lastXPTimestamp) < 30000) {
+                return;
+            }
+            
+            // Award XP
+            user.xp += 1;
+            user.lastXPTimestamp = now;
+            
+            // Update level
+            const oldLevel = user.level || 1;
+            updateUserLevel(user);
+            
+            // Save and update UI
+            localStorage.setItem('shaneFunUsers', JSON.stringify(users));
+            updateAuthUI();
+            
+            // Update profile data if modal is open
+            if (document.getElementById('profileModal').style.display === 'flex') {
+                loadProfileData();
+            }
+        }
+        
+        // Close modals when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === document.getElementById('authModal')) {
+                hideAuthModal();
+            }
+            if (event.target === document.getElementById('signupModal')) {
+                hideSignupModal();
+            }
+            if (event.target === document.getElementById('profileModal')) {
+                hideProfileModal();
+            }
+            if (event.target === document.getElementById('settingsModal')) {
+                hideSettingsModal();
+            }
+        });
+    </script>
+</body>
+</html>

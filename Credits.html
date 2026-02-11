@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" href="https://tse1.mm.bing.net/th?id=OIP.et-Rww-Pzeg9fWV5uipNKwHaHa&pid=Api&P=0&h=180" type="image/png"><meta charset="UTF-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credits</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            color: white;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+        }
+        
+        .credits-container {
+            position: absolute;
+            width: 100%;
+            bottom: 0;
+            left: 0;
+            text-align: center;
+            transform: perspective(300px) rotateX(20deg);
+            transform-origin: 50% 100%;
+            animation: scrollCredits 60s linear forwards;
+        }
+        
+        .credits-content {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        h1 {
+            font-size: 3em;
+            margin-bottom: 50px;
+            color: #ffcc00;
+            text-transform: uppercase;
+        }
+        
+        h2 {
+            font-size: 2em;
+            margin: 40px 0 20px;
+            color: #ffcc00;
+            text-transform: uppercase;
+        }
+        
+        p {
+            font-size: 1.5em;
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+        
+        .name {
+            font-size: 1.8em;
+            margin: 20px 0;
+            color: #ffcc00;
+        }
+        
+        .role {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            color: #aaa;
+        }
+        
+        .divider {
+            width: 50%;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #ffcc00, transparent);
+            margin: 40px auto;
+        }
+        
+        @keyframes scrollCredits {
+            0% {
+                transform: perspective(300px) rotateX(20deg) translateY(100%);
+            }
+            100% {
+                transform: perspective(300px) rotateX(20deg) translateY(-200%);
+            }
+        }
+        
+        /* Optional: Add a starfield background */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle 1s infinite alternate;
+        }
+        
+        @keyframes twinkle {
+            0% { opacity: 0.2; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Optional starfield background -->
+    <div class="stars" id="stars"></div>
+    
+    <div class="credits-container">
+        <div class="credits-content">
+            <h1>Website Credits</h1>
+            <p>A production by DeadSub Productions</p>
+            
+            <div class="divider"></div>
+            
+            <h2>Development Team</h2>
+            
+            <div class="name">Creator</div>
+            <div class="role">DeadSubDoc</div>
+            
+            <div class="name">Frontend Developer</div>
+            <div class="role">DeadSubDoc</div>
+            
+            <div class="name">Backend Developer</div>
+            <div class="role">No one</div>
+            
+            <div class="name">UI/UX Designer</div>
+            <div class="role">DeadSubDoc</div>
+            
+            <div class="divider"></div>
+            
+            <h2>Content Team</h2>
+            
+            <div class="name">Content Director</div>
+            <div class="role">DeadSubDoc</div>
+            
+            <div class="name">Ideas</div>
+            <div class="role">DeadSubDoc, Jack Massey Welsh, Few-Woodpecker-9493, Terrible_Ad_12081</div>
+
+            <div class="name">Music</div>
+            <div class="role">Oshen - Topic on Youtube</div>
+            
+            <div class="name">Editors</div>
+            <div class="role">DeadSubDoc</div>
+            
+            <div class="divider"></div>
+            
+            <h2>Special Thanks</h2>
+            
+            <div class="name">Beta Testers</div>
+            <div class="role">DeadSubDoc</div>
+
+            <div class="name">Also To</div>
+            <div class="role">Jack Massey Welsh, Cornelius, Turdboi420, Becky Taylor, Kai Ross Best, JacksEpicYoutubeChannelFullOfFunTimesAndFunHiRickXxX, Oshen, w-Woodpecker-9493, Terrible_Ad_12081 </div>
+            
+            
+            <div class="divider"></div>
+            
+            <h2>Third Party Resources</h2>
+            
+            <div class="name">Fonts by Google</div>
+            <div class="name">Icons by Also Google and Reddit</div>
+            <div class="name">Images from And Google Again and Reddit</div>
+            <div class="name">Hosted by Github</div>
+            <div class="name">Music from Youtube</div>
+            
+            <div class="divider"></div>
+            
+            <h2>That's it, that's the credits</h2>
+            <p>I would've added myself in the Hall of Fame but I'm not narcissistic (unlike someone else) </p>
+            
+            <div class="divider"></div>
+            
+            <p>© 2026 Jack.Fun All rights NOT reserved.</p>
+<br>
+<br>
+<br>
+<br>
+            <p>The End</p>
+        </div>
+    </div>
+    
+</body>
+</html>

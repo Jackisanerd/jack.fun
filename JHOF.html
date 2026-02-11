@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" href="https://i.redd.it/zbqd9dvjx6vf1.png" type="image/png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hall Of Fame</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+            background: #000000;
+            font-family: "Bebas Neue", "Arial Rounded MT Bold", Arial, sans-serif;
+            color: white;
+            min-height: 100vh;
+        }
+        
+.header {
+    text-align: center;
+    padding: 80px 20px 50px;
+    /* Moved the orange gradient here */
+    background: linear-gradient(90deg, #ff6600, #ffcc00, #ff6600); 
+    position: relative;
+    overflow: hidden;
+}
+
+/* DELETED .header::before entirely so it doesn't block things */
+
+.main-title {
+    color: #000000; /* Changed from orange to black for contrast */
+    font-size: 6.5rem;
+    margin: 0 0 20px 0;
+    /* Updated shadow to be subtle white instead of black */
+    text-shadow: 2px 2px 0 rgba(255, 255, 255, 0.3); 
+    letter-spacing: 3px;
+    line-height: 0.9;
+    text-transform: uppercase;
+}
+
+.subtitle-container {
+    margin-top: 60px;
+    padding-top: 30px;
+    border-top: 3px solid #000000; /* Changed line color to black */
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.subtitle {
+    font-size: 2.2rem;
+    color: #1a1a1a; /* Changed from light grey to dark grey */
+    line-height: 1.3;
+    margin: 0;
+    letter-spacing: 1.5px;
+}        
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 40px;
+            padding: 70px 40px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+        
+        .card-link {
+            text-decoration: none;
+            display: block;
+        }
+        
+        .card {
+            background: linear-gradient(145deg, #1a1a1a, #222222);
+            border-radius: 12px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid #333;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+            position: relative;
+            overflow: visible;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ff6600, #ffcc00, #ff6600);
+            border-radius: 14px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        
+        .card:hover::before {
+            opacity: 1;
+        }
+        
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(255, 102, 0, 0.3);
+            border-color: transparent;
+        }
+        
+        .card-image-container {
+            padding: 25px 25px 0 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 280px;
+            flex-shrink: 0;
+        }
+        
+        .card-image {
+            width: 100%;
+            height: auto;
+            max-height: 250px;
+            object-fit: contain;
+            display: block;
+            border-radius: 8px;
+            transition: transform 0.5s ease;
+        }
+        
+        .card:hover .card-image {
+            transform: scale(1.05);
+        }
+        
+        .card-content {
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .username {
+            color: #ff6600;
+            font-size: 2.5rem;
+            margin: 0 0 20px 0;
+            display: block;
+            text-shadow: 1px 1px 0 #000;
+            letter-spacing: 1.5px;
+            line-height: 1;
+            text-align: center;
+            font-family: "Bebas Neue", sans-serif;
+        }
+        
+        .description {
+            font-family: "Bebas Neue", sans-serif;
+            font-size: 1.4rem;
+            line-height: 1.5;
+            color: #e0e0e0;
+            margin: 0;
+            flex-grow: 1;
+            letter-spacing: 0.5px;
+        }
+        
+.footer {
+    text-align: center;
+    padding: 50px 20px;
+    color: #1a1a1a; /* Dark text */
+    font-size: 1.2rem;
+    /* Added the orange gradient here */
+    background: linear-gradient(90deg, #ff6600, #ffcc00, #ff6600);
+    border-top: 3px solid #000;
+    font-family: "Bebas Neue", sans-serif;
+    letter-spacing: 1px;
+}
+
+.footer p {
+    margin: 15px 0;
+}
+
+.accent {
+    color: #ffffff; /* Changed from orange to white so it pops on the orange bg */
+    text-shadow: 1px 1px 0 #000;
+    letter-spacing: 1.5px;
+    font-size: 1.3rem;
+}        
+        /* Responsive adjustments */
+        @media (max-width: 1400px) {
+            .container {
+                grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+                gap: 35px;
+                padding: 60px 30px;
+            }
+        }
+        
+        @media (max-width: 1200px) {
+            .main-title {
+                font-size: 5.5rem;
+            }
+            
+            .subtitle {
+                font-size: 2rem;
+            }
+            
+            .container {
+                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+                gap: 30px;
+                padding: 50px 25px;
+            }
+            
+            .username {
+                font-size: 2.3rem;
+            }
+            
+            .description {
+                font-size: 1.3rem;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .main-title {
+                font-size: 4.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1.8rem;
+            }
+            
+            .container {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 25px;
+                padding: 40px 20px;
+            }
+            
+            .username {
+                font-size: 2.1rem;
+            }
+            
+            .description {
+                font-size: 1.2rem;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .main-title {
+                font-size: 3.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1.5rem;
+            }
+            
+            .container {
+                grid-template-columns: 1fr;
+                gap: 30px;
+                padding: 40px 15px;
+            }
+            
+            .header {
+                padding: 60px 15px 40px;
+            }
+            
+            .subtitle-container {
+                margin-top: 40px;
+                padding-top: 20px;
+            }
+            
+            .card-image-container {
+                padding: 20px 20px 0 20px;
+                min-height: 250px;
+            }
+            
+            .card-content {
+                padding: 20px;
+            }
+            
+            .username {
+                font-size: 2rem;
+            }
+            
+            .description {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1 class="main-title">THE HALL OF FAME</h1>
+    
+    <div class="subtitle-container">
+        <p class="subtitle">Here are some redditors who have made major contributions to r/JackSucksAtLife and deserve a spot on the Hall of Fame!</p>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Card 1 -->
+    <a href="https://www.reddit.com/user/ReviveTheReddit" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="profileIcon_z1fnyow6ukbc1.png" alt="u/ReviveTheReddit" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/ReviveTheReddit</span>
+                <p class="description">RevivetheReddit created high quality posts on Jack's subreddit in his famous series: Putting Jack in places he's not supposed to be. ReviveTheReddit suddenly stopped posting on the subreddit and no one knows why.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 2 -->
+    <a href="https://www.reddit.com/user/RedditReviver" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="profileIcon_8yt11cmrailf1.jpeg" alt="u/RedditReviver" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/RedditReviver</span>
+                <p class="description">RedditReviver is most famous for his recaps of Jack's channel and created high quality posts for a year. RedditReviver then annouced that RedditReviver was going to quit making posts on Jack's subreddit. Two months later RedditReviver posted that RedditReviver was coming back to the Reddit.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 3 -->
+    <a href="https://www.reddit.com/user/Lifesucksatstuff" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="profileIcon_qd2jw7nyqxkf1.png" alt="u/Lifesucksatstuff" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/Lifesucksatstuff</span>
+                <p class="description">Lifesucksatstuff is famous for creating high quality posts on Jack's subreddit. Lifesucksatstuff is famous for leading Jack's side on the war on the subreddit against u/SpecificSample8366. Lifesucksatstuff was passed down the mantle from RedditReviver when RedditReviver quit.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 4 -->
+    <a href="https://www.reddit.com/user/SpecificSample8366" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="avatar_default_2.png" alt="u/SpecificSample8366" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/SpecificSample8366</span>
+                <p class="description">SpecificSample8366 had the most liked comment on one of Jack's videos and Jack deleted SpecificSample8366's comment. SpecficSample8366 waged a war against Jack and won.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 5 -->
+    <a href="https://www.reddit.com/user/FreddieThePebble" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="6c6d20e1-8470-4dda-883a-55a556121aec.png" alt="u/FreddieThePebble" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/FreddieThePebble</span>
+                <p class="description">FreddieThePebble is famous for watermarking one of Jack's meme templates and someone who makes a lot of high quality posts.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 6 -->
+    <a href="https://www.reddit.com/user/Leiocera" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="profileIcon_rkhrbsccv6wa1.png" alt="u/Leiocera" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/Leiocera</span>
+                <p class="description">Leiocera is known for making high quality posts on Jack's subreddit and commenting a lot on the subreddit.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 7 -->
+    <a href="https://www.reddit.com/user/JustAlfie__" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="profileIcon_ipzmztn74kwe1.jpg" alt="u/JustAlfie__" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/JustAlfie__</span>
+                <p class="description">JustAlfie is known for posting and commenting a lot on Jack's subreddit. There is a subreddit dedicated to find JustAlfie posts and comments because of the amount JustAlfie posts. JustAlfie is one of the most active members of r/JackSucksAtLife.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 8 -->
+    <a href="https://www.reddit.com/user/REMINGTON_THE_THIRD" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="profileIcon_p454n8tclmgf1.jpg" alt="u/REMINGTON_THE_THIRD" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/REMINGTON_THE_THIRD</span>
+                <p class="description">REMINGTON_THE_THIRD is known for creating a complete list of all of Jack's promises. Remington's list has all of Jack's complete and incomplete promises. Remington spent 50 hours modifying for Jack's every request so he could make Jack complete a promise.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 9 -->
+    <a href="https://www.reddit.com/user/Bat_Raptor_3" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="nftv2_bmZ0X2VpcDE1NToxMzdfYzhkM2EzYTgzYmRlNWRhZDA2ZDQzNjY5NGUzZTIyYWMzZTY0ZDU3N18xOTk2NjMy.png" alt="u/Bat_Raptor_3" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/Bat_Raptor_3</span>
+                <p class="description">Bat_Raptor_3 is famous for creating the giant meme of the Jackerpillar. Bat_Raptor_3's meme took over Jack's subreddit.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 10 -->
+    <a href="https://www.reddit.com/user/XPineappleOnPizza" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="profileIcon_u9giffef226e1.png" alt="u/XPineappleOnPizza" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/XPineappleOnPizza</span>
+                <p class="description">XPineappleOnPizza created the name for the Jackerpillar and also is very active on the subreddit and posts and comments a lot on Jack's subreddit.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 11 -->
+    <a href="https://www.reddit.com/user/ReviverOfTheReddit" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="profileIcon_ytbu38ovgwlf1.png" alt="u/ReviverOfTheReddit" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/ReviverOfTheReddit</span>
+                <p class="description">ReviverOfTheReddit is a founding member of the Reddit revivers group. This group was formed after RedditReviver quit Reddit. ReviverOfTheReddit is part of a group of many people who want to revive Jack's subreddit. ReviverOfTheReddit is also a mod of r/RedditRevivers. ReviverOfTheReddit also started the color names custom color trend.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 12 -->
+    <a href="https://www.reddit.com/user/Spirited-Direction84" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="6317e22d-b889-4eb6-a8aa-cae2331734f9.png" alt="u/Spirited-Direction84" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/Spirited-Direction84</span>
+                <p class="description">Spirited-Direction84 is known for posting and being an active reviver on Jack's subreddit. Spirited-Direction84 also is known for being a mod on r/RedditRevivers and being an founding and active member of the group. Spirited-Direction84 also created a news site and Youtube channel for r/RedditRevivers. He is also a potato.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 13 -->
+    <a href="https://www.reddit.com/user/CommunicationAny5823" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="e191f1ed-1c1b-4fb6-87b2-ff536946e7fa-headshot-removebg-preview.jpg" alt="u/CommunicationAny5823" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/CommunicationAny5823</span>
+                <p class="description">CommunicationAny5823 is known for being the owner of and creating the r/RedditRevivers Subreddit. CommunicationAny5823 is active in r/RedditRevivers and r/JackSucksAtLife.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 14 -->
+    <a href="https://www.reddit.com/user/neon7000000" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="https://static.wixstatic.com/media/fe8ce1_7d6b61f3bc9e4f1293e4cbb6375ea8dc~mv2.png/v1/fill/w_456,h_444,al_c,lg_1,q_85,enc_avif,quality_auto/b42a2dca-c9e4-4479-92c2-732fa5abdb62.png" alt="u/neon7000000" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/neon7000000</span>
+                <p class="description">Neon7000000 is a well known redditor who is helps with the reviving of r/JackSucksAtLife. Neon7000000 helped create the RedditRevivers group post and is active on r/JackSucksAtLife. Neon7000000 is a mod of r/RedditRevivers.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 15 -->
+    <a href="https://www.reddit.com/user/GamingYouTube14" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="fa71e4a4-c5d2-45ce-9633-14e5bbc89f4e.png" alt="u/GamingYouTube14" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/GamingYouTube14</span>
+                <p class="description">GamingYouTube14 is known for being an active poster. GamingYoutube14 is well known in r/JackSucksAtLife and makes high quality posts there. GamingYoutube14 is a new mod for r/JackSucksAtLife.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 16 -->
+    <a href="https://www.reddit.com/user/TomE41111" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="profileIcon_4snpllv84kef1.png" alt="u/TomE41111" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/TomE41111</span>
+                <p class="description">TomE41111 is well known in the r/JackSucksAtLife community for creating high quality posts. TomE41111 also is playing connect four with Jack every week and is known for that.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 17 -->
+    <a href="https://www.reddit.com/user/NaiveAd1401" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="nftv2_bmZ0X2VpcDE1NToxMzdfZWI5NTlhNzE1ZGZmZmU2ZjgyZjQ2MDU1MzM5ODJjNDg1OWNiMTRmZV8zMTQzODgz.png" alt="u/NaiveAd1401" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/NaiveAd1401</span>
+                <p class="description">NaiveAd1401 is the first person to get the RedditRevivers into the reddit video. NaiveAd1401 is also the creator of the sucksat times newspaper. NaiveAd1401 creates high quality posts and is very active on r/JackSucksAtLife. NaiveAd1401 is also the creator of the r/PWKFanClub subreddit.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 18 -->
+    <a href="https://www.reddit.com/user/TheNoobestt" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="profileIcon_isflsvy8ajlf1.jpeg" alt="u/TheNoobestt" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/TheNoobestt</span>
+                <p class="description">TheNoobestt helped create the RedditRevivers group post. TheNoobestt is a r/RedditRevivers mod. Also, TheNoobestt makes high quality posts on r/JackSucksAtlife.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 19 -->
+    <a href="https://www.reddit.com/user/AdStraight2941" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="7647905a-6806-4abe-8e8b-183a77e7045d.png" alt="u/AdStraight2941" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/AdStraight2941</span>
+                <p class="description">AdStraight2941 is a well known redditor who is an active poster on r/JackSucksAtLife. AdStraight2941 makes high quality posts and is also a mod on r/RedditRevivers. AdStraight2941 came up with idea of a RedditRevivers group post on r/RedditRevivers.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 20 -->
+    <a href="https://www.reddit.com/user/cardbored1" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="profileIcon_9d3fx769hfkb1.jpg" alt="u/cardbored1" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/cardbored1</span>
+                <p class="description">Cardbored1 was the first person on the subreddit to say cheers bud to a bus driver which made jack tell everyone else to do it and the whole thing about random bus drivers thinking of Jack when they hear "Cheers bud!"</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 21 -->
+    <a href="https://www.reddit.com/user/straightboy69420" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="channels4_profile.jpg" alt="u/straightboy69420" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/straightboy69420</span>
+                <p class="description">Straightboy69420 is known for always commenting on r/JackSucksAtLife with insulting comments to Jack. Straightboy continued this for a while before he was banned and is now always remembered.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 22 -->
+    <a href="https://www.reddit.com/user/nataliasucks" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="avatar_default_3.png" alt="u/nataliasucks" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/nataliasucks</span>
+                <p class="description">Nataliasucks is known for making Jack say "Obviously I've not really had that much ...".</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 23 -->
+    <a href="https://www.reddit.com/user/mamamia1001" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="nftv2_bmZ0X2VpcDE1NToxMzdfZTY0YmI3ZGQwYTEzYWY2MjJlMGRlNjQ1NmQxYmJhZGM4ZDFlYzA5ZF83NjE1MQ_r.png" alt="u/mamamia1001" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/mamamia1001</span>
+                <p class="description">Mamamia1001 created the post called "the future" which predicted the future and was top post for a while.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 24 -->
+    <a href="https://www.reddit.com/user/Grouchy_Morning_7387" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="snoovatar-back-64x64px (1).png" alt="u/Grouchy_Morning_7387" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/Grouchy_Morning_7387</span>
+                <p class="description">Grouchy_Morning_7387 was known for making annoying posts like Is Jack a pretzel? After some time of annoying the subreddit Grouchy Morning was banned.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 25 -->
+    <a href="https://www.reddit.com/user/ippesucksatlife" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="5917378b-d598-420f-a709-5084f5646d2c.png" alt="u/ippesucksatlife" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/ippesucksatlife</span>
+                <p class="description">Ippesucksatlife is known for getting top post of the year 2022.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 26 -->
+    <a href="https://www.reddit.com/user/MeowCow_Jumbo" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="dfa08dee-f7da-41be-b695-d07e5c68a661.png" alt="u/MeowCow_Jumbo" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/MeowCow_Jumbo</span>
+                <p class="description">MeowCow_Jumbo is known for requesting 9 user flairs (all of which have been added and include pretty woman kitchen, duck gang, and toilet gang). MeowCow_Jumbo also lead antipwk gang. MeowCow_Jumbo is active on subreddit and posts a lot. MeowCow_Jumbo is known for being the first person to actually get the Hall of Fame website in the Reddit video. MeowCow_Jumbo has had a post recognized by Jack and included in a video. Jack pointed out 3 of MeowCow_Jumbo's drawings in w.place in a recent video (Kong drawing, Big Daddy 69, and Jdawg).</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 27 -->
+    <a href="https://www.reddit.com/user/cybermxn" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="profileIcon_ch9lynzeszjf1.jpg" alt="u/cybermxn" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/cybermxn</span>
+                <p class="description">Cybermxn has been extremely active on the subreddit recently and has been in many Reddit videos.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 28 -->
+    <a href="https://www.reddit.com/user/Aggressive-Hotdog" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="nftv2_bmZ0X2VpcDE1NToxMzdfYjljMDQyYzMyNzViYzQ5Nzk5Njg4ZWVhMWEyOWIxNDA1ZDAyOTQ2Yl8xMjAyMzk_.png" alt="u/Aggressive-Hotdog" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/Aggressive-Hotdog</span>
+                <p class="description">Aggressive-Hotdog is the guy with the iPad, who made Jack take a now infamous photo for their iPad's wallpaper.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 29 -->
+    <a href="https://www.reddit.com/user/jamjobDRWHOgabiteguy" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="f3becf12-e636-423e-8d4d-6fd95ec2e6a5.png" alt="u/jamjobDRWHOgabiteguy" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/jamjobDRWHOgabiteguy</span>
+                <p class="description">JamjobDRWHOgabiteguy is known for getting the top post of the week when they connected Jack to Jesus. Jack made a short on this post and it is Jack's most viewed short in 2025. JamjobDRWHOgabiteguy also got the most comments on a Reddit post on r/JackSucksAtLife.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 30 -->
+    <a href="https://www.reddit.com/user/_Orion_lima_" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="9b9b842a-3205-4502-a0dc-f8348130a596.png" alt="u/_Orion_lima_" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/_Orion_lima_</span>
+                <p class="description">_Orion_lima_ is the third most active person on the subreddit and also has recoomend these flairs: Suggestions, Discussion, Creations, News, Music, Quiz, Feedback, No Context Clip and Thumbnails.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 31 -->
+    <a href="https://www.reddit.com/user/The_Maxinator0612" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="profileIcon_8o3xzp14dptf1.png" alt="u/The_Maxinator0612" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/The_Maxinator0612</span>
+                <p class="description">The_Maxinator0612 is the person who made many mashups of Jack and other people like Becky, Kai, and Oscar.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 32 -->
+    <a href="https://www.reddit.com/user/ZachEchano" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="profileIcon_ujh7siv3uj6f1.png" alt="u/ZachEchano" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/ZachEchano</span>
+                <p class="description">ZachEchano is the person who made a graph of every version of all of Jack's channel's profile pictures.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 33 -->
+    <a href="https://www.reddit.com/user/-KitchenVisit-" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="snoovatar-back-64x64px (2).png" alt="u/-KitchenVisit-" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/-KitchenVisit-</span>
+                <p class="description">-KitchenVisit- is the person who started the narcissistic meme and claimed that Jack was a narcissist.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 34 -->
+    <a href="https://www.reddit.com/user/J_LitDOTjpg" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="profileIcon_snoocaab8a4c-4fb6-470b-9adb-41a258f4e959-headshot.webp" alt="u/J_LitDOTjpg" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/J_LitDOTjpg</span>
+                <p class="description">J_LitDOTjpg got Jack his youtube directors chair and was denied by Jack a Tesla charger.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 35 -->
+    <a href="https://www.reddit.com/user/MossW268" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="95902193-0987-4a31-9374-e77c932d863a.png" alt="u/MossW268" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/MossW268</span>
+                <p class="description">MossW268 started the conspiracy theory that Jack Is Dead and got 3 top posts about it two of which became the title and thumbnail of the video.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 36 -->
+    <a href="https://www.reddit.com/user/SappySnow" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="profileIcon_y86rbwe95t5g1.jpg" alt="u/SappySnow" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/SappySnow</span>
+                <p class="description">SappySnow created a hot interlude that Jack used once and was one of the main people involved in the RedditRevivers group post and first raid. SappySnow created the RedditRevivers watermark that many popular redditors use that is also the r/RedditRevivers subreddit icon.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 37 -->
+    <a href="https://www.reddit.com/user/anonymous-owl11" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="avatar_default_3 (2).png" alt="u/anonymous-owl11" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/anonymous-owl11</span>
+                <p class="description">Anonymous-owl11 created the Removing jack's facial features until he is unrecognizable series. The series had 16 weeks and week 16 got top post of the week with 1.4k upvotes of a blank image.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 38 -->
+    <a href="https://www.reddit.com/user/squ0dMan" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="nftv2_bmZ0X2VpcDE1NToxMzdfNjIyZDhmZWE0NjAzYmE5ZWRhZjEwODRiNDA3MDUyZDhiMGE5YmVkN18yOTU4MDU2.png" alt="u/squ0dMan" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/squ0dMan</span>
+                <p class="description">Squ0dMan used a reddit video to ask out his girlfriend and she said yes!</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 39 -->
+    <a href="https://www.reddit.com/user/Starminx" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="profileIcon_r6njod0z4n481.jpg" alt="u/Starminx" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/Starminx</span>
+                <p class="description">u/Starminx created the Jack's Wee Wee Bush flag and the microwiki page for it. Starminx also created a reddit and discord server for it. Starminx also added a subregion for the Pee Pee tree.</p>
+            </div>
+        </div>
+    </a>
+    
+    <!-- Card 40 -->
+    <a href="https://www.reddit.com/user/Mehlekun" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="profileIcon_vegkhppx7v7d1.jpeg" alt="u/Mehlekun" class="card-image">
+            </div>
+            <div class="card-content">
+                <span class="username">u/Mehlekun</span>
+                <p class="description">Mehlekun created the orginal post that used the Disappointed KSI meme template. This caused Jack to tell everyone to use and make it viral.</p>
+            </div>
+
+        </div>
+    </a>
+
+    <!-- Card 41 -->
+    <a href="https://www.reddit.com/user/Few-Woodpecker-9493/" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="https://i.redd.it/snoovatar/avatars/1d2cb122-7ff8-468b-b500-f27c75bc768d.png" alt="u/Mehlekun" class="card-image">
+            </div>
+<div class="card-content"> <span class="username">u/Few-Woodpecker-9493</span> <p class="description">Few-Woodpecker-9493 is known for being the co-creator of the first Hall of Fame website (jsalhof.wixsite.com/reddit/halloffame) which has now been discontinued.
+</div>
+
+        </div>
+
+    </a>
+    <!-- Card 42 -->
+    <a href="u/Terrible_Ad_12081" class="card-link" target="_blank">
+        <div class="card">
+            <div class="card-image-container">
+                <img src="https://i.redd.it/snoovatar/avatars/f332dc86-93a9-4390-aa25-4f9ed9142b62.png" alt="u/Terrible_Ad_12081" class="card-image">
+            </div>
+<div class="card-content"> <span class="username">u/Terrible_Ad_12081</span> <p class="description">Terrible_Ad_12081 co-created the first HOF website along with Terrible_Ad_12081 (jsalhof.wixsite.com/reddit/halloffame)
+</div>
+
+        </div>
+    </a>
+
+</div>
+
+<div class="footer">
+    <p>Made by <span class="accent">u/DeadSubDoc</span> <br> inspired by <span class="accent">u/Few-Woodpecker-9493</span> and <span class="accent">u/Terrible_Ad_12081</span></p>
+</div>
+
+</body>
+</html>
