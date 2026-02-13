@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="icon" href="j.png" type="image/png">
+    <link rel="icon" href="https://yt3.googleusercontent.com/bu29B2Crvfklt8nXuKZe6ekhRZvgCn2orZltPE2Z2sAvoqNsIJ21Ggjedl9oOqWzmx88X-pMaQ=s900-c-k-c0x00ffffff-no-rj" type="image/png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jack.fun</title>
@@ -633,6 +633,9 @@
         
         <!-- Credits -->
         <div class="button" style="background-image: url('CRDS.png');" onclick="playGame('credits', 'Credits')"></div>
+        
+        <!-- Hall of Fame -->
+        <div class="button" style="background-image: url('hallofog.png');" onclick="playGame('hall', 'Hall of Fame')"></div>
     </div>
     
     <script>
@@ -708,7 +711,7 @@
             });
         });
         
-        // Game playing function
+        // Game playing function - FIXED: Added missing comma
         function playGame(gameId, gameName) {
             // Track that user played this game
             if (currentUser) {
@@ -726,11 +729,14 @@
                 'infinitescroll': 'https://jackisanerd.github.io/HigherOrLower/',
                 'oftheday': 'JHOF.html',
                 'tictactoe': 'JHOS.html',
-                'credits': 'Credits.html'
+                'credits': 'Credits.html',
+                'hall': 'https://jsalhof.wixsite.com/reddit/halloffame'
             };
             
             if (gameLinks[gameId]) {
                 window.location.href = gameLinks[gameId];
+            } else {
+                alert('Game link not found for: ' + gameName);
             }
         }
         
@@ -758,7 +764,7 @@
             document.getElementById('profileUsername').textContent = currentUser;
             
             // Update level and XP
-            const currentXP = calculateCurrentLevelXP(user.xp);
+            const currentXP = calculateCurrentLevelXP(user.xp || 0);
             const level = user.level || 1;
             
             document.getElementById('profileLevel').textContent = level;
@@ -775,30 +781,36 @@
             const profilePic = user.profilePicture || '';
             
             // Update all profile picture elements
-            const profilePicElements = [
-                document.getElementById('profilePicSmall'),
-                document.getElementById('profilePicLarge'),
-                document.getElementById('profilePicPreview')
-            ];
+            const profilePicSmall = document.getElementById('profilePicSmall');
+            const profilePicLarge = document.getElementById('profilePicLarge');
+            const profilePicPreview = document.getElementById('profilePicPreview');
             
-            profilePicElements.forEach(element => {
-                if (element) {
-                    if (profilePic) {
-                        element.src = profilePic;
-                        element.style.display = 'block';
-                    } else {
-                        // Default profile icon
-                        element.src = '';
-                        element.style.backgroundColor = '#4CAF50';
-                        element.style.display = 'flex';
-                        element.style.alignItems = 'center';
-                        element.style.justifyContent = 'center';
-                        element.style.color = 'white';
-                        element.style.fontSize = '16px';
-                        element.textContent = currentUser.charAt(0).toUpperCase();
-                    }
-                }
-            });
+            if (profilePic) {
+                if (profilePicSmall) profilePicSmall.src = profilePic;
+                if (profilePicLarge) profilePicLarge.src = profilePic;
+                if (profilePicPreview) profilePicPreview.src = profilePic;
+            } else {
+                // Default profile icon - use a data URL with colored background
+                const initial = currentUser.charAt(0).toUpperCase();
+                const canvas = document.createElement('canvas');
+                canvas.width = 80;
+                canvas.height = 80;
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#4CAF50';
+                ctx.beginPath();
+                ctx.arc(40, 40, 40, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = 'white';
+                ctx.font = '40px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(initial, 40, 40);
+                const defaultPic = canvas.toDataURL();
+                
+                if (profilePicSmall) profilePicSmall.src = defaultPic;
+                if (profilePicLarge) profilePicLarge.src = defaultPic;
+                if (profilePicPreview) profilePicPreview.src = defaultPic;
+            }
             
             // Update small profile username
             document.getElementById('profileUsernameSmall').textContent = currentUser;
@@ -943,8 +955,6 @@
             
             if (newLevel > oldLevel) {
                 alert(`Level Up! You're now level ${user.level}!`);
-            } else if (newLevel < oldLevel) {
-                alert(`Level Down! You're now level ${user.level}!`);
             }
         }
         
@@ -1101,7 +1111,7 @@
                 xpContainer.style.display = 'block';
                 
                 // Update XP display
-                const currentXP = calculateCurrentLevelXP(user.xp);
+                const currentXP = calculateCurrentLevelXP(user.xp || 0);
                 const level = user.level || 1;
                 
                 document.getElementById('xpValue').textContent = currentXP;
@@ -1149,7 +1159,7 @@
             }
             
             // Award XP
-            user.xp += 1;
+            user.xp = (user.xp || 0) + 1;
             user.lastXPTimestamp = now;
             
             // Update level
