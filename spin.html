@@ -212,9 +212,7 @@
   <!-- clearer action bar -->
   <div class="action-bar">
     <div class="result-badge" id="resultDisplay">✨ spin me</div>
-    <button id="spinBtn">🌀 spin</button>
     <button id="goBtn" class="go-button" disabled>▶ GO</button>
-    <button id="resetBtn">⟲ spin again</button>
   </div>
 
   <!-- editable list of interludes -->
@@ -264,9 +262,7 @@
   const canvas = document.getElementById('wheelCanvas');
   const ctx = canvas.getContext('2d');
   const resultDisplay = document.getElementById('resultDisplay');
-  const spinBtn = document.getElementById('spinBtn');
   const goBtn = document.getElementById('goBtn');
-  const resetBtn = document.getElementById('resetBtn');
   const interludeListContainer = document.getElementById('interludeListContainer');
   const newNameInput = document.getElementById('newName');
   const newLinkInput = document.getElementById('newLink');
@@ -455,17 +451,7 @@
     }
   });
 
-  spinBtn.addEventListener('click', () => {
-    if (segments.length === 0) {
-      alert('Add some interludes first!');
-      return;
-    }
-    spinWheel();
-  });
-
   goBtn.addEventListener('click', goToCurrentInterlude);
-
-  resetBtn.addEventListener('click', resetSpinState);
 
   // ---- interlude list management ----
   function renderInterludeList() {
