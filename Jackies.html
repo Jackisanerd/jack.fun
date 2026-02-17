@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jackies</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+      background: #f5f5f5;
+      color: #111;
+      line-height: 1.5;
+    }
+
+    /* fade animation */
+    .fade {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.9s cubic-bezier(0.2, 0.9, 0.1, 1), transform 0.9s cubic-bezier(0.2, 0.9, 0.1, 1);
+    }
+    .fade.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* sections */
+    section {
+      min-height: 100vh;
+      padding: 60px 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* INTRO — minimalist */
+    .intro {
+      background: #fff;
+      color: #111;
+      flex-direction: column;
+      text-align: center;
+      gap: 40px;
+    }
+    .intro h1 {
+      font-size: 1.8rem;
+      font-weight: 300;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #333;
+    }
+    .logo {
+      font-size: 5rem;
+      font-weight: 800;
+      color: #000;
+      border-top: 2px solid #ccc;
+      border-bottom: 2px solid #ccc;
+      padding: 20px 0;
+      font-family: 'Times New Roman', serif;
+    }
+    .intro-img {
+      max-width: 700px;
+      width: 100%;
+      border-radius: 4px;
+      box-shadow: 0 20px 30px -15px rgba(0,0,0,0.3);
+    }
+
+    /* NEW YORK TIMES STYLE — with award box below article */
+    .times-paper {
+      background: #fff;
+      color: #111;
+      max-width: 1100px;
+      width: 100%;
+      padding: 40px 40px;
+      font-family: 'Times New Roman', serif;
+      box-shadow: 0 0 30px rgba(0,0,0,0.1);
+      border-radius: 2px;
+    }
+    .times-header {
+      text-align: center;
+      border-bottom: 2px solid #333;
+      padding-bottom: 20px;
+      margin-bottom: 30px;
+    }
+    .times-header h1 {
+      font-size: 3.8rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      font-family: 'Times New York', 'Times New Roman', serif;
+    }
+    .times-header .date {
+      font-size: 1rem;
+      text-transform: uppercase;
+      color: #555;
+      margin-top: 8px;
+    }
+    .times-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 40px;
+    }
+    .times-article {
+      font-size: 1.2rem;
+      line-height: 1.6;
+      border-right: 1px solid #ccc;
+      padding-right: 30px;
+    }
+    .times-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+    /* award box now sits in the main column under article text */
+    .storyteller-award-box {
+      background: #f8f8f8;
+      border: 2px solid gold;        /* more noticeable */
+      padding: 24px 20px;
+      font-weight: 700;
+      font-size: 1.3rem;
+      text-align: center;
+      font-family: system-ui;
+      box-shadow: 0 8px 12px rgba(0,0,0,0.1);
+      margin-top: 30px;               /* space below article */
+      border-radius: 8px;
+      color: #1e1e1e;
+    }
+    .storyteller-award-box span {
+      display: block;
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+    .times-award-box {
+      background: #f8f8f8;
+      border: 1px solid #aaa;
+      padding: 20px;
+      font-weight: 600;
+      font-size: 1.2rem;
+      text-align: center;
+      font-family: system-ui;
+    }
+
+    /* WIKIPEDIA */
+    .wikipedia {
+      background: #fff;
+      max-width: 1000px;
+      width: 100%;
+      padding: 30px 40px;
+      border: 1px solid #a7d7f9;
+      border-radius: 2px;
+    }
+    .wikipedia h1 {
+      font-family: 'Times New Roman', serif;
+      font-size: 2.8rem;
+      border-bottom: 1px solid #aaa;
+      margin-bottom: 16px;
+    }
+    .wikipedia .infobox {
+      background: #f8f9fa;
+      border: 1px solid #a2a9b1;
+      padding: 20px;
+      float: right;
+      width: 260px;
+      margin-left: 20px;
+      margin-bottom: 20px;
+      font-size: 0.95rem;
+    }
+    .wikipedia .infobox h3 {
+      background: #eaecf0;
+      text-align: center;
+      padding: 5px;
+    }
+    .wiki-content {
+      font-size: 1.1rem;
+      line-height: 1.7;
+    }
+
+    /* YOUTUBE style */
+    .youtube {
+      background: #f9f9f9;
+      max-width: 1100px;
+      width: 100%;
+      padding: 0;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .yt-topbar {
+      background: #fff;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      border-bottom: 1px solid #ddd;
+    }
+    .yt-logo {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: 600;
+      font-size: 1.5rem;
+    }
+    .yt-logo img {
+      height: 40px;
+      width: auto;
+    }
+    .yt-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      padding: 30px;
+    }
+    .yt-video-box {
+      background: #e5e5e5;
+      aspect-ratio: 16/9;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* AMAZON */
+    .amazon {
+      background: #fff;
+      max-width: 1100px;
+      width: 100%;
+      padding: 30px;
+      border-radius: 20px;
+    }
+    .amazon-nav {
+      background: #131921;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 12px 12px 0 0;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .amazon-logo {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #ff9900;
+    }
+    .search-bar {
+      flex: 1;
+      display: flex;
+    }
+    .search-bar input {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px 0 0 8px;
+      font-size: 1rem;
+    }
+    .search-bar button {
+      background: #febd69;
+      border: none;
+      padding: 0 20px;
+      border-radius: 0 8px 8px 0;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+      padding: 30px 0;
+    }
+    .product {
+      border: 1px solid #ddd;
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+    }
+    .product img {
+      width: 100%;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+      border-radius: 12px;
+    }
+    .buy-btn {
+      background: #ffd814;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 30px;
+      margin-top: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* TROPHY (bigger images) */
+    .trophy {
+      background: #000;
+      color: white;
+      flex-direction: column;
+      text-align: center;
+      padding: 60px 30px;
+    }
+    .trophy img, .trophy .embed-player {
+      width: 500px;
+      max-width: 90vw;
+      border-radius: 30px;
+      box-shadow: 0 0 0 4px gold;
+      margin-bottom: 25px;
+    }
+    .winner {
+      font-size: 2.8rem;
+      color: gold;
+    }
+
+    /* JACKTOK — vertical stacks (shorts) */
+    .jacktok {
+      background: #000;
+      width: 100%;
+    }
+    .tok-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr 1fr;
+      gap: 16px;
+      align-items: center;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+    .tok-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .tok-stack .embed-player {
+      aspect-ratio: 9/16;
+      border-radius: 24px;
+      overflow: hidden;
+    }
+
+    /* JOOOGLE (google style) */
+    .joogle {
+      background: #fff;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+    .joogle-card {
+      max-width: 700px;
+      width: 100%;
+      text-align: center;
+    }
+    .joogle-logo {
+      font-size: 5.5rem;
+      font-weight: 600;
+      font-family: 'Product Sans', sans-serif;
+      color: #4285f4;
+      margin-bottom: 20px;
+    }
+    .joogle-search {
+      display: flex;
+      border: 1px solid #dfe1e5;
+      border-radius: 40px;
+      padding: 12px 20px;
+      margin: 25px 0;
+      box-shadow: 0 1px 6px rgba(32,33,36,.28);
+    }
+    .joogle-search input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 1.2rem;
+    }
+    .joogle-button {
+      background: #f8f9fa;
+      border: 1px solid #f8f9fa;
+      padding: 10px 20px;
+      border-radius: 4px;
+      margin: 11px 4px;
+      cursor: pointer;
+    }
+    .joogle-results {
+      text-align: left;
+      margin-top: 40px;
+      border-top: 1px solid #ccc;
+      padding-top: 25px;
+    }
+    .result-item {
+      margin-bottom: 30px;
+    }
+    .result-title {
+      color: #1a0dab;
+      font-size: 1.4rem;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    /* helper */
+    .embed-player iframe {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- minimalist intro + image below -->
+  <section class="intro fade show">
+    <h1>THE FIRST ANNUAL</h1>
+    <div class="logo">Jackies</div>
+    <img class="intro-img" src="https://i.ytimg.com/vi/kVV95DkUERc/hqdefault.jpg" alt="jackies background">
+  </section>
+
+  <section class="fade show" style="background:#eee;">
+    <div class="times-paper">
+      <div class="times-header">
+        <h1>@jackies</h1>
+        <h4>The New Jack Times</h4>
+        <div class="date">FEBRUARY, 2025 · THE AWARDS ISSUE</div>
+      </div>
+      <div class="times-grid">
+        <div class="times-article">
+          <p><strong>JackSucksAtLife</strong> has walked 100k steps in a single day, surprising all — including pretty woman kitchen, turdboi420, FreddieThePebble, and all the ducks of the world that are part of duck gang.<br> Furthermore, all are in distress due to Mr. Welsh not uploading in more than 3 months on JackSucksAtLife, his main channel.</p>
+gold border -->
+          <div class="storyteller-award-box">
+            <span>🏆</span>
+            <strong>Storyteller Award<br>Favorite Jack Storytelling event of all time</strong>
+          </div>
+        </div>
+        <!-- right sidebar unchanged -->
+        <div class="times-sidebar">
+          <div class="times-award-box">📰 Also in this issue: The Great Playbutton Heist</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- wisdom teeth (bigger image) -->
+  <section class="trophy fade show">
+    <img src="https://i.ytimg.com/vi/jiP85eHz-qk/sddefault.jpg" alt="wisdom teeth">
+    <div class="winner">So I had surgery..</div>
+  </section>
+
+  <!-- JACKIPEDIA (wikipedia style) -->
+  <section class="fade show" style="background:#e9eef3;">
+    <div class="wikipedia">
+      <h1>Jackipedia</h1>
+      <div class="infobox">
+        <h3>Jack Massey Welsh</h3>
+        <p><b>Occupation:</b> Content Creator</p>
+        <p><b>Known for:</b> Playbuttons</p>
+        <p><b>Status:</b> Deceased</p>
+        <p><b>Died:</b> 2021</p>
+      </div>
+      <div class="wiki-content">
+        <p><b>Jacksucksatlife</b> was a content creator, making 1000s of videos on numerous categories such as fitness, playbuttons, and reddit videos. He sadly passed away in 2021.</p>
+        <h2><u>Best Reddit Reviver Award</u></h2>
+        <p>And the winner is...</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- JustAlfie trophy -->
+  <section class="trophy fade show">
+    <img src="https://styles.redditmedia.com/t5_5tpjeq/styles/profileIcon_yzgtax3ujudg1.jpeg?s=4cbbaabb16c126774ba2e368a607e76a74fcde46" alt="JustAlfie">
+    <div class="winner">Winner: <a href="#" style="color:gold;">JustAlfie</a></div>
+  </section>
+
+  <!-- JACKTUBE (youtube style + jackling.png) -->
+  <section class="fade show" style="background:#ff0000;">
+    <div class="youtube">
+      <div class="yt-topbar">
+        <div class="yt-logo">
+          <img src="https://yt3.googleusercontent.com/ytc/AIdro_mdR4c6Uj2t1593drUj9tlpPLxeM3OdUmO04hHT6n4=s900-c-k-c0x00ffffff-no-rj" alt="jackling" onerror="this.style.display='none'; this.nextSibling.textContent='🔴 JackTube';">
+          <span>JackTube</span>
+        </div>
+      </div>
+      <div class="yt-grid">
+        <div class="yt-video-box">
+          <iframe src="https://www.youtube.com/embed/DDvyeek9qLc?autoplay=1&mute=1" allow="autoplay; fullscreen"></iframe>
+        </div>
+        <div style="background:#fff; padding:20px; border-radius:12px;">
+          <h1>Video of the Year</h1>
+          <h2>Best video uploaded on ANY channel</h2>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- video winner -->
+  <section class="trophy fade show">
+    <div class="embed-player" style="width:560px; height:315px;">
+      <iframe src="https://www.youtube.com/embed/OgJSBKblXaw?autoplay=1&mute=1" allow="autoplay; fullscreen"></iframe>
+    </div>
+    <div class="winner">Winner: I'm Not A Robot (neal.fun)</div>
+  </section>
+
+  <!-- JACKAZON (amazon style) with search & 3 random items -->
+  <section class="fade show" style="background:#ff9900;">
+    <div class="amazon">
+      <div class="amazon-nav">
+        <span class="amazon-logo">Jackazon</span>
+        <div class="search-bar">
+          <input type="text" placeholder="Search for anything" value="">
+          <button onclick="alert('Searching...')">🔍</button>
+        </div>
+      </div>
+      <div class="products-grid">
+        <div class="product">
+          <img src="https://i.ytimg.com/vi/ZcF_ltmdgAw/hq720.jpg" alt="Turd Mobile">
+          <div>The Turd Mobile</div>
+          <button class="buy-btn" onclick="fakeBuy('Turd Mobile')">Buy now</button>
+        </div>
+        <div class="product">
+          <img src="https://preview.redd.it/i-made-a-pretty-woman-kitchen-spoon-what-should-i-do-with-v0-rlqegtueclyc1.jpeg?auto=webp&s=fecf64ceeb56284a4d1a63b56f51ddaa34c78dae" alt="spoon">
+          <div>Pretty Woman Kitchen Custom Spoon</div>
+          <button class="buy-btn" onclick="fakeBuy('Custom spoon')">Buy now</button>
+        </div>
+        <div class="product">
+          <img src="https://preview.redd.it/jack-is-sad-make-him-happy-v0-h5jqr2y4axtf1.png?width=640&crop=smart&auto=webp&s=185347088d33927c32d3f715a44e426f4ee2e191" alt="Sad Jack">
+          <div>Sad Jack :(</div>
+          <button class="buy-btn" onclick="fakeBuy('Sad Jack art')">Buy now</button>
+        </div>
+      </div><br> <u><center><h2>Worst Buy of the Year</h2></center></u>
+      <div style="text-align:center; margin-top:20px;"></div>
+    </div>
+  </section>
+
+  <!-- LABUBU TROPHY - bigger image -->
+  <section class="trophy fade show">
+    <img src="https://preview.redd.it/jack-what-do-you-want-for-ur-labubu-v0-opu8sxfqll3f1.jpeg?width=1080&crop=smart&auto=webp&s=b9d04a5e44bcc64973ec56ca1a0940a14f058422" alt="Labubu fake" style="width:600px;">
+    <div class="winner">Winner: Labubu (which turned out to be fake)</div>
+  </section>
+
+  <!-- JACKTOK (vertical stacks, short style) -->
+  <section class="fade jacktok show">
+    <div class="tok-grid">
+      <div class="tok-stack">
+        <div class="embed-player"><iframe src="https://www.youtube.com/embed/4ZSCJYtLEBQ?autoplay=1&mute=1" allow="autoplay; fullscreen"></iframe></div>
+        <div class="embed-player"><iframe src="https://www.youtube.com/embed/ddHtWJce8iY?autoplay=1&mute=1" allow="autoplay; fullscreen"></iframe></div>
+      </div>
+
+      <div style="background:#111; color:white; padding:30px; border-radius:48px; text-align:center;">
+        <h2 style="color:gold;">🎵 JackTok</h2>
+        <h3>Best Short</h3>
+        <div style="background:#222; padding:20px; border-radius:20px;">Best SHORT that Jack uploaded this year</div>
+      </div>
+
+      <div class="tok-stack">
+        <div class="embed-player"><iframe src="https://www.youtube.com/embed/k-6c3vizIXQ?autoplay=1&mute=1" allow="autoplay; fullscreen"></iframe></div>
+        <div class="embed-player"><iframe src="https://www.youtube.com/embed/3D5zzmkgjwY?autoplay=1&mute=1" allow="autoplay; fullscreen"></iframe></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- athlete month trophy -->
+  <section class="trophy fade show">
+    <img src="https://i.ytimg.com/vi/vivdSxWub9Y/oar2.jpg" alt="athlete">
+    <div class="winner">Winner: I trained like a professional athlete for 1 month</div>
+  </section>
+
+  <!-- JOOOGLE (google style) with search reveals -->
+  <section class="fade joogle show">
+    <div class="joogle-card">
+      <div class="joogle-logo">Joogle</div>
+      <div class="joogle-search">
+        <input type="text" placeholder="Search for award..." id="joogleInput" value="Storyteller">
+        <button class="joogle-button" onclick="searchJoogle()">Joogle Search</button>
+      </div>
+      <div class="joogle-results" id="joogleResults">
+        <div class="result-item">
+          <div class="result-title" onclick="revealWinner('Storyteller')">Storyteller Award</div>
+          <div>Winner: So I had surgery..</div>
+        </div>
+        <div class="result-item">
+          <div class="result-title" onclick="revealWinner('Reddit')">Best Reddit Reviver</div>
+          <div>Winner: JustAlfie</div>
+        </div>
+        <div class="result-item">
+          <div class="result-title" onclick="revealWinner('Video')">Video of the Year</div>
+          <div>Winner: I'm Not A Robot (neal.fun)</div>
+        </div>
+        <div class="result-item">
+          <div class="result-title" onclick="revealWinner('Worst Buy')">Worst Buy</div>
+          <div>Winner: Lafufu</div>
+        </div>
+        <div class="result-item">
+          <div class="result-title" onclick="revealWinner('Short')">Best Short</div>
+          <div>Winner: I trained like a professional athlete for 1 month</div>
+        </div>
+      </div>
+      <p style="margin-top:20px; color:gray;">Click any result to scroll to winner.</p>
+    </div>
+  </section>
+
+  <script>
+    function fakeBuy(item) {
+      alert('🧾 You just bought: ' + item + '\nThank you for shopping on Jackazon.');
+    }
+
+    function searchJoogle() {
+      let query = document.getElementById('joogleInput').value.toLowerCase();
+      alert('Joogle Search: displaying all award results for "' + query + '"');
+    }
+
+    function revealWinner(category) {
+      let targetSection;
+      if (category.includes('Storyteller')) targetSection = document.querySelector('.trophy img[alt="wisdom teeth"]')?.closest('.trophy');
+      else if (category.includes('Reddit')) targetSection = document.querySelector('.trophy img[alt="JustAlfie"]')?.closest('.trophy');
+      else if (category.includes('Video')) targetSection = document.querySelector('.trophy .embed-player')?.closest('.trophy');
+      else if (category.includes('Worst Buy')) targetSection = document.querySelector('.trophy img[alt="Labubu fake"]')?.closest('.trophy');
+      else if (category.includes('Short')) targetSection = document.querySelector('.trophy img[alt="athlete"]')?.closest('.trophy');
+      if (targetSection) targetSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // intersection observer for fade
+    const fades = document.querySelectorAll('.fade');
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('show'); });
+    }, { threshold: 0.2 });
+    fades.forEach(f => obs.observe(f));
+
+    window.addEventListener('load', () => {
+      fades.forEach(el => { if (el.getBoundingClientRect().top < window.innerHeight - 100) el.classList.add('show'); });
+    });
+  </script>
+
+</body>
+</html>

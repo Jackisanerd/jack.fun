@@ -636,6 +636,12 @@
         
         <!-- Hall of Fame -->
         <div class="button" style="background-image: url('hallofog.png');" onclick="playGame('hall', 'Hall of Fame')"></div>
+        
+        <!-- NEW: Jackies -->
+        <div class="button" style="background-image: url('jackyboi.png');" onclick="playGame('jackies', 'Jackies')"></div>
+        
+        <!-- NEW: Spin -->
+        <div class="button" style="background-image: url('lgo.png');" onclick="playGame('spin', 'Spin')"></div>
     </div>
     
     <script>
@@ -711,7 +717,7 @@
             });
         });
         
-        // Game playing function - FIXED: Added missing comma
+        // Game playing function - updated with two new games
         function playGame(gameId, gameName) {
             // Track that user played this game
             if (currentUser) {
@@ -730,7 +736,9 @@
                 'oftheday': 'JHOF.html',
                 'tictactoe': 'JHOS.html',
                 'credits': 'Credits.html',
-                'hall': 'https://jsalhof.wixsite.com/reddit/halloffame'
+                'hall': 'https://jsalhof.wixsite.com/reddit/halloffame',
+                'jackies': 'Jackies.html',   // new
+                'spin': 'spin.html'           // new
             };
             
             if (gameLinks[gameId]) {
