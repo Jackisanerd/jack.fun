@@ -1,588 +1,533 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="icon" href="https://wheelofnames.com/images/open-graph-image.png"image/png"><meta charset="UTF-8">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>THE READER · page turn folio</title>
+  <title>Interlude Wheel</title>
   <style>
     * {
-      margin: 0;
-      padding: 0;
       box-sizing: border-box;
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
     }
-
     body {
-      background: #2c2219; /* deep leather */
+      background: linear-gradient(145deg, #f0f2f5 0%, #e0e5ec 100%);
       min-height: 100vh;
+      margin: 0;
       display: flex;
-      align-items: center;
       justify-content: center;
-      font-family: 'Times New Roman', Times, serif;
-      background-image: radial-gradient(rgba(170, 130, 80, 0.2) 1px, transparent 1px),
-                      repeating-linear-gradient(45deg, rgba(0,0,0,0.02) 0px, rgba(0,0,0,0.02) 6px, transparent 6px, transparent 12px);
-      background-size: 40px 40px, 24px 24px;
+      align-items: center;
       padding: 20px;
     }
-
-    /* main volume – full screen on large, but nice box */
-    .kindle-reader {
+    .card {
+      max-width: 1000px;
       width: 100%;
-      max-width: 1100px;
-      height: 90vh;
-      background: transparent;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 30px 40px rgba(0,0,0,0.6);
-      border: 12px solid #4e3c27;
+      background: rgba(255,255,255,0.6);
+      backdrop-filter: blur(4px);
+      border-radius: 48px;
+      box-shadow: 20px 20px 40px #b8b9be, -20px -20px 40px #ffffff;
+      padding: 30px 30px 40px;
     }
-
-    /* header same as newspaper style */
-    .header-ribbon {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      background: #dbcbb2;
-      padding: 12px 28px;
-      border-bottom: 5px double #826945;
-      flex-shrink: 0;
+    h1 {
+      text-align: center;
+      font-weight: 600;
+      font-size: 2.2rem;
+      margin: 0 0 10px;
+      color: #1e2b3a;
+      letter-spacing: -0.5px;
     }
-
-    .masthead {
-      font-size: 2.8rem;
-      font-weight: 900;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: #2e1f0e;
-      text-shadow: 3px 3px 0 #b49161;
+    .sub {
+      text-align: center;
+      margin: 0 0 25px;
+      color: #3a4a5a;
+      font-weight: 400;
     }
-    .masthead small {
-      font-size: 1rem;
-      font-style: italic;
-      margin-left: 12px;
-      font-weight: normal;
-      color: #3f2f1b;
-    }
-
-    .weeks-container {
+    .wheel-container {
       position: relative;
+      width: min(70vw, 600px);
+      height: min(70vw, 600px);
+      margin: 0 auto 25px;
     }
-    .list-btn {
-      background: #3b2b17;
-      border: 3px outset #c6a879;
-      color: #f7ecd6;
-      padding: 12px 28px;
-      font-size: 1.8rem;
-      font-weight: bold;
-      font-family: 'Times New Roman', serif;
+    canvas {
+      width: 100% !important;
+      height: 100% !important;
+      display: block;
+      border-radius: 50%;
+      box-shadow: 0 20px 30px rgba(0,0,0,0.2), inset 0 0 10px rgba(255,255,255,0.5);
       cursor: pointer;
-      box-shadow: 5px 5px 0 #1d150b;
-      transition: 0.05s linear;
+      transition: filter 0.2s;
+      background: #fafafa;
     }
-    .list-btn:hover {
-      background: #5a3f24;
-      border: 3px inset #c6a879;
+    canvas:active {
+      filter: brightness(0.98);
     }
-    .dropdown-content {
-      display: none;
+    .pointer {
       position: absolute;
-      right: 0;
-      background-color: #f0e2cf;
-      min-width: 280px;
-      border: 4px solid #886e45;
-      box-shadow: 12px 12px 0 #342619;
-      z-index: 30;
-      max-height: 70vh;
-      overflow-y: auto;
-    }
-    .dropdown-content a {
-      color: #2a1d0f;
-      padding: 16px 22px;
-      text-decoration: none;
-      display: block;
-      font-size: 1.7rem;
-      border-bottom: 2px solid #b28f60;
-      background: #f5e6d1;
-    }
-    .dropdown-content a:last-child {
-      border-bottom: none;
-    }
-    .dropdown-content a:hover {
-      background: #dbbc8e;
-      padding-left: 32px;
-    }
-    .weeks-container:hover .dropdown-content {
-      display: block;
-    }
-
-    /* current week */
-    .current-week {
-      background: #624b2d;
-      color: #f3e3cc;
-      padding: 6px 28px;
-      font-size: 2rem;
-      font-weight: bold;
-      display: inline-block;
-      border: 3px solid #c9a876;
-      letter-spacing: 1px;
-    }
-
-    /* PAGE HOLDER – single full page with turning animation */
-    .page-view {
-      flex: 1;
-      position: relative;
-      background: #c5b192; /* spine effect */
-      overflow: hidden;    /* hide sliding overflow */
-      border-bottom: 6px solid #6f5336;
-      border-top: 2px solid #b38f64;
-    }
-
-    .page-slider {
-      width: 100%;
-      height: 100%;
-      position: relative;
-    }
-
-    /* each page is absolutely positioned, full width/height, slide transition */
-    .page {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #f7ecd9;  /* aged paper */
-      background-image: 
-        linear-gradient(165deg, #ebddc5 0%, #f7efdf 100%),
-        repeating-linear-gradient(45deg, rgba(140, 110, 70, 0.1) 0px, rgba(140, 110, 70, 0.07) 8px, transparent 8px, transparent 20px);
-      background-blend-mode: overlay;
-      border: 2px solid #a58354;
-      box-shadow: inset 0 0 40px rgba(0,0,0,0.1), 0 10px 30px rgba(0,0,0,0.3);
-      padding: 25px 35px;
-      overflow-y: auto;
-      transition: transform 0.7s ease-in-out;  /* slide animation */
-      transform: translateX(0);
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 22px solid transparent;
+      border-right: 22px solid transparent;
+      border-top: 40px solid #c5283d;
+      filter: drop-shadow(0 6px 4px rgba(0,0,0,0.2));
       z-index: 5;
-      /* grain overlay */
-      &::after {
-        content: "";
-        position: absolute;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJmIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iLjc0IiBudW1PY3RhdmVzPSIzIiAvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbHRlcj0idXJsKCNmKSIgb3BhY2l0eT0iMC4xNSIgLz48L3N2Zz4=');
-        opacity: 0.2;
-        pointer-events: none;
-        mix-blend-mode: multiply;
-      }
     }
-
-    /* incoming page from right (next) */
-    .page.next {
-      transform: translateX(100%);
-      z-index: 4;
-    }
-
-    /* outgoing page (prev) */
-    .page.prev {
-      transform: translateX(-100%);
-      z-index: 4;
-    }
-
-    /* no transition during drag - we keep class toggling simple */
-    .page-slider.turning .page {
-      transition: transform 0.7s ease-in-out;
-    }
-
-    /* navigation buttons */
-    .nav-controls {
+    .action-bar {
       display: flex;
       justify-content: center;
-      gap: 30px;
-      background: #b99f7c;
-      padding: 8px 0;
-      border-top: 3px solid #6a4f2e;
+      align-items: center;
+      gap: 15px;
+      margin: 20px 0 25px;
+      flex-wrap: wrap;
     }
-    .nav-btn {
-      background: #3b2d1b;
+    .result-badge {
+      background: #2c3e50;
+      color: white;
+      padding: 12px 30px;
+      border-radius: 60px;
+      font-size: 1.5rem;
+      font-weight: 600;
+      box-shadow: inset 0 -3px 0 #1a2632, 0 8px 12px rgba(0,0,0,0.1);
+      min-width: 200px;
+      text-align: center;
+    }
+    button {
+      background: #ffffff;
       border: none;
-      color: #eadbc5;
-      font-size: 2.2rem;
-      padding: 8px 35px;
-      font-weight: bold;
+      padding: 12px 28px;
+      border-radius: 40px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #1e2b3a;
+      box-shadow: 5px 5px 15px #b8b9be, -5px -5px 15px #ffffff;
       cursor: pointer;
-      border-radius: 0;
-      box-shadow: 5px 5px 0 #1c140c;
-      transition: 0.1s;
-      font-family: 'Times New Roman', serif;
-      border: 2px outset #aa8d63;
+      transition: 0.1s ease;
+      border: 1px solid rgba(255,255,255,0.4);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
     }
-    .nav-btn:hover {
-      background: #5e452b;
-      box-shadow: 2px 2px 0 #1c140c;
+    button:hover {
+      box-shadow: 2px 2px 8px #b8b9be, -2px -2px 8px #ffffff;
     }
-
-    /* footer */
-    .paper-footer {
-      background: #ccb692;
-      padding: 6px 28px;
-      font-size: 1.3rem;
-      border-top: 3px solid #896e44;
-      color: #271e10;
-      text-align: right;
-      flex-shrink: 0;
-      font-style: italic;
+    button:active {
+      transform: scale(0.97);
     }
-
-    /* layout inside left-style page (as requested: 2 articles, 2 images, sidebar) */
-    .left-grid {
-      display: grid;
-      grid-template-columns: 1fr 0.8fr;
-      gap: 25px;
-      height: 100%;
+    button:disabled {
+      opacity: 0.4;
+      pointer-events: none;
     }
-
-    .main-column {
+    .go-button {
+      background: #27ae60;
+      color: white;
+      box-shadow: 5px 5px 15px #1e8449, -5px -5px 15px #2ecc71;
+    }
+    .editor-panel {
+      background: rgba(255,255,255,0.4);
+      backdrop-filter: blur(4px);
+      border-radius: 40px;
+      padding: 25px;
+      box-shadow: inset 2px 2px 6px #b8b9be, inset -3px -3px 8px #ffffff, 0 10px 15px rgba(0,0,0,0.05);
+    }
+    .editor-panel h3 {
+      margin: 0 0 15px;
+      font-weight: 500;
+      color: #1e2b3a;
+    }
+    .interlude-list {
       display: flex;
-      flex-direction: column;
-      gap: 25px;
-    }
-
-    .article-card {
-      border-bottom: 3px solid #be9f78;
-      padding-bottom: 12px;
-    }
-
-    .article-card h2 {
-      font-size: 2.5rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      color: #2a1c0b;
-      margin-bottom: 2px;
-      line-height: 1.1;
-    }
-
-    .article-card h3 {
-      font-size: 1.4rem;
-      font-style: italic;
-      color: #785f3a;
-      border-bottom: 1px dashed #a98655;
-    }
-
-    .article-card img {
-      width: 100%;
-      max-height: 160px;
-      object-fit: cover;
-      border: 7px solid #cfb186;
-      box-shadow: 8px 8px 0 #6d5537;
-      margin: 12px 0 8px 0;
-      filter: sepia(0.3) contrast(0.95);
-    }
-
-    .byline {
-      font-size: 1.0rem;
-      font-weight: bold;
-      color: #7c5b34;
-      text-transform: uppercase;
-    }
-
-    .sidebar {
-      background: #eadbc0;
-      padding: 15px 15px;
-      border-left: 5px solid #a98554;
-      box-shadow: inset 0 0 15px #d4ba95;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 25px;
+      max-height: 180px;
       overflow-y: auto;
+      padding: 8px 4px;
     }
-
-    .sidebar h3 {
-      font-size: 2.2rem;
-      border-bottom: 4px double #8d6b3d;
-      margin-bottom: 15px;
-      font-weight: 800;
-    }
-
-    .sidebar-item {
-      margin-bottom: 20px;
-      border-bottom: 1px solid #bb9d73;
-      padding-bottom: 10px;
+    .interlude-tag {
+      background: white;
+      padding: 8px 16px;
+      border-radius: 40px;
       display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 2px 2px 5px #b8b9be, -2px -2px 5px #ffffff;
+      font-size: 0.9rem;
+    }
+    .interlude-tag .name {
+      font-weight: 600;
+      max-width: 150px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .remove-btn {
+      background: none;
+      border: none;
+      color: #a00;
+      font-weight: bold;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 0 4px;
+      box-shadow: none;
+    }
+    .add-form {
+      display: flex;
+      flex-wrap: wrap;
       gap: 12px;
       align-items: center;
     }
-
-    .sidebar-item img {
-      width: 60px;
-      height: 60px;
-      object-fit: cover;
-      border: 3px solid #836e47;
-      filter: sepia(0.4);
-    }
-
-    .sidebar-text h4 {
-      font-size: 1.4rem;
-      font-weight: bold;
-    }
-    .sidebar-text p {
-      font-size: 0.95rem;
-    }
-
-    /* Right page style (two massive articles) */
-    .massive-page {
-      display: flex;
-      flex-direction: column;
-      gap: 25px;
-      height: 100%;
-    }
-
-    .massive-article {
-      flex: 1;
-      border-bottom: 3px solid #b28f63;
-      padding-bottom: 10px;
-    }
-    .massive-article:last-child {
-      border-bottom: none;
-    }
-
-    .massive-article h2 {
-      font-size: 3.5rem;
-      font-weight: 900;
-      line-height: 1;
-      text-transform: uppercase;
-      color: #1d1307;
-      letter-spacing: -1px;
-    }
-
-    .massive-sub {
-      font-size: 1.8rem;
-      font-style: italic;
-      color: #735b38;
-      margin-bottom: 10px;
-    }
-
-    .massive-img {
-      width: 100%;
-      max-height: 240px;
-      object-fit: cover;
-      border: 9px solid #b28f61;
-      box-shadow: 12px 12px 0 #645035;
-      margin: 12px 0;
-      filter: grayscale(0.2) sepia(0.2);
-    }
-
-    .massive-article p {
-      font-size: 1.2rem;
-      line-height: 1.5;
-      column-count: 2;
-      column-gap: 30px;
-      text-align: justify;
-    }
-
-    .edit-hint {
-      background: #e5d2b5;
+    .add-form input {
+      flex: 1 1 200px;
+      padding: 12px 18px;
+      border: none;
+      border-radius: 40px;
+      background: #f0f2f5;
+      box-shadow: inset 3px 3px 8px #b8b9be, inset -3px -3px 8px #ffffff;
       font-size: 1rem;
-      text-align: center;
-      border-top: 2px solid #a7865a;
-      padding: 4px;
+      outline: none;
+    }
+    .add-form input:focus {
+      background: #ffffff;
+    }
+    .small-note {
+      font-size: 0.8rem;
+      color: #3a4a5a;
+      margin: 8px 0 0;
+      opacity: 0.8;
     }
   </style>
 </head>
 <body>
-<div class="kindle-reader">
-  <!-- header with list -->
-  <div class="header-ribbon">
-    <div class="masthead">
-      THE FOLIO <small>weekly edition</small>
-    </div>
-    <div class="weeks-container">
-      <button class="list-btn">📖 LIST</button>
-      <div class="dropdown-content" id="weekList">
-        <a href="#" data-index="0">April 13, 2025</a>
-        <a href="#" data-index="1">April 6, 2025</a>
-        <a href="#" data-index="2">March 30, 2025</a>
-        <a href="#" data-index="3">March 23, 2025</a>
-        <a href="#" data-index="4">March 16, 2025</a>
-      </div>
-    </div>
+<div class="card">
+  <h1>🎲 INTERLUDE WHEEL</h1>
+  <div class="sub">click the wheel to spin • then use the GO button</div>
+
+  <div class="wheel-container">
+    <canvas id="wheelCanvas" width="600" height="600"></canvas>
+    <div class="pointer"></div>
   </div>
 
-  <!-- current week -->
-  <div class="current-week" id="currentWeekLabel">WEEK OF APRIL 13, 2025</div>
+  <!-- clearer action bar -->
+  <div class="action-bar">
+    <div class="result-badge" id="resultDisplay">✨ spin me</div>
+    <button id="spinBtn">🌀 spin</button>
+    <button id="goBtn" class="go-button" disabled>▶ GO</button>
+    <button id="resetBtn">⟲ spin again</button>
+  </div>
 
-  <!-- single page view with sliding animation -->
-  <div class="page-view" id="pageView">
-    <div class="page-slider" id="pageSlider">
-      <!-- page 0 (first week) - left style (2 articles + sidebar) -->
-      <div class="page" id="page0" data-week="0">
-        <div class="left-grid">
-          <div class="main-column">
-            <div class="article-card">
-              <h2>EXCLUSIVE</h2>
-              <h3>WHARF VAULT OPENED</h3>
-              <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='180' viewBox='0 0 400 180'%3E%3Crect width='400' height='180' fill='%239a875f'/%3E%3Ccircle cx='100' cy='70' r='40' fill='%23634926'/%3E%3Crect x='220' y='40' width='120' height='90' fill='%237d613b'/%3E%3Ctext x='40' y='150' fill='%23352814' font-size='38' font-family='Times'%3E⚓ PIER%3C/text%3E%3C/svg%3E"
-                   alt="wharf">
-              <p class="byline">BY L. STONE</p>
-              <p>Workers found a sealed vault beneath pier 17. Tea crates and a captain's log shed light on 1880s trade. “History just below our feet,” said curator Dunn.</p>
-              <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='120' viewBox='0 0 400 120'%3E%3Crect width='400' height='120' fill='%23aa8f65'/%3E%3Crect x='40' y='20' width='140' height='50' fill='%2345321d'/%3E%3C/svg%3E"
-                   alt="logbook">
-            </div>
-            <div class="article-card">
-              <h2>COUNCIL</h2>
-              <h3>MARKET SQUARE VOTE</h3>
-              <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='150' viewBox='0 0 400 150'%3E%3Crect width='400' height='150' fill='%239f825a'/%3E%3Ccircle cx='150' cy='50' r='25' fill='%235d4026'/%3E%3Ccircle cx='270' cy='55' r='25' fill='%235d4026'/%3E%3C/svg%3E"
-                   alt="council">
-              <p class="byline">BY T. EVANS</p>
-              <p>Renovation passes 6–3. Opponents cite cost overruns. Work to begin in May.</p>
-            </div>
-          </div>
-          <div class="sidebar">
-            <h3>📰 EXTRA</h3>
-            <div class="sidebar-item">
-              <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Crect fill='%238b7249' width='60' height='60'/%3E%3Ccircle cx='30' cy='25' r='10' fill='%233d2e18'/%3E%3C/svg%3E">
-              <div class="sidebar-text"><h4>PROTEST</h4><p>Tax rally draws 300.</p></div>
-            </div>
-            <div class="sidebar-item">
-              <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Crect fill='%239e865c' width='60' height='60'/%3E%3Crect x='15' y='20' width='30' height='20' fill='%23443320'/%3E%3C/svg%3E">
-              <div class="sidebar-text"><h4>LIBRARY</h4><p>500 rare books donated.</p></div>
-            </div>
-            <div class="sidebar-item">
-              <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Crect fill='%2389744b' width='60' height='60'/%3E%3Cpolygon points='30,10 45,40 15,40' fill='%233d2e1a'/%3E%3C/svg%3E">
-              <div class="sidebar-text"><h4>HORSE SHOW</h4><p>Kent stallion wins.</p></div>
-            </div>
-            <div class="sidebar-item">
-              <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Crect fill='%239f865e' width='60' height='60'/%3E%3Crect x='20' y='20' width='20' height='20' fill='%233f2e18'/%3E%3C/svg%3E">
-              <div class="sidebar-text"><h4>FIRE</h4><p>Mill hay blaze, no injuries.</p></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- page 1 (second week) – massive article layout (two massive articles) -->
-      <div class="page" id="page1" data-week="1" style="transform:translateX(100%);">
-        <div class="massive-page">
-          <div class="massive-article">
-            <h2>THE GREAT FLOOD</h2>
-            <div class="massive-sub">Rivers inundate three counties</div>
-            <img class="massive-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='300' viewBox='0 0 800 300'%3E%3Crect width='800' height='300' fill='%23608292'/%3E%3Crect y='150' width='800' height='100' fill='%232a4050'/%3E%3Ccircle cx='200' cy='130' r='30' fill='%233b2e1a'/%3E%3C/svg%3E"
-                 alt="flood">
-            <p>Water levels reach highest since 1872. Towns isolated, boats rescue families. State of emergency declared. Further rain expected. Hundreds of homes affected. The river crest may break records. Volunteers sandbag historic buildings.</p>
-          </div>
-          <div class="massive-article">
-            <h2>ELECTION UPSET</h2>
-            <div class="massive-sub">Incumbent loses by 12 votes</div>
-            <img class="massive-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='280' viewBox='0 0 800 280'%3E%3Crect width='800' height='280' fill='%23856f4a'/%3E%3Ccircle cx='300' cy='120' r='70' fill='%235c452b'/%3E%3Ccircle cx='520' cy='140' r='60' fill='%233f3324'/%3E%3C/svg%3E"
-                 alt="election">
-            <p>Challenger Victoria Grey defeats two‑term mayor Alden. Recount possible. "People demanded change," Grey said. Highest turnout in decades. Election officials to verify.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Additional pages week2,3,4 (quick copies with minor changes) – we'll reuse same classes -->
-      <div class="page" id="page2" data-week="2" style="transform:translateX(100%);">
-        <div class="left-grid">
-          <div class="main-column">
-            <div class="article-card"><h2>RAILWAY</h2><h3>ROBBERY ON NIGHT MAIL</h3><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='150' viewBox='0 0 400 150'%3E%3Crect width='400' height='150' fill='%23856f4a'/%3E%3Crect x='40' y='50' width='300' height='40' fill='%2343321c'/%3E%3C/svg%3E"><p>Mail bags stolen near Dartford. Thieves escaped.</p></div>
-            <div class="article-card"><h2>THEATRE</h2><h3>OPERA PREMIERE</h3><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='150' viewBox='0 0 400 150'%3E%3Crect width='400' height='150' fill='%239f825a'/%3E%3Ccircle cx='120' cy='70' r='30' fill='%23563f25'/%3E%3C/svg%3E"><p>Verdi triumph at new hall.</p></div>
-          </div><div class="sidebar">…</div>
-        </div>
-      </div>
-      <div class="page" id="page3" data-week="3" style="transform:translateX(100%);">… (additional) </div>
-      <div class="page" id="page4" data-week="4" style="transform:translateX(100%);">… (additional) </div>
+  <!-- editable list of interludes -->
+  <div class="editor-panel">
+    <h3>✏️ edit interludes (add / remove)</h3>
+    <div class="interlude-list" id="interludeListContainer"></div>
+    <div class="add-form">
+      <input type="text" id="newName" placeholder="name e.g. 'hot interlude'" />
+      <input type="text" id="newLink" placeholder="url (or comma separated, leave blank if none)" />
+      <button id="addInterludeBtn">➕ add</button>
+    </div>
+    <div class="small-note">
+      • for multiple urls, separate with commas (e.g. https://a.com, https://b.com)<br>
+      • leave link empty for interludes like "Call Kai"
     </div>
   </div>
-
-  <!-- navigation previous/next -->
-  <div class="nav-controls">
-    <button class="nav-btn" id="prevBtn">◀ PREV</button>
-    <button class="nav-btn" id="nextBtn">NEXT ▶</button>
-  </div>
-
-  <div class="paper-footer">
-    <span>VOL. 312 · WEEKLY EDITION · TWO PENCE</span>
-  </div>
-  <div class="edit-hint">✎ EDITABLE: page articles inside #page0, #page1, etc. (full control)</div>
 </div>
 
 <script>
-  (function() {
-    const slider = document.getElementById('pageSlider');
-    const pages = document.querySelectorAll('.page');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const weekLinks = document.querySelectorAll('#weekList a');
-    const currentLabel = document.getElementById('currentWeekLabel');
+(function() {
+  // ---- initial interlude data ----
+  const initialInterludes = [
+    { name: "hot interlude", link: "https://www.reddit.com/r/JackSucksAtLife/hot/" },
+    { name: "Geography Interlude", link: ["https://worldle.teuteuf.fr/", "https://www.flaggle.net/", "https://globle-game.com/"] },
+    { name: "jackle interlude", link: "https://jackisanerd.github.io/Jackle/" },
+    { name: "higher or lower interlude", link: "https://jackisanerd.github.io/HigherOrLower/" },
+    { name: "jack.fun interlude", link: "https://jackisanerd.github.io/jack.fun/" },
+    { name: "Call Kai", link: null },
+    { name: "new interlude", link: "https://www.reddit.com/r/JackSucksAtLife/new/" },
+    { name: "r/JSAG interlude", link: "https://www.reddit.com/r/JackSucksAtGeography/" },
+    { name: "Sitting in the front seat", link: "https://www.reddit.com/r/JackSucksAtLife/comments/1pw2rnj/jack_again_do_it_again_revive_sitting_in_the/" },
+    { name: "complete a promise", link: null },
+    { name: "Hall of Fame interlude", link: ["https://jackisanerd.github.io/jack.fun/JHOF.html", "https://jsalhof.wixsite.com/reddit/halloffame"] },
+    { name: "fan subreddit", link: ["https://www.reddit.com/r/PWKFanClub/", "https://www.reddit.com/r/weeweebush/", "https://www.reddit.com/r/peepeetree/"] }
+  ];
 
-    let currentIndex = 0;
-    const totalPages = pages.length;
+  let interludes = [];
+  let segments = [];
+  let currentRotation = 0;
+  let spinVelocity = 0;
+  let spinAnimationFrame = null;
+  let isSpinning = false;
+  let currentResultIndex = -1;
+  const pointerAngle = -Math.PI / 2; // 12 o'clock
 
-    // labels corresponding to data-week
-    const weekLabels = [
-      'APRIL 13, 2025',
-      'APRIL 6, 2025',
-      'MARCH 30, 2025',
-      'MARCH 23, 2025',
-      'MARCH 16, 2025'
-    ];
+  // DOM elements
+  const canvas = document.getElementById('wheelCanvas');
+  const ctx = canvas.getContext('2d');
+  const resultDisplay = document.getElementById('resultDisplay');
+  const spinBtn = document.getElementById('spinBtn');
+  const goBtn = document.getElementById('goBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const interludeListContainer = document.getElementById('interludeListContainer');
+  const newNameInput = document.getElementById('newName');
+  const newLinkInput = document.getElementById('newLink');
+  const addBtn = document.getElementById('addInterludeBtn');
 
-    function updatePages(animate = true) {
-      // set transform for each page based on index
-      pages.forEach((page, idx) => {
-        if (idx === currentIndex) {
-          page.style.transform = 'translateX(0)';
-          page.style.zIndex = '5';
-        } else if (idx < currentIndex) {
-          page.style.transform = 'translateX(-100%)'; // left (prev)
-          page.style.zIndex = '4';
-        } else {
-          page.style.transform = 'translateX(100%)';  // right (next)
-          page.style.zIndex = '4';
+  // helper: short name for wheel
+  function shortNameFrom(name) {
+    if (name.length <= 14) return name;
+    let words = name.split(' ');
+    if (words[0].length < 10) return words[0];
+    return name.substring(0, 12) + '…';
+  }
+
+  // rebuild segments from interludes
+  function rebuildSegments() {
+    segments = interludes.map((item, idx) => {
+      const short = shortNameFrom(item.name);
+      const hue = (idx * 37) % 360;
+      const color = `hsl(${hue}, 70%, 75%)`;
+      return { name: item.name, short, color, link: item.link };
+    });
+  }
+
+  // initial load
+  function loadInitial() {
+    interludes = initialInterludes.map(item => ({
+      name: item.name,
+      link: Array.isArray(item.link) ? [...item.link] : item.link
+    }));
+    rebuildSegments();
+  }
+  loadInitial();
+
+  // draw wheel
+  function drawWheel(highlightIndex = -1) {
+    const width = canvas.width;
+    const height = canvas.height;
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const radius = Math.min(width, height) * 0.42;
+
+    ctx.clearRect(0, 0, width, height);
+
+    if (segments.length === 0) {
+      ctx.font = 'bold 20px "Segoe UI"';
+      ctx.fillStyle = '#aaa';
+      ctx.textAlign = 'center';
+      ctx.fillText('no interludes', centerX, centerY);
+      return;
+    }
+
+    const anglePerSegment = (2 * Math.PI) / segments.length;
+
+    for (let i = 0; i < segments.length; i++) {
+      const startAngle = i * anglePerSegment + currentRotation;
+      const endAngle = startAngle + anglePerSegment;
+
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+      ctx.closePath();
+      ctx.fillStyle = segments[i].color;
+      if (i === highlightIndex && !isSpinning) {
+        ctx.shadowColor = 'gold';
+        ctx.shadowBlur = 15;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      } else {
+        ctx.fill();
+      }
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      ctx.save();
+      ctx.translate(centerX, centerY);
+      ctx.rotate(startAngle + anglePerSegment / 2);
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.font = 'bold 16px "Segoe UI", sans-serif';
+      ctx.fillStyle = '#1e2b3a';
+      ctx.shadowColor = 'rgba(255,255,255,0.5)';
+      ctx.shadowBlur = 4;
+      ctx.fillText(segments[i].short, radius * 0.7, 0);
+      ctx.restore();
+    }
+
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius * 0.12, 0, 2 * Math.PI);
+    ctx.fillStyle = '#f0f2f5';
+    ctx.shadowBlur = 8;
+    ctx.shadowColor = '#b8b9be';
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = '#ccc';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+
+  // get segment under pointer
+  function getCurrentSegmentIndex() {
+    if (segments.length === 0) return -1;
+    let rawAngle = pointerAngle - currentRotation;
+    rawAngle = ((rawAngle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+    const anglePer = (2 * Math.PI) / segments.length;
+    return Math.floor(rawAngle / anglePer);
+  }
+
+  // spin animation
+  function spinWheel() {
+    if (isSpinning) return;
+    isSpinning = true;
+    currentResultIndex = -1;
+    goBtn.disabled = true;
+    resultDisplay.innerText = '🌀 spinning...';
+    spinVelocity = 15 + Math.random() * 25;
+    const friction = 0.97;
+
+    function animate() {
+      if (!isSpinning) return;
+      currentRotation += spinVelocity * 0.02;
+      spinVelocity *= friction;
+      drawWheel();
+
+      if (Math.abs(spinVelocity) < 0.05) {
+        isSpinning = false;
+        const landedIdx = getCurrentSegmentIndex();
+        currentResultIndex = landedIdx;
+        const landedName = segments[landedIdx]?.name || '???';
+        resultDisplay.innerText = `🎯 ${landedName}`;
+        drawWheel(landedIdx);
+        goBtn.disabled = false; // enable GO button
+      } else {
+        spinAnimationFrame = requestAnimationFrame(animate);
+      }
+    }
+    spinAnimationFrame = requestAnimationFrame(animate);
+  }
+
+  // open link for current result
+  function goToCurrentInterlude() {
+    if (currentResultIndex < 0 || currentResultIndex >= interludes.length) {
+      alert('No interlude selected – spin first!');
+      return;
+    }
+    const interlude = interludes[currentResultIndex];
+    const link = interlude.link;
+
+    if (!link) {
+      alert(`"${interlude.name}" has no website. Maybe it's a challenge!`);
+      return;
+    }
+
+    if (Array.isArray(link)) {
+      if (link.length === 0) {
+        alert('No links available.');
+        return;
+      }
+      const randomLink = link[Math.floor(Math.random() * link.length)];
+      window.open(randomLink, '_blank');
+    } else {
+      window.open(link, '_blank');
+    }
+  }
+
+  // reset to idle
+  function resetSpinState() {
+    if (isSpinning) {
+      cancelAnimationFrame(spinAnimationFrame);
+      isSpinning = false;
+    }
+    currentResultIndex = -1;
+    goBtn.disabled = true;
+    resultDisplay.innerText = '✨ spin me';
+    drawWheel();
+  }
+
+  // ---- event listeners ----
+  canvas.addEventListener('click', () => {
+    if (segments.length === 0) {
+      alert('Add some interludes first!');
+      return;
+    }
+    if (!isSpinning) {
+      spinWheel(); // wheel click always spins
+    }
+  });
+
+  spinBtn.addEventListener('click', () => {
+    if (segments.length === 0) {
+      alert('Add some interludes first!');
+      return;
+    }
+    spinWheel();
+  });
+
+  goBtn.addEventListener('click', goToCurrentInterlude);
+
+  resetBtn.addEventListener('click', resetSpinState);
+
+  // ---- interlude list management ----
+  function renderInterludeList() {
+    let html = '';
+    interludes.forEach((item, idx) => {
+      let linkSummary = '';
+      if (item.link === null) linkSummary = '🚫 no url';
+      else if (Array.isArray(item.link)) linkSummary = `🔗 ${item.link.length} urls`;
+      else linkSummary = '🔗 url';
+      html += `<div class="interlude-tag">
+        <span class="name" title="${item.name}">${item.name}</span>
+        <span style="font-size:0.8rem;opacity:0.8;">${linkSummary}</span>
+        <button class="remove-btn" data-index="${idx}">✕</button>
+      </div>`;
+    });
+    interludeListContainer.innerHTML = html;
+
+    document.querySelectorAll('.remove-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const index = parseInt(e.target.getAttribute('data-index'), 10);
+        if (!isNaN(index) && index >= 0 && index < interludes.length) {
+          interludes.splice(index, 1);
+          rebuildSegments();
+          resetSpinState();
+          renderInterludeList();
         }
       });
-      // update label
-      if (weekLabels[currentIndex]) {
-        currentLabel.innerText = `WEEK OF ${weekLabels[currentIndex]}`;
+    });
+  }
+
+  function addInterlude() {
+    const name = newNameInput.value.trim();
+    if (!name) {
+      alert('Please enter a name');
+      return;
+    }
+    const linkInput = newLinkInput.value.trim();
+    let link = null;
+    if (linkInput !== '') {
+      if (linkInput.includes(',')) {
+        link = linkInput.split(',').map(s => s.trim()).filter(s => s.startsWith('http'));
+        if (link.length === 0) link = null;
+      } else {
+        link = linkInput;
       }
     }
+    interludes.push({ name, link });
+    rebuildSegments();
+    resetSpinState();
+    renderInterludeList();
+    newNameInput.value = '';
+    newLinkInput.value = '';
+  }
 
-    function goToPage(index) {
-      if (index < 0) index = 0;
-      if (index >= totalPages) index = totalPages - 1;
-      if (index === currentIndex) return;
-      currentIndex = index;
-      updatePages();
-    }
+  addBtn.addEventListener('click', addInterlude);
+  newLinkInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addInterlude(); });
+  newNameInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addInterlude(); });
 
-    nextBtn.addEventListener('click', () => {
-      if (currentIndex < totalPages - 1) {
-        currentIndex++;
-        updatePages();
-      }
-    });
-
-    prevBtn.addEventListener('click', () => {
-      if (currentIndex > 0) {
-        currentIndex--;
-        updatePages();
-      }
-    });
-
-    // list clicks
-    weekLinks.forEach((link, idx) => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        if (idx < totalPages) {
-          currentIndex = idx;
-          updatePages();
-        }
-      });
-    });
-
-    // initialize: page 0 visible, others shifted
-    updatePages();
-
-    // fill placeholder pages 3 & 4 with some content to avoid empty (quick)
-    if (pages[3]) {
-      pages[3].innerHTML = `<div class="massive-page"><div class="massive-article"><h2>COLLIERY STRIKE</h2><div class="massive-sub">Pit deputies walk out</div><img class="massive-img" src="data:image/svg+xml,%3Csvg width='800' height='240'%3E%3Crect width='800' height='240' fill='%236b5740'/%3E%3C/svg%3E"><p>Thousands idle as talks stall. Mines halted.</p></div><div class="massive-article"><h2>FOOD PRICES</h2><div class="massive-sub">Bread up 10%</div><img class="massive-img" src='...'><p>Poor harvest drives cost.</p></div></div>`;
-    }
-    if (pages[4]) {
-      pages[4].innerHTML = `<div class="left-grid">…<div class="main-column">…</div><div class="sidebar">…</div></div>`;
-    }
-  })();
+  // initial render
+  renderInterludeList();
+  drawWheel();
+})();
 </script>
 </body>
 </html>
