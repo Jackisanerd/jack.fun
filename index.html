@@ -640,8 +640,11 @@
         <!-- Spin -->
         <div class="button" style="background-image: url('lgo.png');" onclick="playGame('spin', 'Spin')"></div>
         
-        <!-- Quotes (NEW) -->
+        <!-- Quotes -->
         <div class="button" style="background-image: url('Quotes.png');" onclick="playGame('quotes', 'Quotes')"></div>
+
+        <!-- Memes -->
+        <div class="button" style="background-image: url('memes.png');" onclick="playGame('memes', 'Memes')"></div>
         
         <!-- Credits -->
         <div class="button" style="background-image: url('CRDS.png');" onclick="playGame('credits', 'Credits')"></div>
@@ -720,7 +723,7 @@
             });
         });
         
-        // Game playing function - updated with new quotes game
+        // Game playing function
         function playGame(gameId, gameName) {
             // Track that user played this game
             if (currentUser) {
@@ -742,7 +745,8 @@
                 'hall': 'https://jsalhof.wixsite.com/reddit/halloffame',
                 'jackies': 'Jackies.html',
                 'spin': 'spin.html',
-                'quotes': 'quote.html'  // New quotes game
+                'quotes': 'quote.html',
+                'memes': 'https://jacksucksat.meme/'
             };
             
             if (gameLinks[gameId]) {
@@ -970,7 +974,7 @@
             }
         }
         
-        // Admin code function - PASSWORD FEATURE ADDED BACK
+        // Admin code function
         function applyAdminCode() {
             const adminCode = document.getElementById('adminCode').value;
             const adminMessage = document.getElementById('adminMessage');
