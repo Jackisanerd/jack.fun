@@ -631,17 +631,20 @@
         <!-- Tic Tac Toe -->
         <div class="button" style="background-image: url('hallofsh.png');" onclick="playGame('tictactoe', 'Tic Tac Toe')"></div>
         
-        <!-- Credits -->
-        <div class="button" style="background-image: url('CRDS.png');" onclick="playGame('credits', 'Credits')"></div>
-        
         <!-- Hall of Fame -->
         <div class="button" style="background-image: url('hallofog.png');" onclick="playGame('hall', 'Hall of Fame')"></div>
         
-        <!-- NEW: Jackies -->
+        <!-- Jackies -->
         <div class="button" style="background-image: url('jackyboi.png');" onclick="playGame('jackies', 'Jackies')"></div>
         
-        <!-- NEW: Spin -->
+        <!-- Spin -->
         <div class="button" style="background-image: url('lgo.png');" onclick="playGame('spin', 'Spin')"></div>
+        
+        <!-- Quotes (NEW) -->
+        <div class="button" style="background-image: url('Quotes.png');" onclick="playGame('quotes', 'Quotes')"></div>
+        
+        <!-- Credits -->
+        <div class="button" style="background-image: url('CRDS.png');" onclick="playGame('credits', 'Credits')"></div>
     </div>
     
     <script>
@@ -717,7 +720,7 @@
             });
         });
         
-        // Game playing function - updated with two new games
+        // Game playing function - updated with new quotes game
         function playGame(gameId, gameName) {
             // Track that user played this game
             if (currentUser) {
@@ -737,8 +740,9 @@
                 'tictactoe': 'JHOS.html',
                 'credits': 'Credits.html',
                 'hall': 'https://jsalhof.wixsite.com/reddit/halloffame',
-                'jackies': 'Jackies.html',   // new
-                'spin': 'spin.html'           // new
+                'jackies': 'Jackies.html',
+                'spin': 'spin.html',
+                'quotes': 'quote.html'  // New quotes game
             };
             
             if (gameLinks[gameId]) {
