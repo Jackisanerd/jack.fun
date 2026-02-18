@@ -648,10 +648,14 @@
         
         <!-- Connect 4 -->
         <div class="button" style="background-image: url('connect.png');" onclick="playGame('connect4', 'Connect 4')"></div>
+
+        <!-- PFPs - NEW BUTTON -->
+        <div class="button" style="background-image: url('pfps.png');" onclick="playGame('pfps', 'PFPs')"></div>
+
         
         <!-- Credits -->
         <div class="button" style="background-image: url('CRDS.png');" onclick="playGame('credits', 'Credits')"></div>
-    </div>
+        
     
     <script>
         // User data storage
@@ -750,7 +754,8 @@
                 'spin': 'spin.html',
                 'quotes': 'quote.html',
                 'memes': 'https://jacksucksat.meme/',
-                'connect4': 'connect4.html'
+                'connect4': 'connect4.html',
+                'pfps': 'https://smallmarbles.github.io/jsalsubreddit/'  // New link for PFPs button
             };
             
             if (gameLinks[gameId]) {
