@@ -15,7 +15,6 @@
             --theme-color: #4CAF50;
         }
         
-        /* Rainbow text animation */
         .rainbow-text {
             animation: rainbow 3s linear infinite;
             background-clip: text;
@@ -41,7 +40,6 @@
             transition: filter 0.3s;
         }
         
-        /* Invert logo in dark mode to make it visible on dark background */
         body.dark-mode .logo {
             filter: invert(1);
         }
@@ -70,7 +68,6 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
         
-        /* Auth modal styles */
         .auth-modal {
             display: none;
             position: fixed;
@@ -131,7 +128,6 @@
             opacity: 0.9;
         }
         
-        /* XP display */
         .xp-container {
             position: fixed;
             top: 10px;
@@ -169,12 +165,11 @@
             transition: width 0.3s;
         }
         
-        /* Auth buttons (shown when NOT logged in) */
         .auth-buttons {
             position: fixed;
             top: 10px;
             right: 10px;
-            display: flex;
+            display: none;
             gap: 10px;
             z-index: 100;
         }
@@ -188,7 +183,6 @@
             cursor: pointer;
         }
         
-        /* Profile section (shown when logged in) */
         .profile-section {
             position: fixed;
             top: 10px;
@@ -230,7 +224,6 @@
             font-size: 14px;
         }
         
-        /* Profile modal */
         .profile-modal {
             display: none;
             position: fixed;
@@ -298,7 +291,6 @@
             color: #aaa;
         }
         
-        /* Settings modal */
         .settings-modal {
             display: none;
             position: fixed;
@@ -312,7 +304,6 @@
             align-items: center;
         }
         
-        /* Mouse cursor effect */
         .jackyboi-cursor {
             display: none;
             position: fixed;
@@ -323,12 +314,10 @@
             transform: translate(-50%, -50%);
         }
         
-        /* Music player */
         #backgroundMusic {
             display: none;
         }
         
-        /* Toggle switch */
         .switch {
             position: relative;
             display: inline-block;
@@ -374,7 +363,6 @@
             transform: translateX(26px);
         }
         
-        /* Profile picture upload */
         .profile-pic-upload {
             margin: 15px 0;
             text-align: center;
@@ -422,7 +410,6 @@
             color: #aaa;
         }
         
-        /* Top icons */
         .top-icons {
             position: fixed;
             top: 60px;
@@ -465,7 +452,6 @@
             border-bottom-color: #444;
         }
         
-        /* Admin input in profile */
         .admin-input {
             display: flex;
             gap: 10px;
@@ -475,17 +461,62 @@
         .admin-input input {
             flex: 1;
         }
+
+        /* Auto-logged in state - always show profile section by default */
+        .profile-section {
+            display: flex !important;
+        }
+        
+        .xp-container {
+            display: block !important;
+        }
+        
+        .top-icons {
+            display: flex !important;
+        }
+        
+        .auth-buttons {
+            display: none !important;
+        }
+
+        /* Welcome message for new users */
+        .welcome-message {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--theme-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            z-index: 1000;
+            animation: slideDown 0.5s ease-out;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        @keyframes slideDown {
+            from {
+                top: -50px;
+                opacity: 0;
+            }
+            to {
+                top: 80px;
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Music Player -->
     <audio id="backgroundMusic" loop>
         <source src="main.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
     </audio>
     
-    <!-- Jackyboi Mouse Cursor -->
     <img class="jackyboi-cursor" id="jackyboiCursor" src="jack.png" alt="Jackyboi cursor">
+    
+    <!-- Welcome message (shown for new users) -->
+    <div id="welcomeMessage" class="welcome-message" style="display: none;">
+        👋 Welcome! Click your profile to set a username and picture
+    </div>
     
     <!-- Modals -->
     <div class="auth-modal" id="authModal">
@@ -529,26 +560,26 @@
             </div>
             
             <div class="profile-pic-upload">
-                <h4>Profile Picture</h4>
+                <h4>Set Your Username & Profile Picture</h4>
+                <input type="text" id="profileUsernameInput" placeholder="Enter username" value="Player1">
                 <img id="profilePicPreview" src="" alt="Preview" class="profile-pic-preview">
                 <label class="file-input-label">
                     Upload Picture
                     <input type="file" id="profilePicInput" class="file-input" accept="image/*">
                 </label>
-                <p class="profile-pic-note">Max 2MB. Image will be cropped to circle.</p>
-                <button onclick="saveProfilePicture()" style="margin-top: 10px;">Save Picture</button>
+                <p class="profile-pic-note">Max 2MB.</p>
+                <button onclick="saveProfile()" style="margin-top: 10px; background-color: #2196F3;">Save Profile</button>
                 <p id="profilePicError" style="color:red; margin-top: 5px;"></p>
             </div>
             
-            <!-- Admin password input -->
             <div class="admin-input">
-                <input type="password" id="adminCode" placeholder="jack check messages for password">
+                <input type="password" id="adminCode" placeholder="Admin code">
                 <button onclick="applyAdminCode()">Apply</button>
             </div>
             <p id="adminMessage" style="color:green; margin-top: 10px;"></p>
             
             <div class="profile-actions">
-                <button onclick="logout()" style="background-color: #f44336;">Logout</button>
+                <button onclick="resetProfile()" style="background-color: #ff9800;">Reset</button>
             </div>
         </div>
     </div>
@@ -587,18 +618,17 @@
         </div>
     </div>
     
-    <!-- Top UI Elements -->
-    <!-- Login/Signup buttons (shown when NOT logged in) -->
+    <!-- Top UI Elements - Always visible -->
     <div class="auth-buttons" id="authButtons">
         <button class="auth-button" onclick="showLoginModal()">Login</button>
         <button class="auth-button" onclick="showSignupModal()">Sign Up</button>
     </div>
     
-    <!-- Profile button (shown when logged in) -->
-    <div class="profile-section" id="profileSection" style="display: none;">
+    <!-- Profile button - Always visible -->
+    <div class="profile-section" id="profileSection">
         <div class="profile-button" onclick="showProfileModal()">
             <img id="profilePicSmall" src="" alt="Profile" class="profile-pic">
-            <span class="username" id="profileUsernameSmall"></span>
+            <span class="username" id="profileUsernameSmall">Player1</span>
         </div>
     </div>
     
@@ -610,8 +640,7 @@
         </div>
     </div>
     
-    <!-- Top icons (always shown when logged in) -->
-    <div class="top-icons" id="topIcons" style="display: none;">
+    <div class="top-icons" id="topIcons">
         <button class="icon-button" onclick="showSettingsModal()">⚙️</button>
     </div>
     
@@ -649,33 +678,57 @@
         <!-- Connect 4 -->
         <div class="button" style="background-image: url('connect.png');" onclick="playGame('connect4', 'Connect 4')"></div>
 
-        <!-- PFPs - NEW BUTTON -->
+        <!-- PFPs -->
         <div class="button" style="background-image: url('pfps.png');" onclick="playGame('pfps', 'PFPs')"></div>
 
         
         <!-- Credits -->
         <div class="button" style="background-image: url('CRDS.png');" onclick="playGame('credits', 'Credits')"></div>
-        
+    </div>
     
     <script>
-        // User data storage
+        // User data storage - always have a default user
         let users = JSON.parse(localStorage.getItem('shaneFunUsers')) || {};
-        let currentUser = null;
+        let currentUser = 'Player1'; // Auto-logged in as Player1 by default
         let backgroundMusic = document.getElementById('backgroundMusic');
         let jackyboiCursor = document.getElementById('jackyboiCursor');
         let cursorActive = false;
         let currentProfilePic = null;
         
+        // Ensure default user exists
+        if (!users['Player1']) {
+            users['Player1'] = {
+                password: 'default',
+                xp: 0,
+                level: 1,
+                lastXPTimestamp: null,
+                playedGames: [],
+                profilePicture: '',
+                settings: {
+                    darkMode: false,
+                    musicEnabled: false,
+                    jackyboiCursor: false
+                }
+            };
+            localStorage.setItem('shaneFunUsers', JSON.stringify(users));
+            
+            // Show welcome message for new users
+            setTimeout(() => {
+                const welcomeMsg = document.getElementById('welcomeMessage');
+                welcomeMsg.style.display = 'block';
+                setTimeout(() => {
+                    welcomeMsg.style.display = 'none';
+                }, 5000);
+            }, 1000);
+        }
+        
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
-            const loggedInUser = localStorage.getItem('shaneFunCurrentUser');
-            if (loggedInUser && users[loggedInUser]) {
-                currentUser = loggedInUser;
-                updateAuthUI();
-                startXPTimer();
-                loadUserSettings();
-                loadProfilePicture();
-            }
+            // Always logged in as Player1
+            updateAuthUI();
+            startXPTimer();
+            loadUserSettings();
+            loadProfilePicture();
             
             // Setup mouse movement tracking for jackyboi cursor
             document.addEventListener('mousemove', function(e) {
@@ -728,6 +781,9 @@
             document.getElementById('cursorToggle').addEventListener('change', function() {
                 saveSettings();
             });
+            
+            // Set username input to current username
+            document.getElementById('profileUsernameInput').value = currentUser;
         });
         
         // Game playing function
@@ -754,8 +810,8 @@
                 'spin': 'spin.html',
                 'quotes': 'quote.html',
                 'memes': 'https://jacksucksat.meme/',
-                'connect4': 'connect4.html',
-                'pfps': 'https://smallmarbles.github.io/jsalsubreddit/'  // New link for PFPs button
+                'connect4': 'https://connect4.jacksucksatlife.com/',
+                'pfps': 'https://smallmarbles.github.io/jsalsubreddit/'
             };
             
             if (gameLinks[gameId]) {
@@ -765,13 +821,7 @@
             }
         }
         
-        // Profile functions
         function showProfileModal() {
-            if (!currentUser) {
-                showLoginModal();
-                return;
-            }
-            
             document.getElementById('profileModal').style.display = 'flex';
             loadProfileData();
         }
@@ -785,8 +835,9 @@
             
             const user = users[currentUser];
             
-            // Update username
+            // Update username display
             document.getElementById('profileUsername').textContent = currentUser;
+            document.getElementById('profileUsernameInput').value = currentUser;
             
             // Update level and XP
             const currentXP = calculateCurrentLevelXP(user.xp || 0);
@@ -841,19 +892,84 @@
             document.getElementById('profileUsernameSmall').textContent = currentUser;
         }
         
-        function saveProfilePicture() {
-            if (!currentUser || !currentProfilePic) return;
+        function saveProfile() {
+            if (!currentUser) return;
             
-            const user = users[currentUser];
-            user.profilePicture = currentProfilePic;
+            const newUsername = document.getElementById('profileUsernameInput').value.trim();
+            
+            if (!newUsername) {
+                document.getElementById('profilePicError').textContent = 'Please enter a username';
+                document.getElementById('profilePicError').style.color = 'red';
+                return;
+            }
+            
+            // If username changed, we need to handle it
+            if (newUsername !== currentUser) {
+                // Check if new username already exists
+                if (users[newUsername] && newUsername !== currentUser) {
+                    document.getElementById('profilePicError').textContent = 'Username already taken';
+                    document.getElementById('profilePicError').style.color = 'red';
+                    return;
+                }
+                
+                // Copy user data to new username
+                users[newUsername] = { ...users[currentUser] };
+                
+                // Delete old user if it was the default or different
+                if (currentUser !== 'Player1' || !users['Player1'].password) {
+                    delete users[currentUser];
+                }
+                
+                currentUser = newUsername;
+            }
+            
+            // Update profile picture if changed
+            if (currentProfilePic) {
+                users[currentUser].profilePicture = currentProfilePic;
+            }
+            
             localStorage.setItem('shaneFunUsers', JSON.stringify(users));
             
             // Update UI
             loadProfilePicture();
-            document.getElementById('profilePicError').textContent = 'Profile picture saved!';
+            document.getElementById('profilePicError').textContent = 'Profile saved successfully!';
             document.getElementById('profilePicError').style.color = 'green';
             
-            // Clear error after 3 seconds
+            // Clear success message after 3 seconds
+            setTimeout(() => {
+                document.getElementById('profilePicError').textContent = '';
+            }, 3000);
+        }
+        
+        function resetProfile() {
+            // Reset to default
+            currentUser = 'Player1';
+            currentProfilePic = null;
+            
+            if (!users['Player1']) {
+                users['Player1'] = {
+                    password: 'default',
+                    xp: 0,
+                    level: 1,
+                    lastXPTimestamp: null,
+                    playedGames: [],
+                    profilePicture: '',
+                    settings: users[currentUser]?.settings || {
+                        darkMode: false,
+                        musicEnabled: false,
+                        jackyboiCursor: false
+                    }
+                };
+            }
+            
+            users['Player1'].profilePicture = '';
+            localStorage.setItem('shaneFunUsers', JSON.stringify(users));
+            
+            loadProfilePicture();
+            document.getElementById('profileUsernameInput').value = 'Player1';
+            document.getElementById('profilePicError').textContent = 'Profile reset to default';
+            document.getElementById('profilePicError').style.color = 'green';
+            
             setTimeout(() => {
                 document.getElementById('profilePicError').textContent = '';
             }, 3000);
@@ -964,7 +1080,7 @@
             document.body.style.cursor = 'default';
         }
         
-        // Fixed XP calculation functions
+        // XP calculation functions
         function calculateLevel(xp) {
             return Math.floor(xp / 100) + 1;
         }
@@ -1013,151 +1129,80 @@
             document.getElementById('adminCode').value = '';
         }
         
-        // Auth modal functions
+        // Auth modal functions (keep for compatibility)
         function showLoginModal() {
-            document.getElementById('authModal').style.display = 'flex';
+            alert('You are already logged in as ' + currentUser + '! Click your profile to change username.');
         }
         
         function showSignupModal() {
-            document.getElementById('signupModal').style.display = 'flex';
+            alert('Just click your profile and enter any username to sign up! No password needed.');
         }
         
-        function hideAuthModal() {
-            document.getElementById('authModal').style.display = 'none';
-            document.getElementById('loginError').textContent = '';
-        }
+        function hideAuthModal() {}
+        function hideSignupModal() {}
         
-        function hideSignupModal() {
-            document.getElementById('signupModal').style.display = 'none';
-            document.getElementById('signupError').textContent = '';
-        }
-        
-        // Auth functions
+        // Simplified auth functions
         function login() {
-            const username = document.getElementById('loginUsername').value;
-            const password = document.getElementById('loginPassword').value;
-            
-            if (!username || !password) {
-                document.getElementById('loginError').textContent = 'Please enter both username and password';
-                return;
-            }
-            
-            if (!users[username] || users[username].password !== password) {
-                document.getElementById('loginError').textContent = 'Invalid username or password';
-                return;
-            }
-            
-            currentUser = username;
-            localStorage.setItem('shaneFunCurrentUser', username);
-            updateAuthUI();
-            hideAuthModal();
-            startXPTimer();
-            loadUserSettings();
-            loadProfilePicture();
+            alert('You are already logged in! Click your profile to change username.');
         }
         
         function signup() {
-            const username = document.getElementById('signupUsername').value;
-            const password = document.getElementById('signupPassword').value;
-            const confirmPassword = document.getElementById('signupConfirmPassword').value;
-            
-            if (!username || !password || !confirmPassword) {
-                document.getElementById('signupError').textContent = 'Please fill all fields';
-                return;
-            }
-            
-            if (password !== confirmPassword) {
-                document.getElementById('signupError').textContent = 'Passwords do not match';
-                return;
-            }
-            
-            if (users[username]) {
-                document.getElementById('signupError').textContent = 'Username already exists';
-                return;
-            }
-            
-            users[username] = {
-                password: password,
-                xp: 0,
-                level: 1,
-                lastXPTimestamp: null,
-                playedGames: [],
-                profilePicture: '',
-                settings: {
-                    darkMode: false,
-                    musicEnabled: false,
-                    jackyboiCursor: false
-                }
-            };
-            
-            localStorage.setItem('shaneFunUsers', JSON.stringify(users));
-            currentUser = username;
-            localStorage.setItem('shaneFunCurrentUser', username);
-            updateAuthUI();
-            hideSignupModal();
-            startXPTimer();
-            loadProfilePicture();
+            alert('Just click your profile and enter any username to sign up! No password needed.');
         }
         
         function logout() {
-            // Save settings before logout
-            saveSettings();
-            
-            // Pause music
-            backgroundMusic.pause();
-            
-            // Reset everything
-            currentUser = null;
-            localStorage.removeItem('shaneFunCurrentUser');
-            updateAuthUI();
-            stopXPTimer();
-            
-            // Reset UI
-            document.body.classList.remove('dark-mode');
-            deactivateJackyboiCursor();
-            
-            // Hide profile modal if open
-            hideProfileModal();
-        }
-        
-        function updateAuthUI() {
-            const authButtons = document.getElementById('authButtons');
-            const profileSection = document.getElementById('profileSection');
-            const xpContainer = document.getElementById('xpContainer');
-            const topIcons = document.getElementById('topIcons');
-            
-            if (currentUser) {
-                const user = users[currentUser];
+            if (confirm('Logout? You can always log back in by clicking your profile.')) {
+                // Reset to default Player1
+                currentUser = 'Player1';
                 
-                // Show profile section and hide auth buttons
-                authButtons.style.display = 'none';
-                profileSection.style.display = 'flex';
-                topIcons.style.display = 'flex';
-                xpContainer.style.display = 'block';
+                // Ensure Player1 exists
+                if (!users['Player1']) {
+                    users['Player1'] = {
+                        password: 'default',
+                        xp: 0,
+                        level: 1,
+                        lastXPTimestamp: null,
+                        playedGames: [],
+                        profilePicture: '',
+                        settings: {
+                            darkMode: false,
+                            musicEnabled: false,
+                            jackyboiCursor: false
+                        }
+                    };
+                }
                 
-                // Update XP display
-                const currentXP = calculateCurrentLevelXP(user.xp || 0);
-                const level = user.level || 1;
+                localStorage.setItem('shaneFunUsers', JSON.stringify(users));
                 
-                document.getElementById('xpValue').textContent = currentXP;
-                document.getElementById('levelValue').textContent = level;
-                document.getElementById('xpProgress').style.width = `${currentXP}%`;
-                
-                // Update profile username
-                document.getElementById('profileUsernameSmall').textContent = currentUser;
-                
-                // Load profile picture
+                // Reset UI
+                updateAuthUI();
                 loadProfilePicture();
-            } else {
-                // Show auth buttons and hide profile section
-                authButtons.style.display = 'flex';
-                profileSection.style.display = 'none';
-                topIcons.style.display = 'none';
-                xpContainer.style.display = 'none';
+                
+                // Hide profile modal if open
+                hideProfileModal();
             }
         }
         
-        // XP System - ONLY OVERTIME XP
+        function updateAuthUI() {
+            // Always show profile UI
+            const user = users[currentUser];
+            
+            // Update XP display
+            const currentXP = calculateCurrentLevelXP(user.xp || 0);
+            const level = user.level || 1;
+            
+            document.getElementById('xpValue').textContent = currentXP;
+            document.getElementById('levelValue').textContent = level;
+            document.getElementById('xpProgress').style.width = `${currentXP}%`;
+            
+            // Update profile username
+            document.getElementById('profileUsernameSmall').textContent = currentUser;
+            
+            // Load profile picture
+            loadProfilePicture();
+        }
+        
+        // XP System - OVERTIME XP
         let xpInterval;
         
         function startXPTimer() {
