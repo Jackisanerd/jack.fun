@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>JackSucksAtNews</title>
+  <style>
+    :root{--bg:#0b1020;--card:#071020;--muted:#9aa4b2;--accent:#2a6fdb;--text:#e6eef6}
+    [data-theme="light"]{--bg:#d4e2f0;--card:#ffffff;--muted:#1e3a5f;--accent:#0f4c9e;--text:#001b36}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial;background:linear-gradient(180deg,var(--bg) 0%, #0a1a30 100%);color:var(--text);min-height:100vh}
+    header{display:flex;align-items:center;justify-content:space-between;padding:18px 26px;border-bottom:1px solid rgba(0,40,80,0.2);background:transparent}
+    .brand{display:flex;gap:14px;align-items:baseline}
+    .logo{font-weight:800;font-size:20px;color:var(--accent);font-family:Georgia, 'Times New Roman', serif}
+    .tagline{color:var(--muted);font-size:13px}
+    .controls{display:flex;align-items:center;gap:10px}
+    .btn{background:transparent;border:0;color:var(--text);cursor:pointer;padding:8px;border-radius:8px}
+    .gear{font-size:18px}
+    .container{max-width:1100px;margin:24px auto;padding:0 18px}
+    .layout{display:grid;grid-template-columns:1fr 300px;gap:22px}
+    .main-col{display:flex;flex-direction:column;gap:18px}
+    .headline{font-family:Georgia, 'Times New Roman', serif;font-size:36px;margin:0}
+    .hero{background:linear-gradient(180deg,rgba(0,70,150,0.05),transparent);padding:18px;border-radius:10px;border:1px solid rgba(0,80,150,0.2)}
+    .cards{display:flex;flex-direction:column;gap:14px}
+    .card{display:flex;gap:14px;background:var(--card);border-radius:10px;padding:14px;border:1px solid rgba(0,80,150,0.2);align-items:flex-start}
+    .thumb{flex:0 0 140px;height:90px;background:#122233;border-radius:8px;overflow:hidden}
+    .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+    .card-body{flex:1}
+    .card-body h3{margin:0;font-size:18px;font-family:Georgia,serif}
+    .meta{font-size:12px;color:var(--muted);margin-top:6px}
+    .excerpt{margin-top:8px;color:var(--text);opacity:0.9}
+    .read-more{margin-top:10px;color:var(--accent);cursor:pointer;display:inline-block}
+    .sidebar{position:relative}
+    .search{margin-bottom:12px}
+    #q{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(0,80,150,0.3);background:transparent;color:var(--text)}
+    .tag{display:inline-block;background:rgba(0,80,150,0.2);padding:6px 10px;border-radius:999px;font-size:12px;margin:6px 6px 0 0;color:var(--text);border:1px solid rgba(0,120,255,0.2)}
+    .article-view{max-width:900px;margin:0 auto;padding:22px;background:var(--card);border-radius:12px}
+    .article-view h1{font-family:Georgia,serif}
+    .banner{width:100%;height:340px;object-fit:cover;border-radius:10px;margin-bottom:12px}
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:flex-start;justify-content:center;padding-top:60px}
+    .modal{background:var(--card);padding:18px;border-radius:10px;max-width:420px;width:calc(100% - 40px);border:1px solid rgba(0,120,255,0.3)}
+    .row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px dashed rgba(0,100,200,0.2)}
+    label{font-size:14px}
+    .switch{display:inline-flex;gap:8px;align-items:center}
+    .submit-form{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;z-index:1000}
+    .submit-form.active{display:flex}
+    .submit-modal{background:var(--card);padding:24px;border-radius:12px;max-width:500px;width:90%;max-height:80vh;overflow-y:auto}
+    .submit-modal h3{margin-top:0;margin-bottom:16px}
+    .form-group{margin-bottom:16px}
+    .form-group label{display:block;margin-bottom:6px;font-size:14px;color:var(--muted)}
+    .form-control{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(0,80,150,0.3);background:rgba(0,30,60,0.3);color:var(--text);font-family:inherit;font-size:14px}
+    textarea.form-control{min-height:120px;resize:vertical}
+    .form-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+    .btn-primary{background:var(--accent);color:white;padding:10px 20px;border-radius:8px;border:none;cursor:pointer}
+    .btn-secondary{background:rgba(0,80,150,0.3);color:var(--text);padding:10px 20px;border-radius:8px;border:none;cursor:pointer}
+    .copy-success{display:none;color:#4ade80;font-size:14px;margin-top:10px;text-align:center}
+    .copy-success.show{display:block}
+    .email-instructions{background:rgba(0,80,150,0.2);padding:12px;border-radius:8px;margin-top:20px;font-size:14px}
+    footer{color:var(--muted);text-align:center;padding:28px 6px;font-size:13px;margin-top:30px}
+    @media (max-width:900px){.layout{grid-template-columns:1fr}.sidebar{order:2}.thumb{display:none}}
+  </style>
+</head>
+<body data-theme="dark">
+  <header>
+    <div class="brand">
+      <div class="logo">JackSucksAtNews</div>
+      <div class="tagline">The only website for JSAL related news</div>
+    </div>
+    <div class="controls">
+      <button class="btn" id="submit-article" title="Submit Article">✏️ Submit</button>
+</span></button>
+      <button class="btn gear" id="open-settings" title="Settings">⚙️</button>
+    </div>
+  </header>
+  <main class="container" id="app">
+    <div class="layout">
+      <div class="main-col">
+        <div class="hero">
+          <h2 class="headline" id="hero-title">Latest Headlines</h2>
+          <div id="hero-sub" class="meta">The Realest* News of All Time</div>
+        </div>
+        <div class="cards" id="cards"></div>
+      </div>
+      <aside class="sidebar">
+        <div class="search">
+          <input id="q" placeholder="Search headlines or tags..." />
+        </div>
+        <div id="tags"></div>
+        <div style="height:12px"></div>
+        </div>
+      </aside>
+    </div>
+    <div id="article-view" style="display:none;margin-top:18px">
+      <div class="article-view" id="article-content"></div>
+    </div>
+  </main>
+  
+  <div class="submit-form" id="submit-form">
+    <div class="submit-modal">
+      <h3>Submit Article to JackSucksAtNews</h3>
+      <p style="font-size:14px;color:var(--muted);margin-bottom:20px">Submit your satirical news article for consideration.</p>
+      
+      <div class="form-group">
+        <label for="submit-title">Article Title *</label>
+        <input type="text" id="submit-title" class="form-control" placeholder="Enter your catchy headline" />
+      </div>
+      
+      <div class="form-group">
+        <label for="submit-author">Your Name/Alias *</label>
+        <input type="text" id="submit-author" class="form-control" placeholder="Enter your name or pen name" />
+      </div>
+      
+      <div class="form-group">
+        <label for="submit-content">Article Content *</label>
+        <textarea id="submit-content" class="form-control" placeholder="Write your amazing article about pretty woman kicthen or turdboi here"></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label for="submit-tags">Tags (comma separated)</label>
+        <input type="text" id="submit-tags" class="form-control" placeholder="featured, politics, tech, etc." />
+      </div>
+      
+      <div class="email-instructions">
+        <strong>How to submit:</strong>
+        <ol style="margin:8px 0;padding-left:20px">
+          <li>Click "Copy Email Content" below</li>
+          <li>Open your email app</li>
+          <li>Create new email to: <code>notascammer1123@gmail.com</code></li>
+          <li>Paste the copied content</li>
+          <li>Send!</li>
+        </ol>
+      </div>
+      
+      <div class="copy-success" id="copy-success">✅ Email content copied to clipboard!</div>
+      
+      <div class="form-actions">
+        <button class="btn-secondary" id="cancel-submit">Cancel</button>
+        <button class="btn-primary" id="copy-content">Copy Email Content</button>
+      </div>
+    </div>
+  </div>
+  
+  <footer>© JackSucksAtNews — The only website for JSAL related news</footer>
+  
+  <template id="settings-template">
+    <div class="modal-backdrop" id="modal-backdrop">
+      <div class="modal" role="dialog" aria-modal="true">
+        <h3 style="margin-top:0">Settings</h3>
+        <div class="row">
+          <label>Theme</label>
+          <div class="switch">
+            <select id="theme-select">
+              <option value="dark">Dark</option>
+              <option value="light">Light</option>
+              <option value="system">System</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <label>Gender</label>
+          <div class="switch">
+            <select id="gender-select">
+              <option value="turdboi420">turdboi420</option>
+              <option value="pretty woman kitchen">pretty woman kitchen</option>
+              <option value="other">other</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+          <button id="close-modal" class="btn">Close</button>
+        </div>
+      </div>
+    </div>
+  </template>
+  
+  <script>
+    const ARTICLES = [
+      {
+        id: '2026-1-21-new-website-release',
+        title: 'A news website has been released on jack.fun!',
+        author: 'JackSucksAtNews Team',
+        date: 'Febuary 21, 2026',
+        tags: ['featured', 'website', 'jack.fun'],
+        excerpt: 'A new news website has released on jack.fun, called JackSucksAtNews!',
+        image: 'https://preview.redd.it/i-just-did-a-massive-update-to-v0-qsz9bzip52kg1.png?width=1080&crop=smart&auto=webp&s=b1fe9cd685255b36513b3d54b8fae3bf77b16dce',
+        content: `<p>A new website has released on Jack.fun, which everyone who's reading this text has probably heard of. Jack.Fun is also rumored to have WEEKLY updates with patch notes released here every week along with all other JSAL related news!</p>`
+      }
+    ];
+
+    const $cards = document.getElementById('cards');
+    const $articleView = document.getElementById('article-view');
+    const $articleContent = document.getElementById('article-content');
+    const $listView = document.getElementById('app');
+    const $q = document.getElementById('q');
+    const $tags = document.getElementById('tags');
+    const $openSettings = document.getElementById('open-settings');
+    const $statusBrief = document.getElementById('status-brief');
+    const $statusText = document.getElementById('status-text');
+    const $submitArticle = document.getElementById('submit-article');
+    const $submitForm = document.getElementById('submit-form');
+    const $cancelSubmit = document.getElementById('cancel-submit');
+    const $copyContent = document.getElementById('copy-content');
+    const $copySuccess = document.getElementById('copy-success');
+    const $submitTitle = document.getElementById('submit-title');
+    const $submitAuthor = document.getElementById('submit-author');
+    const $submitContent = document.getElementById('submit-content');
+    const $submitTags = document.getElementById('submit-tags');
+
+    const PREFS_KEY = 'jacksucksatnews_prefs_v1';
+    const defaultPrefs = {
+      theme: 'dark',
+      gender: 'turdboi420'
+    };
+    function loadPrefs(){
+      try{
+        const raw = localStorage.getItem(PREFS_KEY);
+        return raw ? JSON.parse(raw) : defaultPrefs
+      }catch(e){return defaultPrefs}
+    }
+    function savePrefs(p){
+      localStorage.setItem(PREFS_KEY, JSON.stringify(p));
+      applyPrefs(p);
+    }
+    function applyPrefs(p){
+      if(!p) p = loadPrefs();
+      if(p.theme === 'system'){
+        const mq = window.matchMedia('(prefers-color-scheme: light)');
+        document.body.setAttribute('data-theme', mq.matches ? 'light' : 'dark');
+      }
+      else {
+        document.body.setAttribute('data-theme', p.theme);
+      }
+      $statusText.textContent = p.gender || 'turdboi420';
+    }
+
+    function openSubmitForm() {
+      $submitForm.classList.add('active');
+      $submitTitle.value = '';
+      $submitAuthor.value = '';
+      $submitContent.value = '';
+      $submitTags.value = '';
+      $copySuccess.classList.remove('show');
+    }
+
+    function closeSubmitForm() {
+      $submitForm.classList.remove('active');
+    }
+
+    function copyToClipboard() {
+      const title = $submitTitle.value.trim();
+      const author = $submitAuthor.value.trim();
+      const content = $submitContent.value.trim();
+      const tags = $submitTags.value.trim();
+      
+      if (!title || !author || !content) {
+        alert('Please fill in all required fields (Title, Author, and Content).');
+        return;
+      }
+      
+      const emailContent = `SUBJECT: Article Submission for JackSucksAtNews: ${title}
+
+TO: notascammer1123@gmail.com
+
+ARTICLE DETAILS:
+Title: ${title}
+Author: ${author}
+Date: ${new Date().toLocaleDateString()}
+Tags: ${tags || 'None specified'}
+
+ARTICLE CONTENT:
+${content}
+
+---
+Submitted via JackSucksAtNews submission form`;
+      
+      navigator.clipboard.writeText(emailContent).then(() => {
+        $copySuccess.classList.add('show');
+        $copySuccess.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        setTimeout(() => {
+          $copySuccess.classList.remove('show');
+        }, 5000);
+      }).catch(err => {
+        console.error('Failed to copy: ', err);
+        alert('Failed to copy to clipboard. Please select and copy the text manually.');
+      });
+    }
+
+    function renderCards(list){
+      $cards.innerHTML = '';
+      if(list.length === 0){
+        $cards.innerHTML = '<div style="color:var(--muted)">No articles match that search.</div>';
+        return
+      }
+      list.forEach(a=>{
+        const el = document.createElement('article');
+        el.className = 'card'+(a.tags && a.tags.includes('featured')? ' featured':'');
+        const thumb = document.createElement('div');
+        thumb.className = 'thumb';
+        if(a.image){
+          const img = document.createElement('img');
+          img.src = a.image;
+          img.alt = a.title;
+          thumb.appendChild(img);
+        }
+        const body = document.createElement('div');
+        body.className = 'card-body';
+        body.innerHTML = `<h3>${escapeHtml(a.title)}</h3><div class="meta">${escapeHtml(a.author)} — ${escapeHtml(a.date)}</div><div class="excerpt">${escapeHtml(a.excerpt)}</div><div style="margin-top:8px"><span class="read-more" data-id="${a.id}">Read</span></div>`;
+        el.appendChild(thumb);
+        el.appendChild(body);
+        $cards.appendChild(el);
+      })
+      document.querySelectorAll('.read-more').forEach(btn=>btn.addEventListener('click',e=>openArticle(e.target.dataset.id)));
+    }
+
+    function renderTags(){
+      const tagSet = new Set();
+      ARTICLES.forEach(a=> (a.tags||[]).forEach(t=>tagSet.add(t)) );
+      $tags.innerHTML = '';
+      Array.from(tagSet).forEach(t=>{
+        const b = document.createElement('button');
+        b.className = 'tag';
+        b.textContent = t;
+        b.addEventListener('click',()=>{
+          $q.value = t;
+          applyFilter();
+        });
+        $tags.appendChild(b);
+      })
+    }
+
+    function openArticle(id){
+      const a = ARTICLES.find(x=>x.id===id);
+      if(!a) return;
+      location.hash = '#article='+id;
+      document.getElementById('article-view').style.display = 'block';
+      document.querySelector('.layout').style.display = 'none';
+      const banner = a.image ? `<img src="${a.image}" class="banner" alt="${escapeHtml(a.title)}">` : '';
+      $articleContent.innerHTML = `<div class="back" style="cursor:pointer;color:var(--muted);margin-bottom:12px;" onclick="goHome()">← Back to headlines</div>${banner}<h1>${escapeHtml(a.title)}</h1><div class="meta">${escapeHtml(a.author)} — ${escapeHtml(a.date)}</div><div style="height:12px"></div>${a.content}`;
+      window.scrollTo(0,0);
+    }
+
+    function goHome(){
+      location.hash = '';
+      document.getElementById('article-view').style.display = 'none';
+      document.querySelector('.layout').style.display = 'grid';
+    }
+
+    function applyFilter(){
+      const q = ($q && $q.value) ? $q.value.trim().toLowerCase() : '';
+      const out = ARTICLES.filter(a=>{
+        if(!q) return true;
+        return [a.title,a.excerpt,a.author,(a.tags||[]).join(' ')].join(' ').toLowerCase().includes(q);
+      });
+      renderCards(out);
+    }
+
+    function escapeHtml(s){
+      return (s+'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]});
+    }
+
+    if($q){
+      $q.addEventListener('input',applyFilter);
+    }
+
+    if($submitArticle) {
+      $submitArticle.addEventListener('click', openSubmitForm);
+    }
+    
+    if($cancelSubmit) {
+      $cancelSubmit.addEventListener('click', closeSubmitForm);
+    }
+    
+    if($copyContent) {
+      $copyContent.addEventListener('click', copyToClipboard);
+    }
+
+    $submitForm.addEventListener('click', function(e) {
+      if (e.target === $submitForm) {
+        closeSubmitForm();
+      }
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && $submitForm.classList.contains('active')) {
+        closeSubmitForm();
+      }
+    });
+
+    renderTags();
+    renderCards(ARTICLES);
+
+    window.addEventListener('hashchange',()=>{
+      const h = location.hash.replace('#','');
+      if(!h) {
+        goHome();
+        return
+      }
+      if(h.startsWith('article=')){
+        const id = h.split('=')[1];
+        openArticle(id);
+      }
+    });
+    if(location.hash.startsWith('#article=')){
+      const id = location.hash.replace('#article=','');
+      setTimeout(()=>openArticle(id),50);
+    }
+
+    function openSettingsModal(){
+      const tpl = document.getElementById('settings-template');
+      const node = tpl.content.cloneNode(true);
+      document.body.appendChild(node);
+      const backdrop = document.getElementById('modal-backdrop');
+      const themeSelect = document.getElementById('theme-select');
+      const genderSelect = document.getElementById('gender-select');
+      const close = document.getElementById('close-modal');
+      const prefs = loadPrefs();
+      if(themeSelect) themeSelect.value = prefs.theme || 'dark';
+      if(genderSelect) genderSelect.value = prefs.gender || 'turdboi420';
+      themeSelect.addEventListener('change',()=>{
+        prefs.theme = themeSelect.value;
+        savePrefs(prefs);
+      });
+      genderSelect.addEventListener('change',()=>{
+        prefs.gender = genderSelect.value;
+        savePrefs(prefs);
+      });
+      close.addEventListener('click',()=>{
+        backdrop.remove();
+      });
+      backdrop.addEventListener('click',(e)=>{
+        if(e.target === backdrop) backdrop.remove();
+      });
+    }
+
+    if($openSettings) $openSettings.addEventListener('click',openSettingsModal);
+
+    applyPrefs(loadPrefs());
+
+    window.goHome = goHome;
+  </script>
+</body>
+</html>

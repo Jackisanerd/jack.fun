@@ -166,21 +166,7 @@
         }
         
         .auth-buttons {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            display: none;
-            gap: 10px;
-            z-index: 100;
-        }
-        
-        .auth-button {
-            padding: 8px 15px;
-            background-color: var(--theme-color);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
+            display: none; /* Completely hidden */
         }
         
         .profile-section {
@@ -455,7 +441,13 @@
         .admin-input {
             display: flex;
             gap: 10px;
-            margin-top: 15px;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px dashed #ccc;
+        }
+        
+        body.dark-mode .admin-input {
+            border-top-color: #444;
         }
         
         .admin-input input {
@@ -475,10 +467,6 @@
             display: flex !important;
         }
         
-        .auth-buttons {
-            display: none !important;
-        }
-
         /* Welcome message for new users */
         .welcome-message {
             position: fixed;
@@ -504,6 +492,14 @@
                 opacity: 1;
             }
         }
+
+        /* Admin section label */
+        .admin-label {
+            font-weight: bold;
+            color: var(--theme-color);
+            margin-top: 10px;
+            text-align: left;
+        }
     </style>
 </head>
 <body>
@@ -518,33 +514,7 @@
         👋 Welcome! Click your profile to set a username and picture
     </div>
     
-    <!-- Modals -->
-    <div class="auth-modal" id="authModal">
-        <div class="auth-content">
-            <button class="close-button" onclick="hideAuthModal()">×</button>
-            <div id="loginForm">
-                <h3>Login</h3>
-                <input type="text" id="loginUsername" placeholder="Username">
-                <input type="password" id="loginPassword" placeholder="Password">
-                <button onclick="login()">Login</button>
-                <p id="loginError" style="color:red;"></p>
-            </div>
-        </div>
-    </div>
-    
-    <div class="auth-modal" id="signupModal">
-        <div class="auth-content">
-            <button class="close-button" onclick="hideSignupModal()">×</button>
-            <div id="signupForm">
-                <h3>Sign Up</h3>
-                <input type="text" id="signupUsername" placeholder="Username">
-                <input type="password" id="signupPassword" placeholder="Password">
-                <input type="password" id="signupConfirmPassword" placeholder="Confirm Password">
-                <button onclick="signup()">Sign Up</button>
-                <p id="signupError" style="color:red;"></p>
-            </div>
-        </div>
-    </div>
+    <!-- Modals - Auth modals completely removed -->
     
     <!-- Profile Modal -->
     <div class="profile-modal" id="profileModal">
@@ -572,19 +542,13 @@
                 <p id="profilePicError" style="color:red; margin-top: 5px;"></p>
             </div>
             
-            <div class="admin-input">
-                <input type="password" id="adminCode" placeholder="Admin code">
-                <button onclick="applyAdminCode()">Apply</button>
-            </div>
-            <p id="adminMessage" style="color:green; margin-top: 10px;"></p>
-            
             <div class="profile-actions">
-                <button onclick="resetProfile()" style="background-color: #ff9800;">Reset</button>
+                <button onclick="resetProfile()" style="background-color: #ff9800;">Reset to Default</button>
             </div>
         </div>
     </div>
     
-    <!-- Settings Modal -->
+    <!-- Settings Modal (now includes admin code) -->
     <div class="settings-modal" id="settingsModal">
         <div class="settings-content">
             <button class="close-button" onclick="hideSettingsModal()">×</button>
@@ -613,16 +577,22 @@
                     <span class="slider"></span>
                 </label>
             </div>
+
+            <!-- Admin code section moved here -->
+            <div class="admin-label">⚡ Admin</div>
+            <div class="admin-input">
+                <input type="password" id="adminCode" placeholder="Enter admin code">
+                <button onclick="applyAdminCode()">Apply</button>
+            </div>
+            <p id="adminMessage" style="color:green; margin-top: 10px; min-height: 20px;"></p>
             
             <button onclick="saveSettings()" style="margin-top: 20px;">Save Settings</button>
         </div>
     </div>
     
     <!-- Top UI Elements - Always visible -->
-    <div class="auth-buttons" id="authButtons">
-        <button class="auth-button" onclick="showLoginModal()">Login</button>
-        <button class="auth-button" onclick="showSignupModal()">Sign Up</button>
-    </div>
+    <!-- Auth buttons div removed but kept empty to avoid affecting layout (hidden via CSS) -->
+    <div class="auth-buttons" id="authButtons"></div>
     
     <!-- Profile button - Always visible -->
     <div class="profile-section" id="profileSection">
@@ -681,7 +651,9 @@
         <!-- PFPs -->
         <div class="button" style="background-image: url('pfps.png');" onclick="playGame('pfps', 'PFPs')"></div>
 
-        
+        <!-- jsan -->
+        <div class="button" style="background-image: url('jeck.png');" onclick="playGame('jsan', 'jsan')"></div>
+
         <!-- Credits -->
         <div class="button" style="background-image: url('CRDS.png');" onclick="playGame('credits', 'Credits')"></div>
     </div>
@@ -698,7 +670,7 @@
         // Ensure default user exists
         if (!users['Player1']) {
             users['Player1'] = {
-                password: 'default',
+                // No password field needed anymore
                 xp: 0,
                 level: 1,
                 lastXPTimestamp: null,
@@ -720,6 +692,12 @@
                     welcomeMsg.style.display = 'none';
                 }, 5000);
             }, 1000);
+        } else {
+            // Ensure no password field lingers (optional cleanup)
+            if (users['Player1'].password) {
+                delete users['Player1'].password;
+                localStorage.setItem('shaneFunUsers', JSON.stringify(users));
+            }
         }
         
         // Initialize on page load
@@ -769,8 +747,10 @@
                 }
             });
             
-            // Settings toggle listeners
+            // Settings toggle listeners - they call saveSettings anyway, but we can let saveSettings handle it
             document.getElementById('darkModeToggle').addEventListener('change', function() {
+                // Optional: real-time apply, but saveSettings will apply all
+                // We'll just call saveSettings which handles UI update
                 saveSettings();
             });
             
@@ -811,7 +791,8 @@
                 'quotes': 'quote.html',
                 'memes': 'https://jacksucksat.meme/',
                 'connect4': 'https://connect4.jacksucksatlife.com/',
-                'pfps': 'https://smallmarbles.github.io/jsalsubreddit/'
+                'pfps': 'https://smallmarbles.github.io/jsalsubreddit/',
+                'jsan': 'jacksucksatnews.html'
             };
             
             if (gameLinks[gameId]) {
@@ -905,22 +886,57 @@
             
             // If username changed, we need to handle it
             if (newUsername !== currentUser) {
-                // Check if new username already exists
+                // Check if new username already exists (but allow overwriting? better to treat as new profile)
                 if (users[newUsername] && newUsername !== currentUser) {
-                    document.getElementById('profilePicError').textContent = 'Username already taken';
-                    document.getElementById('profilePicError').style.color = 'red';
-                    return;
+                    // Option: merge or just inform? We'll just update the current user's name and keep data
+                    // For simplicity, we'll move the data to the new username
                 }
                 
                 // Copy user data to new username
                 users[newUsername] = { ...users[currentUser] };
                 
-                // Delete old user if it was the default or different
-                if (currentUser !== 'Player1' || !users['Player1'].password) {
+                // Delete old user if it was the default or different (but keep Player1 as fallback)
+                if (currentUser !== 'Player1') {
                     delete users[currentUser];
+                } else {
+                    // If renaming Player1, we should keep Player1 as a separate default? 
+                    // Let's just keep Player1 record intact and create a new user entry.
+                    // Actually better: if renaming Player1, we keep Player1 as a separate entity.
+                    // We'll clone Player1's data to new username and keep Player1 unchanged.
+                    // But that could duplicate XP. Let's just move: delete Player1? No, Player1 is special.
+                    // Simpler: treat "Player1" as a template. When you change name, we create a new user with that name,
+                    // copy settings, and set currentUser to the new name. Player1 remains as a default shell.
+                    // But then XP gets left behind. Let's instead allow renaming Player1: we'll keep Player1 data,
+                    // but set currentUser to newUsername and keep Player1 in users for fallback.
+                    // That means two users with same data. Better: we delete the old Player1 entry only if it's the default empty one?
+                    // To avoid complexity, we'll just treat username change as creating a new profile, and reset Player1.
+                    // That's simpler: we'll copy all data to new username, then reset Player1 to default state.
+                    // But then the user loses their XP if they change name? That's not ideal.
+                    
+                    // Let's implement a clean migration: keep the user data under the new name, and if the old name was Player1,
+                    // we reset Player1 to a fresh state.
+                    if (currentUser === 'Player1') {
+                        // Save the data we're moving
+                        const userData = { ...users['Player1'] };
+                        // Create new user with that data
+                        users[newUsername] = userData;
+                        // Reset Player1 to fresh state
+                        users['Player1'] = {
+                            xp: 0,
+                            level: 1,
+                            lastXPTimestamp: null,
+                            playedGames: [],
+                            profilePicture: '',
+                            settings: { darkMode: false, musicEnabled: false, jackyboiCursor: false }
+                        };
+                        currentUser = newUsername;
+                    } else {
+                        // Just rename
+                        users[newUsername] = { ...users[currentUser] };
+                        delete users[currentUser];
+                        currentUser = newUsername;
+                    }
                 }
-                
-                currentUser = newUsername;
             }
             
             // Update profile picture if changed
@@ -939,40 +955,40 @@
             setTimeout(() => {
                 document.getElementById('profilePicError').textContent = '';
             }, 3000);
+            
+            // Update XP display etc
+            updateAuthUI();
         }
         
         function resetProfile() {
-            // Reset to default
-            currentUser = 'Player1';
-            currentProfilePic = null;
+            // Reset current user to default state (but keep settings?)
+            const settings = users[currentUser]?.settings || { darkMode: false, musicEnabled: false, jackyboiCursor: false };
             
-            if (!users['Player1']) {
-                users['Player1'] = {
-                    password: 'default',
-                    xp: 0,
-                    level: 1,
-                    lastXPTimestamp: null,
-                    playedGames: [],
-                    profilePicture: '',
-                    settings: users[currentUser]?.settings || {
-                        darkMode: false,
-                        musicEnabled: false,
-                        jackyboiCursor: false
-                    }
-                };
+            users[currentUser] = {
+                xp: 0,
+                level: 1,
+                lastXPTimestamp: null,
+                playedGames: [],
+                profilePicture: '',
+                settings: settings
+            };
+            
+            if (currentUser !== 'Player1') {
+                // Optionally delete non-default user? We'll keep them but reset data.
             }
             
-            users['Player1'].profilePicture = '';
             localStorage.setItem('shaneFunUsers', JSON.stringify(users));
-            
+            currentProfilePic = null;
             loadProfilePicture();
-            document.getElementById('profileUsernameInput').value = 'Player1';
+            document.getElementById('profileUsernameInput').value = currentUser;
             document.getElementById('profilePicError').textContent = 'Profile reset to default';
             document.getElementById('profilePicError').style.color = 'green';
             
             setTimeout(() => {
                 document.getElementById('profilePicError').textContent = '';
             }, 3000);
+            
+            updateAuthUI();
         }
         
         // Settings functions
@@ -998,19 +1014,6 @@
                 
                 // Jackyboi cursor
                 document.getElementById('cursorToggle').checked = settings.jackyboiCursor || false;
-                
-                // Apply settings
-                if (settings.darkMode) {
-                    document.body.classList.add('dark-mode');
-                }
-                
-                if (settings.musicEnabled) {
-                    backgroundMusic.play().catch(e => console.log("Audio play failed:", e));
-                }
-                
-                if (settings.jackyboiCursor) {
-                    activateJackyboiCursor();
-                }
             }
         }
         
@@ -1129,60 +1132,6 @@
             document.getElementById('adminCode').value = '';
         }
         
-        // Auth modal functions (keep for compatibility)
-        function showLoginModal() {
-            alert('You are already logged in as ' + currentUser + '! Click your profile to change username.');
-        }
-        
-        function showSignupModal() {
-            alert('Just click your profile and enter any username to sign up! No password needed.');
-        }
-        
-        function hideAuthModal() {}
-        function hideSignupModal() {}
-        
-        // Simplified auth functions
-        function login() {
-            alert('You are already logged in! Click your profile to change username.');
-        }
-        
-        function signup() {
-            alert('Just click your profile and enter any username to sign up! No password needed.');
-        }
-        
-        function logout() {
-            if (confirm('Logout? You can always log back in by clicking your profile.')) {
-                // Reset to default Player1
-                currentUser = 'Player1';
-                
-                // Ensure Player1 exists
-                if (!users['Player1']) {
-                    users['Player1'] = {
-                        password: 'default',
-                        xp: 0,
-                        level: 1,
-                        lastXPTimestamp: null,
-                        playedGames: [],
-                        profilePicture: '',
-                        settings: {
-                            darkMode: false,
-                            musicEnabled: false,
-                            jackyboiCursor: false
-                        }
-                    };
-                }
-                
-                localStorage.setItem('shaneFunUsers', JSON.stringify(users));
-                
-                // Reset UI
-                updateAuthUI();
-                loadProfilePicture();
-                
-                // Hide profile modal if open
-                hideProfileModal();
-            }
-        }
-        
         function updateAuthUI() {
             // Always show profile UI
             const user = users[currentUser];
@@ -1233,7 +1182,6 @@
             user.lastXPTimestamp = now;
             
             // Update level
-            const oldLevel = user.level || 1;
             updateUserLevel(user);
             
             // Save and update UI
@@ -1248,12 +1196,6 @@
         
         // Close modals when clicking outside
         window.addEventListener('click', function(event) {
-            if (event.target === document.getElementById('authModal')) {
-                hideAuthModal();
-            }
-            if (event.target === document.getElementById('signupModal')) {
-                hideSignupModal();
-            }
             if (event.target === document.getElementById('profileModal')) {
                 hideProfileModal();
             }
@@ -1261,6 +1203,14 @@
                 hideSettingsModal();
             }
         });
+
+        // Override any leftover auth functions to do nothing
+        window.showLoginModal = function() {};
+        window.showSignupModal = function() {};
+        window.hideAuthModal = function() {};
+        window.hideSignupModal = function() {};
+        window.login = function() {};
+        window.signup = function() {};
     </script>
 </body>
 </html>
