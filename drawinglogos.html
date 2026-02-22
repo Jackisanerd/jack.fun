@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draw Logos From Memory</title>
+    <style>
+        body {
+            background-color: #f0f2f5;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .main-title {
+            background: white;
+            width: 1000px;
+            padding: 20px 0;
+            text-align: center;
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .logo-section {
+            width: 1000px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .prompt-bar {
+            background: white;
+            padding: 15px 0;
+            text-align: center;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .canvas-container {
+            background: white;
+            height: 550px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .drawing-surface {
+            flex-grow: 1;
+            cursor: crosshair;
+        }
+
+        .palette {
+            height: 60px;
+            background: white;
+            display: flex;
+            align-items: center;
+            padding-left: 20px;
+            border-top: 2px solid #f0f2f5;
+        }
+
+        .swatch {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            margin-right: 12px;
+            border: 2px solid transparent;
+            outline: 1px solid rgba(0,0,0,0.2);
+            outline-offset: 1px;
+        }
+
+        .swatch.active { 
+            border-color: #000; 
+            outline: 2px solid #666;
+            outline-offset: 2px;
+        }
+
+        .reveal-container {
+            background: white;
+            height: 550px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .reveal-btn {
+            background: #00c875;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .actual-logo {
+            display: none;
+            max-width: 80%;
+            max-height: 80%;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-title">Draw Jacks Logos From Memory</div>
+
+    <div id="feed"></div>
+
+    <script>
+        const logos = [
+            { name: "Jack's Face", bg: "#01ffff", colors: ["#3b1d11", "#df92bc", "#eb9f8d", "#ffffff"], img: "https://yt3.googleusercontent.com/bu29B2Crvfklt8nXuKZe6ekhRZvgCn2orZltPE2Z2sAvoqNsIJ21Ggjedl9oOqWzmx88X-pMaQ=s900-c-k-c0x00ffffff-no-rj" },
+            { name: "Second Last Week of Removing Jack's Facial Features", bg: "#01ffff", colors: ["#eb9f8d", "#000000", "#811200"], img: "https://preview.redd.it/removing-jacks-facial-features-until-he-is-unrecognizable-v0-usk9s7k72i2g1.jpg?width=640&crop=smart&auto=webp&s=6f502401f7a616289d3d6f442f5096f8578f1def" },
+            { name: "Reddit", bg: "#ffffff", colors: ["#ff4500", "#ffffff"], img: "https://upload.wikimedia.org/wikipedia/en/b/bd/Reddit_Logo_Icon.svg" },
+            { name: "Jack Pack", bg: "#ffffff", colors: ["#1d919c", "#f0f3ef", "#e29884", "#ffffff"], img: "https://upload.wikimedia.org/wikipedia/en/thumb/3/3e/Jack_in_the_Box_2009_logo.svg/1200px-Jack_in_the_Box_2009_logo.svg.png" }
+        ];
+
+        function createChallenge(data) {
+            const section = document.createElement('div');
+            section.className = 'logo-section';
+            section.innerHTML = `
+                <div class="prompt-bar">Draw the ${data.name} logo</div>
+                <div class="game-grid">
+                    <div class="canvas-container">
+                        <canvas class="drawing-surface" width="495" height="490" style="background:${data.bg}"></canvas>
+                        <div class="palette"></div>
+                    </div>
+                    <div class="reveal-container" style="background:${data.bg}">
+                        <button class="reveal-btn">Reveal Logo</button>
+                        <img class="actual-logo" src="${data.img}">
+                    </div>
+                </div>
+            `;
+
+            const canvas = section.querySelector('canvas');
+            const ctx = canvas.getContext('2d');
+            const palette = section.querySelector('.palette');
+            const revealBtn = section.querySelector('.reveal-btn');
+            const actualLogo = section.querySelector('.actual-logo');
+
+            let drawing = false;
+            let currentColor = data.colors[0];
+
+            data.colors.forEach((c, i) => {
+                const s = document.createElement('div');
+                s.className = `swatch ${i===0?'active':''}`;
+                s.style.backgroundColor = c;
+                s.onclick = () => {
+                    section.querySelectorAll('.swatch').forEach(sw => sw.classList.remove('active'));
+                    s.classList.add('active');
+                    currentColor = c;
+                };
+                palette.appendChild(s);
+            });
+
+            canvas.onmousedown = () => { drawing = true; ctx.beginPath(); };
+            window.addEventListener('mouseup', () => drawing = false);
+            canvas.onmousemove = (e) => {
+                if (!drawing) return;
+                const rect = canvas.getBoundingClientRect();
+                ctx.lineWidth = 12;
+                ctx.lineCap = 'round';
+                ctx.strokeStyle = currentColor;
+                ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+            };
+
+            revealBtn.onclick = () => {
+                revealBtn.style.display = 'none';
+                actualLogo.style.display = 'block';
+            };
+
+            return section;
+        }
+
+        const feed = document.getElementById('feed');
+        logos.forEach(logo => feed.appendChild(createChallenge(logo)));
+    </script>
+
+</body>
+</html>
