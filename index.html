@@ -166,7 +166,7 @@
         }
         
         .auth-buttons {
-            display: none; /* Completely hidden */
+            display: none;
         }
         
         .profile-section {
@@ -454,7 +454,6 @@
             flex: 1;
         }
 
-        /* Auto-logged in state - always show profile section by default */
         .profile-section {
             display: flex !important;
         }
@@ -467,7 +466,6 @@
             display: flex !important;
         }
         
-        /* Welcome message for new users */
         .welcome-message {
             position: fixed;
             top: 80px;
@@ -493,7 +491,6 @@
             }
         }
 
-        /* Admin section label */
         .admin-label {
             font-weight: bold;
             color: var(--theme-color);
@@ -509,14 +506,10 @@
     
     <img class="jackyboi-cursor" id="jackyboiCursor" src="jack.png" alt="Jackyboi cursor">
     
-    <!-- Welcome message (shown for new users) -->
     <div id="welcomeMessage" class="welcome-message" style="display: none;">
         👋 Welcome! Click your profile to set a username and picture
     </div>
     
-    <!-- Modals - Auth modals completely removed -->
-    
-    <!-- Profile Modal -->
     <div class="profile-modal" id="profileModal">
         <div class="profile-content">
             <button class="close-button" onclick="hideProfileModal()">×</button>
@@ -548,7 +541,6 @@
         </div>
     </div>
     
-    <!-- Settings Modal (now includes admin code) -->
     <div class="settings-modal" id="settingsModal">
         <div class="settings-content">
             <button class="close-button" onclick="hideSettingsModal()">×</button>
@@ -578,7 +570,6 @@
                 </label>
             </div>
 
-            <!-- Admin code section moved here -->
             <div class="admin-label">⚡ Admin</div>
             <div class="admin-input">
                 <input type="password" id="adminCode" placeholder="Enter admin code">
@@ -590,11 +581,8 @@
         </div>
     </div>
     
-    <!-- Top UI Elements - Always visible -->
-    <!-- Auth buttons div removed but kept empty to avoid affecting layout (hidden via CSS) -->
     <div class="auth-buttons" id="authButtons"></div>
     
-    <!-- Profile button - Always visible -->
     <div class="profile-section" id="profileSection">
         <div class="profile-button" onclick="showProfileModal()">
             <img id="profilePicSmall" src="" alt="Profile" class="profile-pic">
@@ -614,69 +602,50 @@
         <button class="icon-button" onclick="showSettingsModal()">⚙️</button>
     </div>
     
-    <!-- Main Content -->
     <img src="Shane.Fun.png" alt="Shane.fun Logo" class="logo">
     
     <div class="container">
-        <!-- Yo Mama Game -->
         <div class="button" style="background-image: url('jackle.png');" onclick="playGame('yomom', 'Yo Mama')"></div>
         
-        <!-- Infinite Scroll -->
         <div class="button" style="background-image: url('HIGH.png');" onclick="playGame('infinitescroll', 'Infinite Scroll')"></div>
         
-        <!-- Of The Day -->
         <div class="button" style="background-image: url('halloffame.png');" onclick="playGame('oftheday', 'Of The Day')"></div>
         
-        <!-- Tic Tac Toe -->
         <div class="button" style="background-image: url('hallofsh.png');" onclick="playGame('tictactoe', 'Tic Tac Toe')"></div>
         
-        <!-- Hall of Fame -->
         <div class="button" style="background-image: url('hallofog.png');" onclick="playGame('hall', 'Hall of Fame')"></div>
         
-        <!-- Jackies -->
         <div class="button" style="background-image: url('jackyboi.png');" onclick="playGame('jackies', 'Jackies')"></div>
         
-        <!-- Spin -->
         <div class="button" style="background-image: url('lgo.png');" onclick="playGame('spin', 'Spin')"></div>
         
-        <!-- Quotes -->
         <div class="button" style="background-image: url('Quotes.png');" onclick="playGame('quotes', 'Quotes')"></div>
 
-        <!-- Memes -->
         <div class="button" style="background-image: url('memes.png');" onclick="playGame('memes', 'Memes')"></div>
         
-        <!-- Connect 4 -->
         <div class="button" style="background-image: url('connect.png');" onclick="playGame('connect4', 'Connect 4')"></div>
 
-        <!-- PFPs -->
         <div class="button" style="background-image: url('pfps.png');" onclick="playGame('pfps', 'PFPs')"></div>
 
-        <!-- jsan -->
         <div class="button" style="background-image: url('jeck.png');" onclick="playGame('jsan', 'jsan')"></div>
 
-        <!-- drawing -->
         <div class="button" style="background-image: url('drawing.png');" onclick="playGame('draw', 'draw')"></div>
 
-        <!-- well -->
         <div class="button" style="background-image: url('WELL.png');" onclick="playGame('well', 'well')"></div>
 
-        <!-- Credits -->
         <div class="button" style="background-image: url('CRDS.png');" onclick="playGame('credits', 'Credits')"></div>
     </div>
     
     <script>
-        // User data storage - always have a default user
         let users = JSON.parse(localStorage.getItem('shaneFunUsers')) || {};
-        let currentUser = 'Player1'; // Auto-logged in as Player1 by default
+        let currentUser = 'Player1';
         let backgroundMusic = document.getElementById('backgroundMusic');
         let jackyboiCursor = document.getElementById('jackyboiCursor');
         let cursorActive = false;
         let currentProfilePic = null;
         
-        // Ensure default user exists
         if (!users['Player1']) {
             users['Player1'] = {
-                // No password field needed anymore
                 xp: 0,
                 level: 1,
                 lastXPTimestamp: null,
@@ -690,7 +659,6 @@
             };
             localStorage.setItem('shaneFunUsers', JSON.stringify(users));
             
-            // Show welcome message for new users
             setTimeout(() => {
                 const welcomeMsg = document.getElementById('welcomeMessage');
                 welcomeMsg.style.display = 'block';
@@ -699,22 +667,18 @@
                 }, 5000);
             }, 1000);
         } else {
-            // Ensure no password field lingers (optional cleanup)
             if (users['Player1'].password) {
                 delete users['Player1'].password;
                 localStorage.setItem('shaneFunUsers', JSON.stringify(users));
             }
         }
         
-        // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
-            // Always logged in as Player1
             updateAuthUI();
             startXPTimer();
             loadUserSettings();
             loadProfilePicture();
             
-            // Setup mouse movement tracking for jackyboi cursor
             document.addEventListener('mousemove', function(e) {
                 if (cursorActive && jackyboiCursor.style.display === 'block') {
                     jackyboiCursor.style.left = e.pageX + 'px';
@@ -722,7 +686,6 @@
                 }
             });
             
-            // Hide cursor when leaving window
             document.addEventListener('mouseleave', function() {
                 jackyboiCursor.style.display = 'none';
             });
@@ -733,11 +696,10 @@
                 }
             });
             
-            // Profile picture upload preview
             document.getElementById('profilePicInput').addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (file) {
-                    if (file.size > 2 * 1024 * 1024) { // 2MB limit
+                    if (file.size > 2 * 1024 * 1024) {
                         document.getElementById('profilePicError').textContent = 'File too large! Max 2MB.';
                         return;
                     }
@@ -753,10 +715,7 @@
                 }
             });
             
-            // Settings toggle listeners - they call saveSettings anyway, but we can let saveSettings handle it
             document.getElementById('darkModeToggle').addEventListener('change', function() {
-                // Optional: real-time apply, but saveSettings will apply all
-                // We'll just call saveSettings which handles UI update
                 saveSettings();
             });
             
@@ -768,13 +727,10 @@
                 saveSettings();
             });
             
-            // Set username input to current username
             document.getElementById('profileUsernameInput').value = currentUser;
         });
         
-        // Game playing function
         function playGame(gameId, gameName) {
-            // Track that user played this game
             if (currentUser) {
                 const user = users[currentUser];
                 if (!user.playedGames) user.playedGames = [];
@@ -784,7 +740,6 @@
                 }
             }
             
-            // Navigate to the game
             const gameLinks = {
                 'yomom': 'https://jackisanerd.github.io/Jackle/',
                 'infinitescroll': 'https://jackisanerd.github.io/HigherOrLower/',
@@ -824,18 +779,15 @@
             
             const user = users[currentUser];
             
-            // Update username display
             document.getElementById('profileUsername').textContent = currentUser;
             document.getElementById('profileUsernameInput').value = currentUser;
             
-            // Update level and XP
             const currentXP = calculateCurrentLevelXP(user.xp || 0);
             const level = user.level || 1;
             
             document.getElementById('profileLevel').textContent = level;
             document.getElementById('profileXP').textContent = currentXP;
             
-            // Load profile picture
             loadProfilePicture();
         }
         
@@ -845,7 +797,6 @@
             const user = users[currentUser];
             const profilePic = user.profilePicture || '';
             
-            // Update all profile picture elements
             const profilePicSmall = document.getElementById('profilePicSmall');
             const profilePicLarge = document.getElementById('profilePicLarge');
             const profilePicPreview = document.getElementById('profilePicPreview');
@@ -855,7 +806,6 @@
                 if (profilePicLarge) profilePicLarge.src = profilePic;
                 if (profilePicPreview) profilePicPreview.src = profilePic;
             } else {
-                // Default profile icon - use a data URL with colored background
                 const initial = currentUser.charAt(0).toUpperCase();
                 const canvas = document.createElement('canvas');
                 canvas.width = 80;
@@ -877,7 +827,6 @@
                 if (profilePicPreview) profilePicPreview.src = defaultPic;
             }
             
-            // Update small profile username
             document.getElementById('profileUsernameSmall').textContent = currentUser;
         }
         
@@ -892,43 +841,18 @@
                 return;
             }
             
-            // If username changed, we need to handle it
             if (newUsername !== currentUser) {
-                // Check if new username already exists (but allow overwriting? better to treat as new profile)
                 if (users[newUsername] && newUsername !== currentUser) {
-                    // Option: merge or just inform? We'll just update the current user's name and keep data
-                    // For simplicity, we'll move the data to the new username
                 }
                 
-                // Copy user data to new username
                 users[newUsername] = { ...users[currentUser] };
                 
-                // Delete old user if it was the default or different (but keep Player1 as fallback)
                 if (currentUser !== 'Player1') {
                     delete users[currentUser];
                 } else {
-                    // If renaming Player1, we should keep Player1 as a separate default? 
-                    // Let's just keep Player1 record intact and create a new user entry.
-                    // Actually better: if renaming Player1, we keep Player1 as a separate entity.
-                    // We'll clone Player1's data to new username and keep Player1 unchanged.
-                    // But that could duplicate XP. Let's just move: delete Player1? No, Player1 is special.
-                    // Simpler: treat "Player1" as a template. When you change name, we create a new user with that name,
-                    // copy settings, and set currentUser to the new name. Player1 remains as a default shell.
-                    // But then XP gets left behind. Let's instead allow renaming Player1: we'll keep Player1 data,
-                    // but set currentUser to newUsername and keep Player1 in users for fallback.
-                    // That means two users with same data. Better: we delete the old Player1 entry only if it's the default empty one?
-                    // To avoid complexity, we'll just treat username change as creating a new profile, and reset Player1.
-                    // That's simpler: we'll copy all data to new username, then reset Player1 to default state.
-                    // But then the user loses their XP if they change name? That's not ideal.
-                    
-                    // Let's implement a clean migration: keep the user data under the new name, and if the old name was Player1,
-                    // we reset Player1 to a fresh state.
                     if (currentUser === 'Player1') {
-                        // Save the data we're moving
                         const userData = { ...users['Player1'] };
-                        // Create new user with that data
                         users[newUsername] = userData;
-                        // Reset Player1 to fresh state
                         users['Player1'] = {
                             xp: 0,
                             level: 1,
@@ -939,7 +863,6 @@
                         };
                         currentUser = newUsername;
                     } else {
-                        // Just rename
                         users[newUsername] = { ...users[currentUser] };
                         delete users[currentUser];
                         currentUser = newUsername;
@@ -947,29 +870,24 @@
                 }
             }
             
-            // Update profile picture if changed
             if (currentProfilePic) {
                 users[currentUser].profilePicture = currentProfilePic;
             }
             
             localStorage.setItem('shaneFunUsers', JSON.stringify(users));
             
-            // Update UI
             loadProfilePicture();
             document.getElementById('profilePicError').textContent = 'Profile saved successfully!';
             document.getElementById('profilePicError').style.color = 'green';
             
-            // Clear success message after 3 seconds
             setTimeout(() => {
                 document.getElementById('profilePicError').textContent = '';
             }, 3000);
             
-            // Update XP display etc
             updateAuthUI();
         }
         
         function resetProfile() {
-            // Reset current user to default state (but keep settings?)
             const settings = users[currentUser]?.settings || { darkMode: false, musicEnabled: false, jackyboiCursor: false };
             
             users[currentUser] = {
@@ -982,7 +900,6 @@
             };
             
             if (currentUser !== 'Player1') {
-                // Optionally delete non-default user? We'll keep them but reset data.
             }
             
             localStorage.setItem('shaneFunUsers', JSON.stringify(users));
@@ -999,7 +916,6 @@
             updateAuthUI();
         }
         
-        // Settings functions
         function showSettingsModal() {
             document.getElementById('settingsModal').style.display = 'flex';
             loadSettingsToUI();
@@ -1014,13 +930,10 @@
                 const user = users[currentUser];
                 const settings = user.settings || {};
                 
-                // Dark mode
                 document.getElementById('darkModeToggle').checked = settings.darkMode || false;
                 
-                // Music
                 document.getElementById('musicToggle').checked = settings.musicEnabled || false;
                 
-                // Jackyboi cursor
                 document.getElementById('cursorToggle').checked = settings.jackyboiCursor || false;
             }
         }
@@ -1037,7 +950,6 @@
             
             localStorage.setItem('shaneFunUsers', JSON.stringify(users));
             
-            // Apply settings immediately
             if (user.settings.darkMode) {
                 document.body.classList.add('dark-mode');
             } else {
@@ -1063,17 +975,14 @@
             const user = users[currentUser];
             const settings = user.settings || {};
             
-            // Apply dark mode
             if (settings.darkMode) {
                 document.body.classList.add('dark-mode');
             }
             
-            // Apply music
             if (settings.musicEnabled) {
                 backgroundMusic.play().catch(e => console.log("Audio autoplay blocked"));
             }
             
-            // Apply jackyboi cursor if enabled
             if (settings.jackyboiCursor) {
                 activateJackyboiCursor();
             }
@@ -1091,7 +1000,6 @@
             document.body.style.cursor = 'default';
         }
         
-        // XP calculation functions
         function calculateLevel(xp) {
             return Math.floor(xp / 100) + 1;
         }
@@ -1110,7 +1018,6 @@
             }
         }
         
-        // Admin code function
         function applyAdminCode() {
             const adminCode = document.getElementById('adminCode').value;
             const adminMessage = document.getElementById('adminMessage');
@@ -1141,10 +1048,8 @@
         }
         
         function updateAuthUI() {
-            // Always show profile UI
             const user = users[currentUser];
             
-            // Update XP display
             const currentXP = calculateCurrentLevelXP(user.xp || 0);
             const level = user.level || 1;
             
@@ -1152,14 +1057,11 @@
             document.getElementById('levelValue').textContent = level;
             document.getElementById('xpProgress').style.width = `${currentXP}%`;
             
-            // Update profile username
             document.getElementById('profileUsernameSmall').textContent = currentUser;
             
-            // Load profile picture
             loadProfilePicture();
         }
         
-        // XP System - OVERTIME XP
         let xpInterval;
         
         function startXPTimer() {
@@ -1180,29 +1082,23 @@
             const now = Date.now();
             const user = users[currentUser];
             
-            // Check if we've already awarded XP in the last 30 seconds
             if (user.lastXPTimestamp && (now - user.lastXPTimestamp) < 30000) {
                 return;
             }
             
-            // Award XP
             user.xp = (user.xp || 0) + 1;
             user.lastXPTimestamp = now;
             
-            // Update level
             updateUserLevel(user);
             
-            // Save and update UI
             localStorage.setItem('shaneFunUsers', JSON.stringify(users));
             updateAuthUI();
             
-            // Update profile data if modal is open
             if (document.getElementById('profileModal').style.display === 'flex') {
                 loadProfileData();
             }
         }
         
-        // Close modals when clicking outside
         window.addEventListener('click', function(event) {
             if (event.target === document.getElementById('profileModal')) {
                 hideProfileModal();
@@ -1212,7 +1108,6 @@
             }
         });
 
-        // Override any leftover auth functions to do nothing
         window.showLoginModal = function() {};
         window.showSignupModal = function() {};
         window.hideAuthModal = function() {};
