@@ -84,41 +84,23 @@
             border: 8px solid #ffcc00;
             box-shadow: inset 0 -10px 0 #b8860b, 15px 15px 0 #c0c0c0;
             transform: rotate(0.8deg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: fit-content;
+            margin: 0 auto;
         }
         .image {
             display: block;
-            width: 600px;
-            max-width: 75vw;
+            width: auto;
             height: auto;
-            aspect-ratio: 4/3;
-            object-fit: cover;
+            max-width: 100%;
+            max-height: 70vh;
             border-radius: 30px;
             border: 5px solid #fff;
             box-shadow: 0 0 0 5px #ff69b4, 0 0 0 10px #00ced1;
             filter: contrast(1.1) saturate(1.3);
-        }
-        .counter {
-            background: linear-gradient(135deg, #ffd700, #ffa500);
-            border-radius: 80px;
-            padding: 18px 40px;
-            border: 6px solid #000;
-            color: #000;
-            font-size: 2rem;
-            font-weight: 900;
-            display: flex;
-            align-items: center;
-            gap: 25px;
-            box-shadow: 12px 12px 0 #ff00ff, -5px -5px 0 #00ffff;
-            transform: rotate(-1deg);
-            font-family: 'Comic Sans MS', cursive;
-        }
-        .counter span {
-            background: #fff;
-            padding: 12px 30px;
-            border-radius: 50px;
-            border: 4px solid #000;
-            font-size: 2.5rem;
-            box-shadow: inset 3px 3px 0 #888;
+            object-fit: contain;
         }
         .controls {
             display: flex;
@@ -154,31 +136,6 @@
             border-bottom-width: 4px;
             box-shadow: 5px 5px 0 #2ecc40, 8px 8px 0 #0074d9;
         }
-        .reset-btn {
-            background: #39cccc;
-            border: none;
-            border-bottom: 12px solid #001f3f;
-            color: #000;
-            font-size: 2.5rem;
-            font-weight: 900;
-            padding: 20px 50px;
-            border-radius: 70px;
-            cursor: pointer;
-            box-shadow: 12px 12px 0 #ff851b, 18px 18px 0 #b10dc9;
-            transition: 0.05s linear;
-            display: inline-flex;
-            align-items: center;
-            gap: 20px;
-            border-top: 4px solid #f012be;
-            border-left: 4px solid #01ff70;
-            transform: rotate(1deg);
-            font-family: 'Comic Sans MS', cursive;
-        }
-        .reset-btn:active {
-            transform: translateY(12px) rotate(0deg);
-            border-bottom-width: 4px;
-            box-shadow: 5px 5px 0 #ff851b, 8px 8px 0 #b10dc9;
-        }
         .footer-meme {
             font-size: 2rem;
             color: #000;
@@ -204,7 +161,6 @@
         </div>
         <div class="image-wrap">
             <img class="image" id="display-img" src="https://i.redd.it/y93dqvu29xb41.jpg" alt="meme image">
-        </div>
         </div>
         <div class="controls">
             <button class="random-btn" id="random">🎰 RANDOMIZE 🎰</button>
@@ -241,21 +197,14 @@
         "https://preview.redd.it/why-is-the-subreddit-filled-with-wells-now-v0-mln431fz94le1.jpeg?width=751&format=pjpg&auto=webp&s=508a10e867dccb965d044b06378c366d2f7bf77d",
     ];
     const img = document.getElementById('display-img');
-    const span = document.getElementById('index-display');
-    let current = 0;
     function update(i) {
         if (i < 0) i = 0;
         if (i >= urls.length) i = urls.length - 1;
         img.src = urls[i];
-        span.innerText = i + 1;
-        current = i;
     }
     document.getElementById('random').addEventListener('click', function() {
         const r = Math.floor(Math.random() * urls.length);
         update(r);
-    });
-    document.getElementById('reset').addEventListener('click', function() {
-        update(0);
     });
     update(0);
 })();
