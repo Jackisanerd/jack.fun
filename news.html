@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Jack Weekly</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Times New Roman', serif;
+      background: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 40px 20px;
+      transition: background 0.3s ease;
+    }
+
+    .newspaper-container {
+      position: relative;
+      max-width: 1100px;
+      width: 100%;
+    }
+
+    .navigation {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      font-family: 'Courier New', monospace;
+    }
+
+    .nav-btn {
+      background: #8b4513;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 30px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: transform 0.2s, background 0.2s;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-btn:hover {
+      background: #5a2e0c;
+      transform: scale(1.05);
+    }
+
+    .nav-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .issue-indicator {
+      font-size: 1.3rem;
+      font-weight: bold;
+      background: white;
+      padding: 8px 25px;
+      border-radius: 40px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      border: 1px solid #8b4513;
+    }
+
+    .newspaper {
+      max-width: 1000px;
+      width: 100%;
+      background: #fffdf7;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      padding: 40px 50px;
+      position: relative;
+      margin: 0 auto;
+      transition: opacity 0.3s ease;
+    }
+
+    .newspaper.fade-out {
+      opacity: 0;
+    }
+
+    .newspaper.fade-in {
+      opacity: 1;
+    }
+
+    /* Decorative lines */
+    .newspaper:before {
+      content: "";
+      position: absolute;
+      top: 20px;
+      left: 30px;
+      right: 30px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #8b4513, #8b4513, #8b4513, transparent);
+    }
+
+    .newspaper:after {
+      content: "";
+      position: absolute;
+      bottom: 20px;
+      left: 30px;
+      right: 30px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #8b4513, #8b4513, #8b4513, transparent);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      border-bottom: 3px double #8b4513;
+      padding-bottom: 15px;
+    }
+
+    .header h1 {
+      font-size: 4.5rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      font-family: 'Times New Roman', serif;
+      text-transform: uppercase;
+      color: #1a1a1a;
+      text-shadow: 2px 2px 3px rgba(0,0,0,0.1);
+      margin-bottom: 5px;
+    }
+
+    .header .edition {
+      font-size: 1rem;
+      text-transform: uppercase;
+      color: #555;
+      border-top: 1px solid #ccc;
+      border-bottom: 1px solid #ccc;
+      padding: 6px 0;
+      display: inline-block;
+      font-family: 'Courier New', monospace;
+    }
+
+    .date-line {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      color: #444;
+      border-bottom: 1px solid #333;
+      padding-bottom: 6px;
+      margin-bottom: 25px;
+      font-family: 'Courier New', monospace;
+      font-weight: 600;
+    }
+
+    .main-story {
+      margin-bottom: 30px;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 25px;
+    }
+
+    .main-story h2 {
+      font-size: 2.4rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      line-height: 1.2;
+      color: #000;
+    }
+
+    .main-story .subhead {
+      font-size: 1.3rem;
+      font-style: italic;
+      color: #444;
+      margin-bottom: 15px;
+      font-weight: normal;
+    }
+
+    .main-story p {
+      font-size: 1.2rem;
+      line-height: 1.6;
+      color: #222;
+      columns: 2 300px;
+      column-gap: 40px;
+      text-align: justify;
+    }
+
+    .secondary-story {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+
+    .story-card {
+      border-top: 2px solid #8b4513;
+      padding-top: 15px;
+    }
+
+    .story-card h3 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+
+    .story-card .subhead {
+      font-size: 1.1rem;
+      font-style: italic;
+      color: #555;
+      margin-bottom: 12px;
+      border-bottom: 1px dotted #aaa;
+      padding-bottom: 8px;
+    }
+
+    .story-card p {
+      font-size: 1.1rem;
+      line-height: 1.5;
+      color: #222;
+      text-align: justify;
+      margin-bottom: 15px;
+    }
+
+    .story-image {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      border: 1px solid #8b4513;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .image-caption {
+      font-size: 0.8rem;
+      color: #666;
+      font-style: italic;
+      margin-top: -8px;
+      margin-bottom: 12px;
+      text-align: right;
+      font-family: 'Courier New', monospace;
+    }
+
+    .footer-note {
+      margin-top: 25px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #666;
+      font-family: 'Courier New', monospace;
+      border-top: 1px solid #ccc;
+      padding-top: 15px;
+    }
+
+    @media (max-width: 700px) {
+      .newspaper {
+        padding: 25px 20px;
+      }
+      
+      .header h1 {
+        font-size: 3rem;
+      }
+      
+      .main-story p {
+        columns: 1;
+      }
+      
+      .secondary-story {
+        grid-template-columns: 1fr;
+        gap: 25px;
+      }
+      
+      .navigation {
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      .issue-indicator {
+        order: -1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="newspaper-container">
+    <div class="navigation">
+      <button class="nav-btn" id="prevBtn" onclick="changeIssue(-1)">◀ PREVIOUS ISSUE</button>
+      <span class="issue-indicator" id="issueIndicator">VOL. 1 · ISSUE 7</span>
+      <button class="nav-btn" id="nextBtn" onclick="changeIssue(1)">NEXT ISSUE ▶</button>
+    </div>
+
+    <div class="newspaper" id="newspaper">
+      <div class="header">
+        <h1>THE JACK WEEKLY</h1>
+        <div class="edition">EST. 2025 · THE VOICE OF THE COMMUNITY</div>
+      </div>
+
+      <div class="date-line" id="dateLine">
+        <span>VOL. 1 · NO. 7</span>
+        <span>FEBRUARY 17, 2025</span>
+        <span>$2.50</span>
+      </div>
+
+      <div class="main-story" id="mainStory">
+        <h2>So many Reddit Revivers</h2>
+        <div class="subhead">Is this a problem?</div>
+        <p>As of recent, many users on r/JackSucksAtLife have pointed out the increasing amount of Reddit Revivers and Reddit Destroyers on the subreddit. While there are many people who support the Reddit Reviver, some are annoyed with how many there are. The debate continues to grow as more users join the subreddit daily, with some calling for moderation changes while others embrace the revival culture that has become synonymous with Jack's community.</p>
+      </div>
+
+      <div class="secondary-story" id="secondaryStory">
+        <div class="story-card">
+          <img class="story-image" id="img1" src="https://preview.redd.it/r-jacksucksatlife-subreddit-v0-4bh4fjvz5khe1.png?width=640&crop=smart&auto=webp&s=9b7f4b8c7e3b8a1d9c5a5f6b7c8d9e0f1a2b3c4d" alt="Reddit Revival" onerror="this.src='https://via.placeholder.com/400x180/8b4513/ffffff?text=Reddit+Revival'">
+          <div class="image-caption">The revival movement gains momentum</div>
+          <h3>r/JackSucksAtGeogra</h3>
+          <div class="subhead">phy mass revival?</div>
+          <p>JSAL sister sub to possibly return. For the first time in a year, Jack made a Reddit video on JackSucksAtGeography on the JSAG subreddit. He said he would end the video once he found a post about himself, but, in the entire 13 minute video, there was not a single post about himself. This was the exact reason why Jack abandoned the sub in the first place. But, the subreddit is close to 100k members, (Similarly, JSAL is close 200k members) and Jack said he might make a video for 100k members.</p>
+          <p style="margin-top: 12px; font-style: italic;">After this video, a user on JSAL posted about a JSAG mass revival. While the post has only has 34 upvotes and 3 comments, it still can succeed.</p>
+        </div>
+
+        <div class="story-card">
+          <img class="story-image" id="img2" src="https://styles.redditmedia.com/t5_2uohb/styles/communityIcon_9f6q88y5alr51.jpg" alt="Community Reacts" onerror="this.src='https://via.placeholder.com/400x180/8b4513/ffffff?text=Community+Reacts'">
+          <div class="image-caption">Community members share their thoughts</div>
+          <h3>Community Reacts</h3>
+          <div class="subhead">Mixed feelings on revival trend</div>
+          <p>The phenomenon of Reddit Revivers has taken the subreddit by storm. Some users spend hours reviving old posts, while others create "destroyer" accounts to counter them. This has created an underground economy of Reddit engagement that Jack himself has acknowledged in multiple videos. "It's fascinating to watch," one moderator noted. "The community has created its own meta-game within the subreddit."</p>
+          <p>Recent polls show that 47% of users enjoy the revival culture, while 32% find it annoying, and 21% are neutral. The debate continues to heat up as more users join the community.</p>
+        </div>
+      </div>
+
+      <div class="footer-note" id="footer">
+        <span>ALL RIGHTS RESERVED · JACK WEEKLY PUBLICATIONS · EST. 2025</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentIssue = 7;
+    const maxIssues = 10;
+    const minIssues = 1;
+
+    // Issue data for different weeks
+    const issues = {
+      6: {
+        date: "FEBRUARY 10, 2025",
+        mainTitle: "Jack Hits 200k?",
+        mainSubhead: "Subreddit milestone approaching",
+        mainText: "The r/JackSucksAtLife subreddit is rapidly approaching 200,000 members, a milestone that would make it one of the largest YouTuber communities on the platform. Jack has acknowledged this in recent streams, hinting at a potential special video to celebrate the occasion. Meanwhile, the JSAG subreddit sits at just under 100k, creating an interesting dynamic where both subs could hit major milestones within weeks of each other.",
+        story1Title: "r/JackSucksAtGeogra",
+        story1Subhead: "phy hits 99k",
+        story1Text: "The geography subreddit is just 1,000 members away from the coveted 100k mark. Users are rallying to push it over the edge, hoping to trigger a celebration video from Jack. 'We've been waiting for this for months,' said one moderator. 'The revival efforts have really paid off.'",
+        story1Extra: "The push has seen a 300% increase in daily posts as users scramble to create content.",
+        story2Title: "Destroyer Drama",
+        story2Subhead: "New accounts cause chaos",
+        story2Text: "A new wave of 'Reddit Destroyer' accounts has emerged, systematically downvoting revival posts across both subreddits. This has sparked a meta-war between revivers and destroyers, with some users creating bots to automate the process. Jack has yet to comment on the situation.",
+        story2Extra: "Some users are calling for rule changes to prevent bot activity.",
+        img1: "https://preview.redd.it/r-jacksucksatlife-subreddit-v0-4bh4fjvz5khe1.png?width=640&crop=smart&auto=webp&s=9b7f4b8c7e3b8a1d9c5a5f6b7c8d9e0f1a2b3c4d",
+        img2: "https://styles.redditmedia.com/t5_2uohb/styles/communityIcon_9f6q88y5alr51.jpg",
+        img1Caption: "Subreddit growth chart shows steady increase",
+        img2Caption: "The destroyer accounts have become increasingly sophisticated"
+      },
+      7: {
+        date: "FEBRUARY 17, 2025",
+        mainTitle: "So many Reddit Revivers",
+        mainSubhead: "Is this a problem?",
+        mainText: "As of recent, many users on r/JackSucksAtLife have pointed out the increasing amount of Reddit Revivers and Reddit Destroyers on the subreddit. While there are many people who support the Reddit Reviver, some are annoyed with how many there are. The debate continues to grow as more users join the subreddit daily, with some calling for moderation changes while others embrace the revival culture that has become synonymous with Jack's community.",
+        story1Title: "r/JackSucksAtGeogra",
+        story1Subhead: "phy mass revival?",
+        story1Text: "JSAL sister sub to possibly return. For the first time in a year, Jack made a Reddit video on JackSucksAtGeography on the JSAG subreddit. He said he would end the video once he found a post about himself, but, in the entire 13 minute video, there was not a single post about himself. This was the exact reason why Jack abandoned the sub in the first place. But, the subreddit is close to 100k members, (Similarly, JSAL is close 200k members) and Jack said he might make a video for 100k members.",
+        story1Extra: "After this video, a user on JSAL posted about a JSAG mass revival. While the post has only has 34 upvotes and 3 comments, it still can succeed.",
+        story2Title: "Community Reacts",
+        story2Subhead: "Mixed feelings on revival trend",
+        story2Text: "The phenomenon of Reddit Revivers has taken the subreddit by storm. Some users spend hours reviving old posts, while others create 'destroyer' accounts to counter them. This has created an underground economy of Reddit engagement that Jack himself has acknowledged in multiple videos. 'It's fascinating to watch,' one moderator noted. 'The community has created its own meta-game within the subreddit.'",
+        story2Extra: "Recent polls show that 47% of users enjoy the revival culture, while 32% find it annoying, and 21% are neutral.",
+        img1: "https://preview.redd.it/r-jacksucksatlife-subreddit-v0-4bh4fjvz5khe1.png?width=640&crop=smart&auto=webp&s=9b7f4b8c7e3b8a1d9c5a5f6b7c8d9e0f1a2b3c4d",
+        img2: "https://styles.redditmedia.com/t5_2uohb/styles/communityIcon_9f6q88y5alr51.jpg",
+        img1Caption: "The revival movement gains momentum",
+        img2Caption: "Community members share their thoughts"
+      },
+      8: {
+        date: "FEBRUARY 24, 2025",
+        mainTitle: "Jack Returns?",
+        mainSubhead: "Main channel upload imminent",
+        mainText: "After more than 3 months of silence on JackSucksAtLife, speculation is mounting that Jack may finally return to his main channel. Sources close to the creator suggest that multiple videos have been filmed and are in the editing stage. The drought has been the longest in the channel's history, with fans growing increasingly desperate for content. Meanwhile, Jack has been active on other channels, leading some to question his priorities.",
+        story1Title: "JSAG at 100k!",
+        story1Subhead: "Milestone reached at last",
+        story1Text: "The JackSucksAtGeography subreddit has finally hit 100,000 members, triggering celebrations across the community. Users are now eagerly awaiting Jack's promised milestone video. 'We did it!' posted one excited user. 'Now we just need Jack to follow through.' The subreddit has seen a massive influx of new posts as users compete to create content worthy of being featured.",
+        story1Extra: "A countdown timer has been added to the subreddit sidebar.",
+        story2Title: "New Channel Rumors",
+        story2Subhead: "JackSucksAtEverything?",
+        story2Text: "Rumors are circulating that Jack may be planning to launch yet another channel. Domain registrations for JackSucksAtEverything.com have been traced back to Jack's network, though no official announcement has been made. If true, this would bring Jack's total channel count to 7 active channels, further fragmenting his already stretched content schedule.",
+        story2Extra: "Fans are divided on whether another channel is needed.",
+        img1: "https://i.ytimg.com/vi/kVV95DkUERc/hqdefault.jpg",
+        img2: "https://yt3.googleusercontent.com/ytc/AIdro_mdR4c6Uj2t1593drUj9tlpPLxeM3OdUmO04hHT6n4=s900-c-k-c0x00ffffff-no-rj",
+        img1Caption: "The JSAG subreddit celebrates its 100k milestone",
+        img2Caption: "Speculation grows about potential new channels"
+      },
+      9: {
+        date: "MARCH 3, 2025",
+        mainTitle: "Revivers vs Destroyers",
+        mainSubhead: "The war escalates",
+        mainText: "What started as a friendly competition has turned into all-out war on the subreddits. Reddit Revivers and Destroyers are now organizing coordinated campaigns, with some users claiming to have automated bots that can revive or destroy hundreds of posts per day. Moderators are struggling to keep up, and there are calls for Jack to intervene directly. 'This is getting out of hand,' said one long-time user. 'It's not fun anymore, it's just chaos.'",
+        story1Title: "Bot Crackdown",
+        story1Subhead: "Automation detected",
+        story1Text: "Reddit's anti-bot systems have flagged several accounts suspected of automated activity across both subreddits. At least 15 accounts have been suspended in the past week, with more investigations ongoing. The crackdown has temporarily slowed the revival/destroyer wars, but users are already finding new ways to continue their activities.",
+        story1Extra: "Some users are now manually coordinating through Discord servers.",
+        story2Title: "Mods Speak Out",
+        story2Subhead: "Official statement released",
+        story2Text: "The moderation team has released an official statement addressing the ongoing conflict. 'We are aware of the situation and are monitoring it closely,' the statement reads. 'While we appreciate the passion of our community, we ask that users keep activities within Reddit's terms of service. Excessive botting will result in bans.' The statement has received mixed reactions from the community.",
+        story2Extra: "Some users feel the mods aren't doing enough.",
+        img1: "https://preview.redd.it/i-made-a-pretty-woman-kitchen-spoon-what-should-i-do-with-v0-rlqegtueclyc1.jpeg?auto=webp&s=fecf64ceeb56284a4d1a63b56f51ddaa34c78dae",
+        img2: "https://preview.redd.it/jack-is-sad-make-him-happy-v0-h5jqr2y4axtf1.png?width=640&crop=smart&auto=webp&s=185347088d33927c32d3f715a44e426f4ee2e191",
+        img1Caption: "The war has created some creative content",
+        img2Caption: "Moderators face increasing pressure"
+      },
+      10: {
+        date: "MARCH 10, 2025",
+        mainTitle: "Jack FINALLY Uploads",
+        mainSubhead: "3 month drought ends",
+        mainText: "In a surprise move, Jack has finally uploaded to JackSucksAtLife after more than 3 months of silence. The video, titled 'I'm Back...', has already garnered over 500,000 views in just 24 hours. In the video, Jack addresses the long hiatus, citing burnout and creative struggles. He promises a more consistent upload schedule going forward, though stops short of committing to a specific frequency. The community has reacted with overwhelming positivity.",
+        story1Title: "JSAL at 200k!",
+        story1Subhead: "Double milestone",
+        story1Text: "Coinciding with Jack's return, the JackSucksAtLife subreddit has hit 200,000 members. The timing couldn't be more perfect, with many users celebrating the dual milestones. Jack has acknowledged the achievement on Twitter, hinting at a special subreddit video to mark the occasion. 'This community is incredible,' he tweeted. '200k members and still growing!'",
+        story1Extra: "Plans for a 200k celebration video are already underway.",
+        story2Title: "What's Next?",
+        story2Subhead: "Future plans revealed",
+        story2Text: "In the video description, Jack hints at several upcoming projects, including potential collaborations and a possible return to some of his older series. He also mentions that the geography channel will be getting more attention now that both main subs have hit major milestones. '2025 is going to be a big year,' he writes. 'Thanks for sticking with me.'",
+        story2Extra: "Fans are already speculating about what's to come.",
+        img1: "https://i.ytimg.com/vi/jiP85eHz-qk/sddefault.jpg",
+        img2: "https://i.ytimg.com/vi/vivdSxWub9Y/oar2.jpg",
+        img1Caption: "Jack's return video has broken view records",
+        img2Caption: "The community celebrates dual milestones"
+      }
+    };
+
+    function changeIssue(direction) {
+      const newIssue = currentIssue + direction;
+      
+      if (newIssue < minIssues || newIssue > maxIssues) {
+        return;
+      }
+
+      // Fade out
+      const newspaper = document.getElementById('newspaper');
+      newspaper.classList.add('fade-out');
+      
+      setTimeout(() => {
+        currentIssue = newIssue;
+        updateContent();
+        
+        // Update button states
+        document.getElementById('prevBtn').disabled = currentIssue <= minIssues;
+        document.getElementById('nextBtn').disabled = currentIssue >= maxIssues;
+        
+        // Fade in
+        newspaper.classList.remove('fade-out');
+        newspaper.classList.add('fade-in');
+        
+        setTimeout(() => {
+          newspaper.classList.remove('fade-in');
+        }, 300);
+      }, 300);
+    }
+
+    function updateContent() {
+      const issue = issues[currentIssue];
+      
+      // Update date line
+      document.getElementById('dateLine').innerHTML = `
+        <span>VOL. 1 · NO. ${currentIssue}</span>
+        <span>${issue.date}</span>
+        <span>$2.50</span>
+      `;
+      
+      document.getElementById('issueIndicator').textContent = `VOL. 1 · ISSUE ${currentIssue}`;
+      
+      // Update main story
+      document.getElementById('mainStory').innerHTML = `
+        <h2>${issue.mainTitle}</h2>
+        <div class="subhead">${issue.mainSubhead}</div>
+        <p>${issue.mainText}</p>
+      `;
+      
+      // Update secondary stories with images
+      document.getElementById('secondaryStory').innerHTML = `
+        <div class="story-card">
+          <img class="story-image" src="${issue.img1}" alt="Story Image" onerror="this.src='https://via.placeholder.com/400x180/8b4513/ffffff?text=Image+Unavailable'">
+          <div class="image-caption">${issue.img1Caption}</div>
+          <h3>${issue.story1Title}</h3>
+          <div class="subhead">${issue.story1Subhead}</div>
+          <p>${issue.story1Text}</p>
+          <p style="margin-top: 12px; font-style: italic;">${issue.story1Extra}</p>
+        </div>
+        <div class="story-card">
+          <img class="story-image" src="${issue.img2}" alt="Story Image" onerror="this.src='https://via.placeholder.com/400x180/8b4513/ffffff?text=Image+Unavailable'">
+          <div class="image-caption">${issue.img2Caption}</div>
+          <h3>${issue.story2Title}</h3>
+          <div class="subhead">${issue.story2Subhead}</div>
+          <p>${issue.story2Text}</p>
+          <p style="margin-top: 12px; font-style: italic;">${issue.story2Extra}</p>
+        </div>
+      `;
+    }
+
+    // Initialize button states
+    document.getElementById('prevBtn').disabled = currentIssue <= minIssues;
+    document.getElementById('nextBtn').disabled = currentIssue >= maxIssues;
+  </script>
+</body>
+</html>
