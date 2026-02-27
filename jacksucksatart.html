@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JackSucksAtArt</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: #f5f3ef;
+      font-family: Georgia, 'Times New Roman', serif;
+      color: #1e1b18;
+      padding: 2.5rem 1.5rem;
+      display: flex;
+      justify-content: center;
+    }
+    .container {
+      max-width: 1300px;
+      width: 100%;
+    }
+    h1 {
+      font-size: 4rem;
+      font-weight: 350;
+      letter-spacing: -1px;
+      border-bottom: 2px solid #bcb2a4;
+      padding-bottom: 0.4rem;
+      margin-bottom: 0.5rem;
+      display: inline-block;
+    }
+    .sub {
+      font-size: 1.25rem;
+      color: #4d4944;
+      margin-bottom: 3.5rem;
+      font-style: italic;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 2.8rem 2rem;
+    }
+    .card {
+      background: transparent;
+    }
+    .frame {
+      width: 100%;
+      background: #e8e1d6;
+      border: 1px solid #cbc1b3;
+      padding: 0.6rem;
+    }
+    .artwork {
+      width: 100%;
+      display: block;
+      aspect-ratio: 4 / 3;
+      background-size: cover;
+      background-position: center;
+      background-color: #d9cfc0;
+    }
+    .info {
+      margin-top: 0.8rem;
+      text-align: center;
+    }
+    .info .title {
+      font-weight: 600;
+      font-size: 1.2rem;
+      margin-bottom: 0.2rem;
+    }
+    .info .desc {
+      color: #3b3732;
+      margin-bottom: 0.15rem;
+    }
+    .footer {
+      margin-top: 5rem;
+      border-top: 1px solid #d0c7bc;
+      padding-top: 2rem;
+      text-align: center;
+      color: #625b52;
+    }
+    .text-center {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="text-center">
+    <h1>JackSucksAtArt</h1>
+    <div class="sub">All of Jack's wonderful art he's made</div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="frame">
+        <div class="artwork" style="background-image: url('trees.png');"></div>
+      </div>
+      <div class="info">
+        <div class="title">Team Tress</div>
+        <div class="desc">A tree blooming with leaves in a bright green field, which seems to be are now days</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="frame">
+        <div class="artwork" style="background-image: url('cornel.WEBP');"></div>
+      </div>
+      <div class="info">
+        <div class="title">Cornelius</div>
+        <div class="desc">A lego figure called "Cornelius" at a movie theatre selling concessions.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="frame">
+        <div class="artwork" style="background-image: url('seas.png');"></div>
+      </div>
+      <div class="info">
+        <div class="title">Team Seas</div>
+        <div class="desc">A turtle (probably) reuniting with his child</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>Please make more Jack these are eye candy</span>
+  </div>
+</div>
+</body>
+</html>
