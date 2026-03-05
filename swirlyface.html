@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" href="https://preview.redd.it/can-we-get-a-swirly-face-please-its-been-a-while-since-the-v0-0m4krcb82pte1.jpeg?width=640&crop=smart&auto=webp&s=d04cd78b6d93e708b9afe8a1a55696fa3d3db4a2" type="image/png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sWIrLy FaCe OoOoOhhhHhH</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Calibri', 'Arial', sans-serif;
+            background: #0b0b0b;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            position: relative;
+        }
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #1a1a1a;
+            pointer-events: none;
+        }
+        #controls {
+            position: absolute;
+            top: 24px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 0 20px;
+            z-index: 10;
+            flex-wrap: wrap;
+            pointer-events: none;
+        }
+        .btn, .slider-container, .status-badge {
+            pointer-events: auto;
+            background: rgba(20, 20, 20, 0.75);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 60px;
+            padding: 12px 28px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: white;
+        }
+        .btn {
+            cursor: pointer;
+            background: rgba(30, 30, 30, 0.8);
+            padding: 12px 32px;
+            border: 1px solid rgba(255, 215, 100, 0.5);
+            letter-spacing: 0.3px;
+            transition: all 0.15s;
+        }
+        .btn:hover {
+            background: rgba(60, 60, 60, 0.9);
+            border-color: #ffd966;
+            transform: translateY(-1px);
+        }
+        .btn:active {
+            transform: translateY(1px);
+        }
+        .slider-container {
+            background: rgba(20, 20, 20, 0.7);
+            backdrop-filter: blur(8px);
+            padding: 8px 28px;
+        }
+        .slider-container label {
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: #ffe5a3;
+            min-width: 70px;
+            text-align: right;
+        }
+        .status-badge {
+            background: rgba(40, 40, 50, 0.9);
+            border-color: #7a8bff;
+            color: #c6d0ff;
+            font-size: 1rem;
+            padding: 8px 24px;
+        }
+        input[type=range] {
+            width: 320px;
+            height: 6px;
+            -webkit-appearance: none;
+            background: linear-gradient(90deg, #cfa668, #a8643c);
+            border-radius: 20px;
+            outline: none;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #ffb347;
+            border: 2px solid #ffb347;
+            cursor: grab;
+        }
+        input[type=range]::-moz-range-thumb {
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            border: 2px solid #ffb347;
+            cursor: grab;
+        }
+        #swirl-value {
+            min-width: 45px;
+            text-align: right;
+            color: #ffe39f;
+            font-weight: 600;
+        }
+        #file-input {
+            display: none;
+        }
+        #save-btn {
+            background: rgba(70, 90, 120, 0.85);
+            border-color: #7aa3ff;
+        }
+        #save-btn:hover {
+            background: rgba(90, 120, 160, 0.9);
+            border-color: #9bb9ff;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="display-canvas"></canvas>
+    
+    <div id="controls">
+        <div class="btn" id="upload-btn">📁 upload</div>
+        <input type="file" id="file-input" accept="image/*">
+        <div class="slider-container">
+            <label>🌀 swirl</label>
+            <input type="range" id="swirl-slider" min="-4" max="4" step="0.01" value="2.2">
+            <span id="swirl-value">2.20</span>
+        </div>
+        <div class="status-badge" id="face-status">🔍 detecting...</div>
+        <div class="btn" id="save-btn">💾 save</div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.12/dist/face-api.min.js"></script>
+
+    <script>
+        (function(){
+            const canvas = document.getElementById('display-canvas');
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+            const fileInput = document.getElementById('file-input');
+            const uploadBtn = document.getElementById('upload-btn');
+            const saveBtn = document.getElementById('save-btn');
+            const slider = document.getElementById('swirl-slider');
+            const swirlSpan = document.getElementById('swirl-value');
+            const faceStatus = document.getElementById('face-status');
+            
+            let originalImage = null;
+            let swirlAmount = 2.2;
+            let detectedFaces = [];
+            let modelLoaded = false;
+
+            const placeholderImage = new Image();
+            placeholderImage.crossOrigin = 'anonymous';
+            placeholderImage.src = 'swirl.png';
+
+            async function loadModels() {
+                try {
+                    faceStatus.innerText = '⏳ loading model...';
+                    await faceapi.nets.tinyFaceDetector.loadFromUri('https://raw.githubusercontent.com/vladmandic/face-api/master/model/');
+                    faceStatus.innerText = '✅ model ready';
+                    modelLoaded = true;
+                    if (originalImage) detectFacesAndRender();
+                } catch (e) {
+                    faceStatus.innerText = '⚠️ model failed';
+                }
+            }
+            loadModels();
+
+            function getDrawRect(canvasW, canvasH, imgW, imgH) {
+                const scale = Math.min(canvasW / imgW, canvasH / imgH);
+                const drawW = imgW * scale;
+                const drawH = imgH * scale;
+                const x = (canvasW - drawW) / 2;
+                const y = (canvasH - drawH) / 2;
+                return { x, y, drawW, drawH, scale };
+            }
+
+            async function detectFacesAndRender() {
+                if (!originalImage || !modelLoaded) {
+                    renderSwirl();
+                    return;
+                }
+
+                const img = originalImage;
+                const tempCanvas = document.createElement('canvas');
+                tempCanvas.width = img.width;
+                tempCanvas.height = img.height;
+                const tempCtx = tempCanvas.getContext('2d');
+                tempCtx.drawImage(img, 0, 0, img.width, img.height);
+
+                try {
+                    const detections = await faceapi.detectAllFaces(tempCanvas, new faceapi.TinyFaceDetectorOptions());
+                    detectedFaces = detections.map(d => {
+                        const box = d.box;
+                        return {
+                            centerX: box.x + box.width / 2,
+                            centerY: box.y + box.height * 0.45,
+                            width: box.width,
+                            height: box.height
+                        };
+                    });
+                    
+                    if (detectedFaces.length === 0) {
+                        faceStatus.innerText = 'no faces';
+                    } else {
+                        faceStatus.innerText = `${detectedFaces.length} face(s)`;
+                    }
+                } catch (e) {
+                    detectedFaces = [];
+                    faceStatus.innerText = 'detection error';
+                }
+                renderSwirl();
+            }
+
+            function applyFullImageSwirl(imageData, amount) {
+                const data = imageData.data;
+                const w = imageData.width;
+                const h = imageData.height;
+                const originalData = new Uint8ClampedArray(data);
+                
+                const centerX = w / 2;
+                const centerY = h / 2;
+                const maxRadius = Math.sqrt(centerX*centerX + centerY*centerY);
+                
+                for (let y = 0; y < h; y++) {
+                    for (let x = 0; x < w; x++) {
+                        const dx = x - centerX;
+                        const dy = y - centerY;
+                        const distance = Math.sqrt(dx*dx + dy*dy);
+                        
+                        if (distance < 0.5) continue;
+                        
+                        const falloff = 1.0 - Math.min(distance / maxRadius, 0.95);
+                        const swirlStrength = amount * falloff * 2.5;
+                        
+                        const angle = Math.atan2(dy, dx);
+                        const newAngle = angle + swirlStrength;
+                        
+                        const srcX = centerX + distance * Math.cos(newAngle);
+                        const srcY = centerY + distance * Math.sin(newAngle);
+                        
+                        const x1 = Math.floor(srcX);
+                        const y1 = Math.floor(srcY);
+                        const x2 = Math.min(w-1, x1 + 1);
+                        const y2 = Math.min(h-1, y1 + 1);
+                        
+                        const fx = srcX - x1;
+                        const fy = srcY - y1;
+                        
+                        if (x1 < 0 || x1 >= w || y1 < 0 || y1 >= h) continue;
+                        
+                        const idx00 = (y1 * w + x1) * 4;
+                        const idx10 = (y1 * w + x2) * 4;
+                        const idx01 = (y2 * w + x1) * 4;
+                        const idx11 = (y2 * w + x2) * 4;
+                        
+                        const targetIdx = (y * w + x) * 4;
+                        
+                        for (let c = 0; c < 3; c++) {
+                            const v00 = originalData[idx00 + c];
+                            const v10 = originalData[idx10 + c];
+                            const v01 = originalData[idx01 + c];
+                            const v11 = originalData[idx11 + c];
+                            
+                            const v0 = v00 * (1 - fx) + v10 * fx;
+                            const v1 = v01 * (1 - fx) + v11 * fx;
+                            const v = v0 * (1 - fy) + v1 * fy;
+                            
+                            data[targetIdx + c] = Math.round(v);
+                        }
+                    }
+                }
+            }
+
+            function applyFaceSwirl(imageData, amount, faces, scale) {
+                const data = imageData.data;
+                const w = imageData.width;
+                const h = imageData.height;
+                const originalData = new Uint8ClampedArray(data);
+
+                for (const face of faces) {
+                    const faceXcanvas = (face.centerX * scale);
+                    const faceYcanvas = (face.centerY * scale);
+                    const faceRadius = (Math.max(face.width, face.height) * 0.8) * scale;
+                    
+                    const minX = Math.max(0, Math.floor(faceXcanvas - faceRadius));
+                    const maxX = Math.min(w, Math.ceil(faceXcanvas + faceRadius));
+                    const minY = Math.max(0, Math.floor(faceYcanvas - faceRadius));
+                    const maxY = Math.min(h, Math.ceil(faceYcanvas + faceRadius));
+                    
+                    for (let y = minY; y < maxY; y++) {
+                        for (let x = minX; x < maxX; x++) {
+                            const dx = x - faceXcanvas;
+                            const dy = y - faceYcanvas;
+                            const distance = Math.sqrt(dx*dx + dy*dy);
+                            
+                            if (distance < 0.5 || distance > faceRadius) continue;
+                            
+                            const strength = 1.0 - (distance / faceRadius);
+                            const swirlStrength = amount * strength * 2.0;
+                            
+                            const angle = Math.atan2(dy, dx);
+                            const newAngle = angle + swirlStrength;
+                            
+                            const srcX = faceXcanvas + distance * Math.cos(newAngle);
+                            const srcY = faceYcanvas + distance * Math.sin(newAngle);
+                            
+                            const x1 = Math.floor(srcX);
+                            const y1 = Math.floor(srcY);
+                            const x2 = Math.min(w-1, x1 + 1);
+                            const y2 = Math.min(h-1, y1 + 1);
+                            
+                            const fx = srcX - x1;
+                            const fy = srcY - y1;
+                            
+                            if (x1 < 0 || x1 >= w || y1 < 0 || y1 >= h) continue;
+                            
+                            const idx00 = (y1 * w + x1) * 4;
+                            const idx10 = (y1 * w + x2) * 4;
+                            const idx01 = (y2 * w + x1) * 4;
+                            const idx11 = (y2 * w + x2) * 4;
+                            
+                            const targetIdx = (y * w + x) * 4;
+                            
+                            for (let c = 0; c < 3; c++) {
+                                const v00 = originalData[idx00 + c];
+                                const v10 = originalData[idx10 + c];
+                                const v01 = originalData[idx01 + c];
+                                const v11 = originalData[idx11 + c];
+                                
+                                const v0 = v00 * (1 - fx) + v10 * fx;
+                                const v1 = v01 * (1 - fx) + v11 * fx;
+                                const v = v0 * (1 - fy) + v1 * fy;
+                                
+                                data[targetIdx + c] = Math.round(v);
+                            }
+                        }
+                    }
+                }
+            }
+
+            function renderSwirl() {
+                if (!originalImage) return;
+
+                const img = originalImage;
+                const canvasW = canvas.clientWidth;
+                const canvasH = canvas.clientHeight;
+
+                if (canvas.width !== canvasW || canvas.height !== canvasH) {
+                    canvas.width = canvasW;
+                    canvas.height = canvasH;
+                }
+
+                ctx.clearRect(0, 0, canvasW, canvasH);
+                ctx.fillStyle = '#1a1a1a';
+                ctx.fillRect(0, 0, canvasW, canvasH);
+
+                const { x, y, drawW, drawH, scale } = getDrawRect(canvasW, canvasH, img.width, img.height);
+
+                ctx.drawImage(img, x, y, drawW, drawH);
+                
+                if (Math.abs(swirlAmount) < 0.1) return;
+
+                let imageData;
+                try {
+                    imageData = ctx.getImageData(x, y, drawW, drawH);
+                } catch (e) {
+                    return;
+                }
+
+                if (!detectedFaces || detectedFaces.length === 0) {
+                    applyFullImageSwirl(imageData, swirlAmount);
+                } else {
+                    applyFaceSwirl(imageData, swirlAmount, detectedFaces, scale);
+                }
+
+                ctx.putImageData(imageData, x, y);
+            }
+
+            function setImageFromSrc(src) {
+                const img = new Image();
+                img.onload = () => {
+                    originalImage = img;
+                    if (modelLoaded) {
+                        detectFacesAndRender();
+                    } else {
+                        renderSwirl();
+                    }
+                };
+                img.onerror = () => {
+                    originalImage = null;
+                    ctx.fillStyle = '#2a2a2a';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = '#aaa';
+                    ctx.font = '24px Calibri, Arial, sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('⚠️ could not load swirl.png', canvas.width/2, canvas.height/2);
+                };
+                img.src = src;
+            }
+
+            uploadBtn.addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        originalImage = img;
+                        if (modelLoaded) {
+                            detectFacesAndRender();
+                        } else {
+                            renderSwirl();
+                        }
+                    };
+                    img.src = ev.target.result;
+                };
+                reader.readAsDataURL(file);
+                fileInput.value = '';
+            });
+
+            saveBtn.addEventListener('click', () => {
+                if (!originalImage) return;
+                
+                const link = document.createElement('a');
+                link.download = 'swirled-image.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+
+            slider.addEventListener('input', (e) => {
+                swirlAmount = parseFloat(e.target.value);
+                swirlSpan.innerText = swirlAmount.toFixed(2);
+                renderSwirl();
+            });
+
+            window.addEventListener('resize', () => {
+                renderSwirl();
+            });
+
+            placeholderImage.onload = () => {
+                originalImage = placeholderImage;
+                if (modelLoaded) {
+                    detectFacesAndRender();
+                } else {
+                    renderSwirl();
+                }
+            };
+            placeholderImage.onerror = () => {
+                originalImage = null;
+                canvas.width = canvas.clientWidth || 800;
+                canvas.height = canvas.clientHeight || 600;
+                ctx.fillStyle = '#1f1f1f';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#bcbcbc';
+                ctx.font = '26px Calibri, Arial, sans-serif';
+                ctx.textAlign = 'center';
+            };
+
+            const resizeObserver = new ResizeObserver(() => renderSwirl());
+            resizeObserver.observe(canvas);
+        })();
+    </script>
+</body>
+</html>

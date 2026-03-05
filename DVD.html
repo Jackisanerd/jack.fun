@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="icon" href="jack.png" type="image/png">
+    <title> poor jack </title>
+    <style>
+        body { margin: 0; background: black; overflow: hidden; }
+        canvas { display: block; }
+    </style>
+</head>
+<body text="white">
+
+    <canvas id="game"></canvas>
+    <script>
+        const canvas = document.getElementById('game');
+        const ctx = canvas.getContext('2d');
+        const audio = new Audio('ivenot.mp3');
+        const img = new Image();
+        img.src = 'jack.png';
+
+        let x, y, dx, dy, w, h;
+        let hue = 0;
+
+        function init() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            w = 300; 
+            h = (img.height / img.width) * w || 300;
+            x = Math.random() * (canvas.width - w);
+            y = Math.random() * (canvas.height - h);
+            dx = 5;
+            dy = 5;
+        }
+
+        function update() {
+            let hitWallX = false;
+            let hitWallY = false;
+
+            x += dx;
+            y += dy;
+
+            if (x + w >= canvas.width || x <= 0) {
+                dx *= -1;
+                hitWallX = true;
+                hue = (hue + 60) % 360;
+            }
+            if (y + h >= canvas.height || y <= 0) {
+                dy *= -1;
+                hitWallY = true;
+                hue = (hue + 60) % 360;
+            }
+
+            if (hitWallX && hitWallY) {
+                audio.currentTime = 0;
+                audio.play();
+            }
+
+            draw();
+            requestAnimationFrame(update);
+        }
+
+        function draw() {
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.save();
+            ctx.filter = `hue-rotate(${hue}deg) saturate(1.5) brightness(1.1)`;
+            ctx.drawImage(img, x, y, w, h);
+            ctx.restore();
+        }
+
+        img.onload = () => {
+            init();
+            update();
+        };
+
+        window.addEventListener('resize', init);
+        window.addEventListener('click', () => audio.play().catch(()=>{}));
+    </script>
+<h1><center> click for a surprise </h1></center>
+</body>
+</html>
