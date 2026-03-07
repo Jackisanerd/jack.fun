@@ -1,0 +1,209 @@
+\<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Spend Jack's Money</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Helvetica, sans-serif; background: #f0f0f0; }
+
+    #header { text-align: center; padding: 40px 16px 28px; background: #fff; }
+    #header img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; }
+    #header h1 { font-size: 32px; font-weight: 700; margin-top: 14px; color: #222; }
+
+    #banner {
+      background: #3dba6e;
+      color: #fff;
+      text-align: center;
+      padding: 22px 16px;
+    }
+    #banner.broke { background: #e53e3e; }
+    #banner #remaining { font-size: 42px; font-weight: 800; letter-spacing: -1px; }
+    #banner #spent-label { font-size: 15px; opacity: 0.85; margin-top: 4px; }
+
+    #grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      max-width: 960px;
+      margin: 0 auto;
+      background: #f0f0f0;
+      gap: 2px;
+    }
+
+    .card {
+      background: #fff;
+      padding: 32px 20px 24px;
+      text-align: center;
+    }
+    .card .img-wrap {
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+    .card img { max-height: 200px; max-width: 90%; object-fit: contain; }
+    .card .item-name { font-weight: 700; font-size: 20px; color: #222; margin-bottom: 4px; }
+    .card .item-price { color: #3dba6e; font-weight: 700; font-size: 20px; margin-bottom: 20px; }
+    .card .controls { display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .card .qty-display {
+      width: 64px; text-align: center; font-size: 18px; font-weight: 700; color: #333;
+      border: 1px solid #ddd; border-radius: 4px; padding: 9px 0; background: #fafafa;
+    }
+    .card .total-label { margin-top: 10px; font-size: 13px; color: #999; }
+
+    button.sell-btn {
+      padding: 10px 20px; font-size: 15px; font-weight: 600;
+      border: 1px solid #ddd; border-radius: 4px;
+      background: #fff; color: #555; cursor: pointer;
+    }
+    button.sell-btn:disabled { background: #f5f5f5; color: #ccc; cursor: default; }
+
+    button.buy-btn {
+      padding: 10px 20px; font-size: 15px; font-weight: 700;
+      border: none; border-radius: 4px;
+      background: #3dba6e; color: #fff; cursor: pointer;
+    }
+    button.buy-btn:disabled { background: #a8d5bc; cursor: default; }
+
+    #footer { text-align: center; color: #bbb; font-size: 13px; padding: 28px; background: #fff; margin-top: 2px; }
+  </style>
+</head>
+<body>
+
+<div id="header">
+  <img
+    src="https://yt3.googleusercontent.com/bu29B2Crvfklt8nXuKZe6ekhRZvgCn2orZltPE2Z2sAvoqNsIJ21Ggjedl9oOqWzmx88X-pMaQ=s900-c-k-c0x00ffffff-no-rj"
+    alt="Jack"
+    onerror="this.src='https://ui-avatars.com/api/?name=J&size=120&background=ff0000&color=fff&bold=true&rounded=true'"
+  />
+  <h1>Spend Jack's Money</h1>
+</div>
+
+<div id="banner">
+  <div id="remaining">$8,000,000</div>
+  <div id="spent-label">$0 spent</div>
+</div>
+
+<div id="grid"></div>
+
+<script>
+const TOTAL = 8000000;
+const ITEMS = [
+  { id: 1,  name: "Pair of Socks",       price: 10,       img: "https://freepngimg.com/save/52976-socks-png-image-high-quality/2062x1500" },
+  { id: 2,  name: "Microphone",          price: 400,      img: "https://freepngimg.com/save/3501-microphone-png-image/2615x2171" },
+  { id: 3,  name: "Studio Lights",       price: 500,      img: "lights.png" },
+  { id: 4,  name: "Smartphone",          price: 1000,     img: "https://pngimg.com/d/iphone16_PNG5.png" },
+  { id: 5,  name: "Camera Drone",        price: 1200,     img: "https://www.freeiconspng.com/uploads/drone-with-camera-white-png-image-3.png" },
+  { id: 6,  name: "Silver Play Button",  price: 150,      img: "https://r74n.com/youtube/button.jpg" },
+  { id: 7,  name: "Gold Play Button",    price: 300,      img: "https://static.wikia.nocookie.net/youtube/images/6/66/Golden_play_button_-_Google_Search_-_Google_Chrome_2019-12-18_18_28_36_%282%29.png/revision/latest?cb=20191218173419" },
+  { id: 8,  name: "Diamond Play Button", price: 3000,     img: "https://static.wikia.nocookie.net/youtube/images/9/91/Diamond_Play_Button.png/revision/latest?cb=20181214115546" },
+  { id: 9,  name: "Laptop",             price: 1500,     img: "https://png.pngtree.com/png-vector/20250304/ourmid/pngtree-sleek-modern-laptop-with-high-resolution-display-png-image_15711292.png" },
+  { id: 10, name: "Gaming PC",           price: 3000,     img: "https://static.vecteezy.com/system/resources/thumbnails/054/720/484/small/gaming-pc-on-white-background-on-transparent-background-png.png" },
+  { id: 11, name: "4K Camera",           price: 2500,     img: "https://pngimg.com/d/video_camera_PNG7875.png" },
+  { id: 12, name: "Used Car",            price: 10000,    img: "https://png.pngtree.com/png-vector/20250110/ourmid/pngtree-a-red-suv-car-in-side-view-png-image_15131280.png" },
+  { id: 13, name: "Tesla Model 3",       price: 40000,    img: "https://i.redd.it/4xgl2zuwec881.png" },
+  { id: 14, name: "Tesla Model S",       price: 95000,    img: "https://www.nicepng.com/png/full/77-778891_model-s-tesla-model-3-png.png" },
+  { id: 15, name: "Supercar",            price: 250000,   img: "https://pngimg.com/d/lamborghini_PNG10683.png" },
+  { id: 16, name: "Small House",         price: 300000,   img: "https://png.pngtree.com/png-clipart/20230927/original/pngtree-house-with-no-background-png-image_13001602.png" },
+  { id: 17, name: "Luxury Mansion",      price: 3000000,  img: "https://png.pngtree.com/png-clipart/20240629/original/pngtree-modern-luxury-mansion-clipart-with-parked-car-png-image_15447204.png" },
+  { id: 18, name: "Auto Complete All Promises",      price: 8000000,  img: "https://preview.redd.it/goodbye-v0-9no1q77ruddg1.jpg?width=1080&crop=smart&auto=webp&s=ad0f309898a884365a17f0ee278334f46066a203" },
+];
+
+const qty = {};
+let displayed = TOTAL;
+let animFrame = null;
+
+function fmt(n) { return "$" + n.toLocaleString(); }
+
+function getSpent() {
+  return ITEMS.reduce((s, i) => s + (qty[i.id] || 0) * i.price, 0);
+}
+
+function animateTo(target) {
+  if (animFrame) cancelAnimationFrame(animFrame);
+  const totalDiff = Math.abs(target - displayed);
+  const speed = Math.max(totalDiff / 40, 1);
+  function step() {
+    const gap = target - displayed;
+    if (Math.abs(gap) <= 1) {
+      displayed = target;
+      renderRemaining(target);
+      return;
+    }
+    displayed += gap > 0 ? Math.min(speed, gap) : Math.max(-speed, gap);
+    renderRemaining(Math.round(displayed));
+    animFrame = requestAnimationFrame(step);
+  }
+  animFrame = requestAnimationFrame(step);
+}
+
+function renderRemaining(n) {
+  document.getElementById("remaining").textContent = n <= 0 ? "You're Broke!" : "$" + n.toLocaleString();
+  document.getElementById("banner").classList.toggle("broke", n <= 0);
+}
+
+function updateBanner() {
+  const spent = getSpent();
+  const remaining = TOTAL - spent;
+  document.getElementById("spent-label").textContent = fmt(spent) + " spent";
+  animateTo(remaining);
+}
+
+function updateCard(id) {
+  const q = qty[id] || 0;
+  const item = ITEMS.find(i => i.id === id);
+  document.getElementById("qty-" + id).textContent = q;
+  document.getElementById("sell-" + id).disabled = q === 0;
+  const totalEl = document.getElementById("total-" + id);
+  totalEl.textContent = q > 0 ? fmt(q * item.price) + " total" : "";
+  totalEl.style.display = q > 0 ? "block" : "none";
+}
+
+function updateAllBuyButtons() {
+  const remaining = TOTAL - getSpent();
+  ITEMS.forEach(item => {
+    document.getElementById("buy-" + item.id).disabled = item.price > remaining;
+  });
+}
+
+function buy(id) {
+  const item = ITEMS.find(i => i.id === id);
+  if (item.price > TOTAL - getSpent()) return;
+  qty[id] = (qty[id] || 0) + 1;
+  updateCard(id);
+  updateBanner();
+  updateAllBuyButtons();
+}
+
+function sell(id) {
+  if (!qty[id]) return;
+  qty[id]--;
+  updateCard(id);
+  updateBanner();
+  updateAllBuyButtons();
+}
+
+const grid = document.getElementById("grid");
+ITEMS.forEach(item => {
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML = `
+    <div class="img-wrap">
+      <img src="${item.img}" alt="${item.name}" onerror="this.style.opacity=0" />
+    </div>
+    <div class="item-name">${item.name}</div>
+    <div class="item-price">${fmt(item.price)}</div>
+    <div class="controls">
+      <button class="sell-btn" id="sell-${item.id}" disabled onclick="sell(${item.id})">Sell</button>
+      <div class="qty-display" id="qty-${item.id}">0</div>
+      <button class="buy-btn" id="buy-${item.id}" onclick="buy(${item.id})">Buy</button>
+    </div>
+    <div class="total-label" id="total-${item.id}" style="display:none"></div>
+  `;
+  grid.appendChild(card);
+});
+</script>
+</body>
+</html>
