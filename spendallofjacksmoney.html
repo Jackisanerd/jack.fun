@@ -1,27 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="icon" href="https://gallery.yopriceville.com/downloadfullsize/send/21205" type="image/png">
+  <link rel="icon" href="https://gallery.yopriceville.com/downloadfullsize/send/21205" type="image/png">
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
   <title>Spend Jack's Money</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Segoe UI', Helvetica, sans-serif; background: #f0f0f0; }
 
-    #header { text-align: center; padding: 40px 16px 28px; background: #fff; }
-    #header img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; }
-    #header h1 { font-size: 32px; font-weight: 700; margin-top: 14px; color: #222; }
+    #header { text-align: center; padding: 28px 16px 20px; background: #fff; }
+    #header img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; }
+    #header h1 { font-size: 26px; font-weight: 700; margin-top: 12px; color: #222; }
 
     #banner {
       background: #3dba6e;
       color: #fff;
       text-align: center;
-      padding: 22px 16px;
+      padding: 18px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
     #banner.broke { background: #e53e3e; }
-    #banner #remaining { font-size: 42px; font-weight: 800; letter-spacing: -1px; }
-    #banner #spent-label { font-size: 15px; opacity: 0.85; margin-top: 4px; }
+    #banner #remaining { font-size: 36px; font-weight: 800; letter-spacing: -1px; }
+    #banner #spent-label { font-size: 14px; opacity: 0.85; margin-top: 4px; }
 
     #grid {
       display: grid;
@@ -32,39 +35,55 @@
       gap: 2px;
     }
 
+    @media (max-width: 700px) {
+      #grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 420px) {
+      #grid { grid-template-columns: 1fr; }
+    }
+
     .card {
       background: #fff;
-      padding: 32px 20px 24px;
+      padding: 24px 14px 20px;
       text-align: center;
     }
     .card .img-wrap {
-      height: 200px;
+      height: 140px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
-    .card img { max-height: 200px; max-width: 90%; object-fit: contain; }
-    .card .item-name { font-weight: 700; font-size: 20px; color: #222; margin-bottom: 4px; }
-    .card .item-price { color: #3dba6e; font-weight: 700; font-size: 20px; margin-bottom: 20px; }
-    .card .controls { display: flex; align-items: center; justify-content: center; gap: 8px; }
+    @media (max-width: 700px) {
+      .card .img-wrap { height: 110px; }
+    }
+    .card img { max-height: 100%; max-width: 90%; object-fit: contain; }
+    .card .item-name { font-weight: 700; font-size: 16px; color: #222; margin-bottom: 4px; }
+    .card .item-price { color: #3dba6e; font-weight: 700; font-size: 16px; margin-bottom: 16px; }
+    .card .controls { display: flex; align-items: center; justify-content: center; gap: 6px; }
     .card .qty-display {
-      width: 64px; text-align: center; font-size: 18px; font-weight: 700; color: #333;
-      border: 1px solid #ddd; border-radius: 4px; padding: 9px 0; background: #fafafa;
+      width: 52px; text-align: center; font-size: 16px; font-weight: 700; color: #333;
+      border: 1px solid #ddd; border-radius: 4px; padding: 8px 0; background: #fafafa;
+      flex-shrink: 0;
     }
-    .card .total-label { margin-top: 10px; font-size: 13px; color: #999; }
+    .card .total-label { margin-top: 8px; font-size: 12px; color: #999; }
 
     button.sell-btn {
-      padding: 10px 20px; font-size: 15px; font-weight: 600;
+      padding: 9px 14px; font-size: 14px; font-weight: 600;
       border: 1px solid #ddd; border-radius: 4px;
       background: #fff; color: #555; cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
     button.sell-btn:disabled { background: #f5f5f5; color: #ccc; cursor: default; }
 
     button.buy-btn {
-      padding: 10px 20px; font-size: 15px; font-weight: 700;
+      padding: 9px 14px; font-size: 14px; font-weight: 700;
       border: none; border-radius: 4px;
       background: #3dba6e; color: #fff; cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
     button.buy-btn:disabled { background: #a8d5bc; cursor: default; }
 
@@ -109,7 +128,7 @@ const ITEMS = [
   { id: 15, name: "Supercar",            price: 250000,   img: "https://pngimg.com/d/lamborghini_PNG10683.png" },
   { id: 16, name: "Small House",         price: 300000,   img: "https://png.pngtree.com/png-clipart/20230927/original/pngtree-house-with-no-background-png-image_13001602.png" },
   { id: 17, name: "Luxury Mansion",      price: 3000000,  img: "https://png.pngtree.com/png-clipart/20240629/original/pngtree-modern-luxury-mansion-clipart-with-parked-car-png-image_15447204.png" },
-  { id: 18, name: "Auto Complete All Promises",      price: 8000000,  img: "https://preview.redd.it/goodbye-v0-9no1q77ruddg1.jpg?width=1080&crop=smart&auto=webp&s=ad0f309898a884365a17f0ee278334f46066a203" },
+  { id: 18, name: "Auto Complete All Promises", price: 8000000, img: "https://preview.redd.it/goodbye-v0-9no1q77ruddg1.jpg?width=1080&crop=smart&auto=webp&s=ad0f309898a884365a17f0ee278334f46066a203" },
 ];
 
 const qty = {};
