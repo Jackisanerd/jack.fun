@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <link rel="icon" href="jack4.png" type="image/png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Thumbnail Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Rubik+One&family=Rubik:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+html,body { width:100%; height:100%; background:#1c1c1c; font-family:'Rubik',sans-serif; overflow:hidden; }
+
+#app { display:flex; flex-direction:column; width:100vw; height:100vh; }
+
+#canvas-area {
+  flex:1; display:flex; align-items:center; justify-content:center;
+  overflow:hidden; background:#141414; position:relative;
+}
+#thumb {
+  position:relative; overflow:hidden;
+  background:linear-gradient(135deg,#00a8d6,#0060b0);
+  cursor:default;
+}
+#thumb-bg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; pointer-events:none; user-select:none; }
+
+/* ── LAYER ── */
+.layer {
+  position:absolute;
+  user-select:none;
+  touch-action:none;
+  cursor:move;
+}
+.layer img {
+  display:block; width:100%; height:auto;
+  pointer-events:none; user-select:none; -webkit-user-drag:none;
+  filter: drop-shadow(4px 6px 12px rgba(0,0,0,0.75));
+}
+
+/* Selection box — only visible when selected */
+.layer .sel-box {
+  display:none;
+  position:absolute;
+  inset:-8px;
+  border:2px dashed rgba(255,255,255,0.85);
+  border-radius:2px;
+  pointer-events:none;
+}
+.layer.selected .sel-box { display:block; }
+
+/* Handles — only visible when selected */
+.layer .handle {
+  display:none;
+  position:absolute;
+  width:14px; height:14px;
+  background:#fff;
+  border:2px solid #1a7fe8;
+  border-radius:2px;
+  z-index:10;
+}
+.layer.selected .handle { display:block; }
+
+/* Corner resize handles */
+.handle.nw { top:-7px;  left:-7px;  cursor:nw-resize; }
+.handle.ne { top:-7px;  right:-7px; cursor:ne-resize; }
+.handle.sw { bottom:-7px; left:-7px;  cursor:sw-resize; }
+.handle.se { bottom:-7px; right:-7px; cursor:se-resize; }
+
+/* Edge handles */
+.handle.n  { top:-7px;    left:50%; transform:translateX(-50%); cursor:n-resize; }
+.handle.s  { bottom:-7px; left:50%; transform:translateX(-50%); cursor:s-resize; }
+.handle.w  { left:-7px;   top:50%;  transform:translateY(-50%); cursor:w-resize; }
+.handle.e  { right:-7px;  top:50%;  transform:translateY(-50%); cursor:e-resize; }
+
+/* Rotate handle */
+.handle.rot {
+  width:16px; height:16px;
+  border-radius:50%;
+  background:#1a7fe8;
+  border:2px solid #fff;
+  top:-34px; left:50%; transform:translateX(-50%);
+  cursor:grab;
+  display:none;
+}
+.layer.selected .handle.rot { display:block; }
+/* rotate line */
+.layer.selected .rot-line {
+  display:block;
+}
+.rot-line {
+  display:none;
+  position:absolute;
+  width:2px; height:20px;
+  background:rgba(255,255,255,0.7);
+  top:-20px; left:50%; transform:translateX(-50%);
+  pointer-events:none;
+}
+
+/* ── BOTTOM BAR ── */
+#bottom-bar { flex-shrink:0; background:#111; border-top:2px solid #2a2a2a; }
+
+#strip {
+  display:flex; align-items:center; padding:0 14px;
+  height:74px; gap:14px; overflow-x:auto; scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;
+}
+#strip::-webkit-scrollbar { display:none; }
+
+#elem-btn {
+  flex-shrink:0; background:#2a2a2a; border:none; border-radius:6px;
+  color:#fff; font-family:'Rubik One',sans-serif; font-size:11px;
+  letter-spacing:2px; padding:9px 14px; cursor:pointer;
+  text-transform:uppercase; display:flex; flex-direction:column;
+  align-items:center; gap:3px; min-width:78px; transition:background .15s;
+}
+#elem-btn .caret { font-size:8px; transition:transform .2s; }
+#elem-btn.open .caret { transform:rotate(180deg); }
+#elem-btn:hover { background:#383838; }
+
+.sdiv { width:1px; height:50px; background:#2a2a2a; flex-shrink:0; }
+.sg { display:flex; align-items:center; gap:9px; flex-shrink:0; }
+.sl { font-family:'Rubik One',sans-serif; font-size:11px; letter-spacing:2px; color:#fff; text-transform:uppercase; white-space:nowrap; }
+
+.sface { height:58px; width:auto; cursor:pointer; filter:drop-shadow(0 2px 6px rgba(0,0,0,.7)); transition:transform .12s; object-fit:contain; }
+.sface:hover { transform:scale(1.1); }
+
+.sbg { height:44px; width:76px; object-fit:cover; border-radius:5px; border:2px solid #444; cursor:pointer; transition:border-color .15s; display:block; }
+.sbg.active { border-color:#00c8ff; }
+.sbg:hover { border-color:#00c8ff; }
+
+.sup {
+  height:44px; width:80px; border:2px dashed #555; border-radius:5px;
+  background:#1e1e1e; cursor:pointer; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; color:#888;
+  font-size:9px; font-family:'Rubik One',sans-serif; letter-spacing:1px;
+  text-transform:uppercase; gap:2px; transition:border-color .15s,color .15s; flex-shrink:0;
+}
+.sup:hover { border-color:#00c8ff; color:#00c8ff; }
+.sup .ico { font-size:16px; }
+
+.sarr { height:44px; padding:4px 10px; background:#222; border:2px solid #444; border-radius:5px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:border-color .15s; flex-shrink:0; }
+.sarr:hover { border-color:#00c8ff; }
+.sarr img { height:28px; pointer-events:none; display:block; }
+
+#dl-btn {
+  flex-shrink:0; margin-left:auto;
+  background:linear-gradient(135deg,#00c8ff,#0075e4);
+  border:none; border-radius:8px; color:#fff;
+  font-family:'Rubik One',sans-serif; font-size:11px;
+  letter-spacing:1px; padding:11px 20px; cursor:pointer;
+  text-transform:uppercase; white-space:nowrap;
+  box-shadow:0 4px 14px rgba(0,150,255,.35);
+  transition:opacity .15s, transform .1s;
+}
+#dl-btn:hover { opacity:.9; }
+#dl-btn:active { transform:scale(.96); }
+
+/* DRAWER */
+#drawer { display:none; padding:10px 14px 14px; background:#161616; border-top:1px solid #2a2a2a; overflow-x:auto; scrollbar-width:none; }
+#drawer::-webkit-scrollbar { display:none; }
+#drawer.open { display:flex; gap:20px; align-items:flex-start; }
+
+.dc { display:flex; flex-direction:column; gap:6px; flex-shrink:0; }
+.dcl { font-family:'Rubik One',sans-serif; font-size:9px; letter-spacing:2px; color:#666; text-transform:uppercase; }
+.df { display:flex; gap:8px; }
+.dface { height:64px; width:auto; cursor:pointer; filter:drop-shadow(0 2px 8px rgba(0,0,0,.8)); transition:transform .12s; object-fit:contain; flex-shrink:0; }
+.dface:hover { transform:scale(1.1); }
+.dbgs { display:flex; gap:8px; }
+.dbg { width:80px; height:45px; object-fit:cover; border-radius:5px; border:2px solid #444; cursor:pointer; transition:border-color .15s; display:block; }
+.dbg.active { border-color:#00c8ff; }
+.dbg:hover { border-color:#00c8ff; }
+.darrs { display:flex; gap:8px; }
+.darr { height:45px; padding:6px 10px; background:#222; border:2px solid #444; border-radius:5px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:border-color .15s; }
+.darr:hover { border-color:#00c8ff; }
+.darr img { height:28px; pointer-events:none; }
+.dup { width:80px; height:45px; border:2px dashed #555; border-radius:5px; background:#1e1e1e; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#777; font-size:9px; font-family:'Rubik One',sans-serif; letter-spacing:1px; text-transform:uppercase; gap:2px; transition:border-color .15s,color .15s; }
+.dup:hover { border-color:#00c8ff; color:#00c8ff; }
+.dup .ico { font-size:16px; }
+.clr-btn { background:#2a2a2a; border:1px solid #444; border-radius:6px; color:#aaa; font-family:'Rubik One',sans-serif; font-size:9px; letter-spacing:1px; padding:7px 12px; cursor:pointer; text-transform:uppercase; transition:border-color .15s,color .15s; white-space:nowrap; }
+.clr-btn:hover { border-color:#e33; color:#e33; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="canvas-area">
+    <div id="thumb">
+      <img id="thumb-bg" src="bg1.png" alt="">
+    </div>
+  </div>
+
+  <div id="bottom-bar">
+    <div id="strip">
+      <button id="elem-btn">ELEMENTS<span class="caret">▼</span></button>
+      <div class="sdiv"></div>
+      <div class="sg">
+        <span class="sl">FACE:</span>
+        <img class="sface" src="jack.png"  data-src="jack.png"  onerror="this.src=ph('J1')">
+        <img class="sface" src="jack2.png" data-src="jack2.png" onerror="this.src=ph('J2')">
+        <img class="sface" src="jack3.png" data-src="jack3.png" onerror="this.src=ph('J3')">
+      </div>
+      <div class="sdiv"></div>
+      <div class="sg">
+        <span class="sl">Background:</span>
+        <img class="sbg active" src="bg1.png" data-bg="bg1.png" onerror="this.style.background='linear-gradient(135deg,#00a8d6,#006)'">
+        <img class="sbg" src="bg2.png" data-bg="bg2.png" onerror="this.style.background='linear-gradient(135deg,#f60,#a06)'">
+      </div>
+      <div class="sdiv"></div>
+      <div class="sg">
+        <span class="sl">ELEMENT</span>
+        <label class="sup" for="ef1"><span class="ico">📁</span><span>upload an image</span></label>
+        <input type="file" id="ef1" accept="image/*" style="display:none">
+      </div>
+      <button id="dl-btn">⬇ Download</button>
+    </div>
+
+    <div id="drawer">
+      <div class="dc">
+        <div class="dcl">All Faces</div>
+        <div class="df">
+          <img class="dface" src="jack.png"  data-src="jack.png"  onerror="this.src=ph('J1')">
+          <img class="dface" src="jack2.png" data-src="jack2.png" onerror="this.src=ph('J2')">
+          <img class="dface" src="jack3.png" data-src="jack3.png" onerror="this.src=ph('J3')">
+          <img class="dface" src="jack4.png" data-src="jack4.png" onerror="this.src=ph('J4')">
+          <img class="dface" src="jack5.png" data-src="jack5.png" onerror="this.src=ph('J5')">
+          <img class="dface" src="jack6.png" data-src="jack6.png" onerror="this.src=ph('J6')">
+        </div>
+      </div>
+      <div class="sdiv" style="height:60px"></div>
+      <div class="dc">
+        <div class="dcl">Backgrounds</div>
+        <div class="dbgs">
+          <img class="dbg active" src="bg1.png" data-bg="bg1.png" onerror="this.style.background='linear-gradient(135deg,#00a8d6,#006)'">
+          <img class="dbg" src="bg2.png" data-bg="bg2.png" onerror="this.style.background='linear-gradient(135deg,#f60,#a06)'">
+        </div>
+      </div>
+      <div class="sdiv" style="height:60px"></div>
+      <div class="dc">
+        <div class="dcl">Arrows</div>
+        <div class="darrs">
+          <div class="darr" data-src="arrow1.png"><img src="arrow1.png" onerror="this.src=arrowPh(1)"></div>
+          <div class="darr" data-src="arrow2.png"><img src="arrow2.png" onerror="this.src=arrowPh(2)"></div>
+        </div>
+      </div>
+      <div class="sdiv" style="height:60px"></div>
+      <div class="dc">
+        <div class="dcl">Upload Element</div>
+        <label class="dup" for="ef2"><span class="ico">📁</span><span>upload image</span></label>
+        <input type="file" id="ef2" accept="image/*" style="display:none">
+      </div>
+      <div class="sdiv" style="height:60px"></div>
+      <div class="dc" style="justify-content:flex-end">
+        <button class="clr-btn" id="clr">✕ Clear All</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<canvas id="xc" style="display:none"></canvas>
+
+<script>
+function ph(label){
+  return `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="44" height="64"><rect width="44" height="64" rx="4" fill="%23333"/><text x="50%25" y="52%25" dominant-baseline="middle" text-anchor="middle" fill="%23888" font-size="10">${label}</text></svg>`;
+}
+function arrowPh(n){
+  const pts = n===1 ? '0,15 45,0 45,10 60,10 60,20 45,20 45,30' : '60,15 15,0 15,10 0,10 0,20 15,20 15,30';
+  const col = n===1 ? '%23ff0' : '%23f0f';
+  return `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30"><polygon points="${pts}" fill="${col}"/></svg>`;
+}
+
+let zt = 10;
+let selected = null; // currently selected layer element
+
+const thumb   = document.getElementById('thumb');
+const thumbBg = document.getElementById('thumb-bg');
+
+// ── Size thumb to 16:9 ──
+function sizeThumb(){
+  const a = document.getElementById('canvas-area');
+  const aw=a.clientWidth, ah=a.clientHeight;
+  let w=aw, h=aw*9/16;
+  if(h>ah){h=ah;w=ah*16/9;}
+  thumb.style.width=w+'px'; thumb.style.height=h+'px';
+}
+sizeThumb();
+window.addEventListener('resize', sizeThumb);
+
+// ── Deselect when clicking empty thumb area ──
+thumb.addEventListener('mousedown', e => {
+  if(e.target === thumb || e.target === thumbBg) deselect();
+});
+
+// ── Deselect helper ──
+function deselect(){
+  if(selected){ selected.classList.remove('selected'); selected=null; }
+}
+
+// ── Select a layer ──
+function selectLayer(l){
+  if(selected && selected !== l) deselect();
+  selected = l;
+  l.classList.add('selected');
+  l.style.zIndex = ++zt;
+}
+
+// ── Keyboard delete ──
+document.addEventListener('keydown', e => {
+  if((e.key==='Delete'||e.key==='Backspace') && selected){
+    // don't fire on input fields
+    if(document.activeElement.tagName==='INPUT') return;
+    selected.remove();
+    selected = null;
+  }
+});
+
+// ── Elements toggle ──
+const ebtn = document.getElementById('elem-btn');
+const drw  = document.getElementById('drawer');
+ebtn.addEventListener('click',()=>{
+  const o = drw.classList.toggle('open');
+  ebtn.classList.toggle('open', o);
+});
+
+// ── BG selection ──
+function selBg(src){
+  thumbBg.src = src;
+  document.querySelectorAll('.sbg,.dbg').forEach(e=>e.classList.toggle('active', e.dataset.bg===src));
+}
+document.querySelectorAll('.sbg,.dbg').forEach(e=>e.addEventListener('click',()=>selBg(e.dataset.bg)));
+selBg('bg1.png');
+
+// ── Add layer ──
+function addLayer(src, type){
+  const tw=thumb.clientWidth, th=thumb.clientHeight;
+  let iw = type==='face' ? tw*0.42 : type==='arrow' ? tw*0.26 : tw*0.50;
+
+  const l = document.createElement('div');
+  l.className = 'layer';
+  l.dataset.rotation = '0'; // degrees
+
+  // centered placement
+  l.style.left = (tw*0.5 - iw*0.5) + 'px';
+  l.style.top  = (th*0.5 - iw*0.3) + 'px';
+  l.style.width = iw + 'px';
+  l.style.zIndex = ++zt;
+
+  const img = document.createElement('img');
+  img.src = src; img.draggable = false;
+
+  // selection box
+  const sb = document.createElement('div'); sb.className='sel-box';
+
+  // rotate line
+  const rl = document.createElement('div'); rl.className='rot-line';
+
+  // handles
+  const handles = ['nw','n','ne','e','se','s','sw','w','rot'];
+  const hdivs = {};
+  handles.forEach(h=>{
+    const d=document.createElement('div');
+    d.className='handle '+h;
+    hdivs[h]=d; l.appendChild(d);
+  });
+
+  l.append(img, sb, rl);
+  thumb.appendChild(l);
+
+  // ── CLICK to select ──
+  l.addEventListener('mousedown', e => {
+    e.stopPropagation();
+    selectLayer(l);
+    startDrag(e, l);
+  });
+  l.addEventListener('touchstart', e => {
+    e.stopPropagation();
+    selectLayer(l);
+    startTouchDrag(e, l);
+  }, {passive:true});
+
+  // ── RESIZE handles ──
+  ['nw','n','ne','e','se','s','sw','w'].forEach(dir=>{
+    hdivs[dir].addEventListener('mousedown', e=>{
+      e.preventDefault(); e.stopPropagation();
+      startResize(e, l, dir);
+    });
+    hdivs[dir].addEventListener('touchstart', e=>{
+      e.stopPropagation();
+      startTouchResize(e, l, dir);
+    },{passive:true});
+  });
+
+  // ── ROTATE handle ──
+  hdivs['rot'].addEventListener('mousedown', e=>{
+    e.preventDefault(); e.stopPropagation();
+    startRotate(e, l);
+  });
+  hdivs['rot'].addEventListener('touchstart', e=>{
+    e.stopPropagation();
+    startTouchRotate(e, l);
+  },{passive:true});
+
+  selectLayer(l);
+}
+
+// ── Face/arrow clicks ──
+document.querySelectorAll('.sface,.dface').forEach(e=>e.addEventListener('click',()=>addLayer(e.dataset.src,'face')));
+document.querySelectorAll('.darr').forEach(e=>e.addEventListener('click',()=>addLayer(e.dataset.src,'arrow')));
+
+// ── Upload ──
+function handleFile(file){ if(!file)return; addLayer(URL.createObjectURL(file),'element'); }
+['ef1','ef2'].forEach(id=>{
+  document.getElementById(id).addEventListener('change',e=>{handleFile(e.target.files[0]);e.target.value='';});
+});
+
+// ── Clear ──
+document.getElementById('clr').addEventListener('click',()=>{
+  thumb.querySelectorAll('.layer').forEach(l=>l.remove());
+  selected=null;
+});
+
+// ════════════════════════════════
+// DRAG
+// ════════════════════════════════
+function startDrag(e, l){
+  // don't drag if clicking a handle
+  if(e.target.classList.contains('handle')) return;
+  const ox=parseFloat(l.style.left)||0, oy=parseFloat(l.style.top)||0;
+  const sx=e.clientX, sy=e.clientY;
+  const mm=ev=>{ l.style.left=(ox+ev.clientX-sx)+'px'; l.style.top=(oy+ev.clientY-sy)+'px'; };
+  const mu=()=>{ document.removeEventListener('mousemove',mm); document.removeEventListener('mouseup',mu); };
+  document.addEventListener('mousemove',mm); document.addEventListener('mouseup',mu);
+}
+function startTouchDrag(e, l){
+  if(e.target.classList.contains('handle')) return;
+  const t=e.touches[0];
+  const ox=parseFloat(l.style.left)||0, oy=parseFloat(l.style.top)||0;
+  const sx=t.clientX, sy=t.clientY;
+  const tm=ev=>{ ev.preventDefault(); const tt=ev.touches[0]; l.style.left=(ox+tt.clientX-sx)+'px'; l.style.top=(oy+tt.clientY-sy)+'px'; };
+  const tu=()=>{ document.removeEventListener('touchmove',tm); document.removeEventListener('touchend',tu); };
+  document.addEventListener('touchmove',tm,{passive:false}); document.addEventListener('touchend',tu);
+}
+
+// ════════════════════════════════
+// RESIZE  (8-handle, rotation-aware)
+// ════════════════════════════════
+function startResize(e, l, dir){
+  e.preventDefault();
+  const startX=e.clientX, startY=e.clientY;
+  const startW=l.offsetWidth, startH=l.offsetHeight;
+  const startLeft=parseFloat(l.style.left)||0, startTop=parseFloat(l.style.top)||0;
+  const ang = (parseFloat(l.dataset.rotation)||0) * Math.PI/180;
+  const cos=Math.cos(ang), sin=Math.sin(ang);
+
+  const mm=ev=>{
+    const dx=ev.clientX-startX, dy=ev.clientY-startY;
+    // project mouse delta onto local axes
+    const local_dx =  dx*cos + dy*sin;
+    const local_dy = -dx*sin + dy*cos;
+    let w=startW, h=startH, dl=0, dt=0;
+
+    if(dir.includes('e'))  w = Math.max(30, startW + local_dx);
+    if(dir.includes('s'))  h = Math.max(30, startH + local_dy);
+    if(dir.includes('w')){ w = Math.max(30, startW - local_dx); dl = startW - w; }
+    if(dir.includes('n')){ h = Math.max(30, startH - local_dy); dt = startH - h; }
+
+    // translate origin to keep opposite corner fixed
+    const ddl = dl*cos - dt*sin;
+    const ddt = dl*sin + dt*cos;
+    l.style.width  = w+'px';
+    l.style.left   = (startLeft + ddl)+'px';
+    l.style.top    = (startTop  + ddt)+'px';
+  };
+  const mu=()=>{ document.removeEventListener('mousemove',mm); document.removeEventListener('mouseup',mu); };
+  document.addEventListener('mousemove',mm); document.addEventListener('mouseup',mu);
+}
+
+function startTouchResize(e, l, dir){
+  const t=e.touches[0];
+  const fakeE = {clientX:t.clientX, clientY:t.clientY, preventDefault:()=>{}};
+  const startX=t.clientX, startY=t.clientY;
+  const startW=l.offsetWidth;
+  const startLeft=parseFloat(l.style.left)||0, startTop=parseFloat(l.style.top)||0;
+  const ang=(parseFloat(l.dataset.rotation)||0)*Math.PI/180;
+  const cos=Math.cos(ang), sin=Math.sin(ang);
+
+  const tm=ev=>{
+    ev.preventDefault();
+    const tt=ev.touches[0];
+    const dx=tt.clientX-startX, dy=tt.clientY-startY;
+    const local_dx=dx*cos+dy*sin, local_dy=-dx*sin+dy*cos;
+    let w=startW, dl=0;
+    if(dir.includes('e')) w=Math.max(30,startW+local_dx);
+    if(dir.includes('w')){w=Math.max(30,startW-local_dx);dl=startW-w;}
+    const ddl=dl*cos; const ddt=dl*sin;
+    l.style.width=w+'px';
+    l.style.left=(startLeft+ddl)+'px';
+    l.style.top=(startTop+ddt)+'px';
+  };
+  const tu=()=>{ document.removeEventListener('touchmove',tm); document.removeEventListener('touchend',tu); };
+  document.addEventListener('touchmove',tm,{passive:false}); document.addEventListener('touchend',tu);
+}
+
+// ════════════════════════════════
+// ROTATE
+// ════════════════════════════════
+function getCenter(l){
+  const r=l.getBoundingClientRect();
+  return { x: r.left+r.width/2, y: r.top+r.height/2 };
+}
+function applyRotation(l, deg){
+  l.dataset.rotation = deg;
+  l.querySelector('img').style.transform = `rotate(${deg}deg)`;
+}
+
+function startRotate(e, l){
+  e.preventDefault();
+  const c = getCenter(l);
+  const startAngle = Math.atan2(e.clientY-c.y, e.clientX-c.x) * 180/Math.PI;
+  const baseRot = parseFloat(l.dataset.rotation)||0;
+  const mm=ev=>{
+    const cc=getCenter(l);
+    const angle = Math.atan2(ev.clientY-cc.y, ev.clientX-cc.x)*180/Math.PI;
+    applyRotation(l, baseRot + angle - startAngle);
+  };
+  const mu=()=>{ document.removeEventListener('mousemove',mm); document.removeEventListener('mouseup',mu); };
+  document.addEventListener('mousemove',mm); document.addEventListener('mouseup',mu);
+}
+
+function startTouchRotate(e, l){
+  const t=e.touches[0];
+  const c=getCenter(l);
+  const startAngle=Math.atan2(t.clientY-c.y,t.clientX-c.x)*180/Math.PI;
+  const baseRot=parseFloat(l.dataset.rotation)||0;
+  const tm=ev=>{
+    ev.preventDefault();
+    const cc=getCenter(l);
+    const tt=ev.touches[0];
+    const angle=Math.atan2(tt.clientY-cc.y,tt.clientX-cc.x)*180/Math.PI;
+    applyRotation(l, baseRot+angle-startAngle);
+  };
+  const tu=()=>{ document.removeEventListener('touchmove',tm); document.removeEventListener('touchend',tu); };
+  document.addEventListener('touchmove',tm,{passive:false}); document.addEventListener('touchend',tu);
+}
+
+// ════════════════════════════════
+// DOWNLOAD
+// ════════════════════════════════
+document.getElementById('dl-btn').addEventListener('click', async()=>{
+  const btn=document.getElementById('dl-btn');
+  btn.textContent='⏳ Rendering...'; btn.disabled=true;
+  deselect();
+  await new Promise(r=>setTimeout(r,50)); // let deselect paint
+
+  try{
+    const W=1280, H=720;
+    const c=document.getElementById('xc'); c.width=W; c.height=H;
+    const ctx=c.getContext('2d');
+    const tw=thumb.clientWidth, th=thumb.clientHeight;
+
+    try{ const bg=await li(thumbBg.src); ctx.drawImage(bg,0,0,W,H); }
+    catch{ ctx.fillStyle='#1a1a1a'; ctx.fillRect(0,0,W,H); }
+
+    const layers=[...thumb.querySelectorAll('.layer')];
+    layers.sort((a,b)=>(+a.style.zIndex||0)-(+b.style.zIndex||0));
+
+    for(const layer of layers){
+      const img=layer.querySelector('img'); if(!img?.src) continue;
+      const lx=(parseFloat(layer.style.left)||0)/tw*W;
+      const ly=(parseFloat(layer.style.top)||0)/th*H;
+      const lw=layer.offsetWidth/tw*W;
+      const lh=layer.offsetHeight/th*H;
+      const rot=(parseFloat(layer.dataset.rotation)||0)*Math.PI/180;
+      const cx=lx+lw/2, cy=ly+lh/2;
+      try{
+        const i=await li(img.src);
+        ctx.save();
+        ctx.translate(cx,cy);
+        ctx.rotate(rot);
+        ctx.drawImage(i,-lw/2,-lh/2,lw,lh);
+        ctx.restore();
+      }catch{}
+    }
+
+    c.toBlob(blob=>{
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a'); a.href=url; a.download='thumbnail.png'; a.click();
+      URL.revokeObjectURL(url);
+      btn.textContent='⬇ Download'; btn.disabled=false;
+    },'image/png');
+  }catch(err){
+    alert('Export error: '+err.message);
+    btn.textContent='⬇ Download'; btn.disabled=false;
+  }
+});
+
+function li(src){
+  return new Promise((res,rej)=>{
+    const i=new Image(); i.crossOrigin='anonymous';
+    i.onload=()=>res(i);
+    i.onerror=()=>{ i.crossOrigin=null; i.onload=()=>res(i); i.onerror=rej; i.src=src; };
+    i.src=src;
+  });
+}
+</script>
+</body>
+</html>
