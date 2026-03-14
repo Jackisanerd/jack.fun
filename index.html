@@ -48,24 +48,26 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 15px;
-            max-width: 800px;
+            gap: 18px;
+            max-width: 1200px;
             margin: auto;
+            padding: 0 20px 40px;
         }
         
         .button {
-            width: 300px;
-            height: 120px;
+            width: 380px;
+            height: 160px;
             background-size: cover;
             background-position: center;
-            border-radius: 10px;
+            border-radius: 14px;
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
+
         }
         
         .button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
         }
         
         .auth-modal {
@@ -438,28 +440,14 @@
             border-bottom-color: #444;
         }
         
-        .admin-input {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 2px dashed #ccc;
-        }
-        
-        body.dark-mode .admin-input {
-            border-top-color: #444;
-        }
-        
-        .admin-input input {
-            flex: 1;
-        }
+        body.dark-mode
 
         .profile-section {
             display: flex !important;
         }
         
         .xp-container {
-            display: block !important;
+            display: none !important;
         }
         
         .top-icons {
@@ -490,13 +478,6 @@
                 opacity: 1;
             }
         }
-
-        .admin-label {
-            font-weight: bold;
-            color: var(--theme-color);
-            margin-top: 10px;
-            text-align: left;
-        }
     </style>
 </head>
 <body>
@@ -511,41 +492,34 @@
     </div>
     
     <div class="profile-modal" id="profileModal">
-        <div class="profile-content">
+        <div class="profile-content" style="width:400px; max-width:95vw;">
             <button class="close-button" onclick="hideProfileModal()">×</button>
-            <div class="profile-header">
-                <img id="profilePicLarge" src="" alt="Profile Picture" class="profile-pic-large">
-                <div class="profile-info">
-                    <h3 id="profileUsername"></h3>
-                    <div class="profile-level">Level <span id="profileLevel">1</span></div>
-                    <div><span id="profileXP">0</span>/100 XP</div>
-                </div>
-            </div>
-            
-            <div class="profile-pic-upload">
-                <h4>Set Your Username & Profile Picture</h4>
-                <input type="text" id="profileUsernameInput" placeholder="Enter username" value="Player1">
-                <img id="profilePicPreview" src="" alt="Preview" class="profile-pic-preview">
-                <label class="file-input-label">
-                    Upload Picture
+
+            <!-- Compact header: clickable pic + name input side by side -->
+            <div style="display:flex; align-items:center; gap:18px; padding: 8px 0 18px;">
+                <label style="cursor:pointer; flex-shrink:0; position:relative;" title="Click to change profile picture">
+                    <img id="profilePicLarge" src="" alt="Profile Picture" class="profile-pic-large" style="display:block; width:80px; height:80px; border-radius:50%; object-fit:cover; border:3px solid var(--theme-color);">
                     <input type="file" id="profilePicInput" class="file-input" accept="image/*">
                 </label>
-                <p class="profile-pic-note">Max 2MB.</p>
-                <button onclick="saveProfile()" style="margin-top: 10px; background-color: #2196F3;">Save Profile</button>
-                <p id="profilePicError" style="color:red; margin-top: 5px;"></p>
+                <div style="flex:1; display:flex; flex-direction:column; gap:8px;">
+                    <input type="text" id="profileUsernameInput" placeholder="enter name here" value="Player1" style="font-size:14px;">
+                    <div style="display:flex; gap:8px;">
+                        <button onclick="saveProfile()" style="background-color:#2196F3; flex:1; margin:0; padding:7px;">Save</button>
+                        <button onclick="resetProfile()" style="background-color:#ff9800; flex:1; margin:0; padding:7px;">Reset</button>
+                    </div>
+                    <p id="profilePicError" style="color:red; margin:0; font-size:12px; min-height:14px;"></p>
+                </div>
             </div>
-            
-            <div class="profile-actions">
-                <button onclick="resetProfile()" style="background-color: #ff9800;">Reset to Default</button>
-            </div>
-        </div>
-    </div>
-    
-    <div class="settings-modal" id="settingsModal">
-        <div class="settings-content">
-            <button class="close-button" onclick="hideSettingsModal()">×</button>
-            <h3>Settings</h3>
-            
+
+            <!-- Hidden fields still needed by JS -->
+            <h3 id="profileUsername" style="display:none"></h3>
+            <img id="profilePicPreview" src="" alt="" style="display:none;">
+            <div class="profile-level" style="display:none">Level <span id="profileLevel">1</span></div>
+            <div style="display:none"><span id="profileXP">0</span>/100 XP</div>
+
+            <hr style="margin: 0 0 4px; border: none; border-top: 1px solid #eee;">
+            <h4 style="margin: 0 0 4px; text-align:center;">Settings</h4>
+
             <div class="settings-option">
                 <span>Dark Mode</span>
                 <label class="switch">
@@ -569,17 +543,10 @@
                     <span class="slider"></span>
                 </label>
             </div>
-
-            <div class="admin-label">⚡ Admin</div>
-            <div class="admin-input">
-                <input type="password" id="adminCode" placeholder="Enter admin code">
-                <button onclick="applyAdminCode()">Apply</button>
-            </div>
-            <p id="adminMessage" style="color:green; margin-top: 10px; min-height: 20px;"></p>
-            
-            <button onclick="saveSettings()" style="margin-top: 20px;">Save Settings</button>
         </div>
     </div>
+
+    <div class="settings-modal" id="settingsModal" style="display:none!important"></div>
     
     <div class="auth-buttons" id="authButtons"></div>
     
@@ -590,7 +557,7 @@
         </div>
     </div>
     
-    <div class="xp-container" id="xpContainer">
+    <div class="xp-container" id="xpContainer" style="display:none!important">
         <div>Level <span id="levelValue">1</span></div>
         <div><span id="xpValue">0</span>/100 XP</div>
         <div class="xp-bar">
@@ -598,9 +565,7 @@
         </div>
     </div>
     
-    <div class="top-icons" id="topIcons">
-        <button class="icon-button" onclick="showSettingsModal()">⚙️</button>
-    </div>
+    <div class="top-icons" id="topIcons"></div>
     
     <img src="Shane.Fun.png" alt="Shane.fun Logo" class="logo">
     
@@ -792,6 +757,7 @@
         function showProfileModal() {
             document.getElementById('profileModal').style.display = 'flex';
             loadProfileData();
+            loadSettingsToUI();
         }
         
         function hideProfileModal() {
@@ -1012,16 +978,20 @@
             }
         }
         
+        const jackyboiStyle = document.createElement('style');
+        jackyboiStyle.id = 'jackyboi-cursor-style';
+        document.head.appendChild(jackyboiStyle);
+
         function activateJackyboiCursor() {
             cursorActive = true;
             jackyboiCursor.style.display = 'block';
-            document.body.style.cursor = 'none';
+            jackyboiStyle.textContent = '*, *::before, *::after { cursor: none !important; }';
         }
         
         function deactivateJackyboiCursor() {
             cursorActive = false;
             jackyboiCursor.style.display = 'none';
-            document.body.style.cursor = 'default';
+            jackyboiStyle.textContent = '';
         }
         
         function calculateLevel(xp) {
@@ -1040,35 +1010,6 @@
             if (newLevel > oldLevel) {
                 alert(`Level Up! You're now level ${user.level}!`);
             }
-        }
-        
-        function applyAdminCode() {
-            const adminCode = document.getElementById('adminCode').value;
-            const adminMessage = document.getElementById('adminMessage');
-            
-            if (adminCode === 'jackssecretpassword' && currentUser) {
-                const user = users[currentUser];
-                user.xp = 9900;
-                updateUserLevel(user);
-                
-                localStorage.setItem('shaneFunUsers', JSON.stringify(users));
-                adminMessage.textContent = 'Admin code applied! You are now level 100!';
-                adminMessage.style.color = 'green';
-                
-                updateAuthUI();
-                loadProfileData();
-                setTimeout(() => {
-                    adminMessage.textContent = '';
-                }, 3000);
-            } else {
-                adminMessage.textContent = 'Invalid admin code';
-                adminMessage.style.color = 'red';
-                setTimeout(() => {
-                    adminMessage.textContent = '';
-                }, 3000);
-            }
-            
-            document.getElementById('adminCode').value = '';
         }
         
         function updateAuthUI() {
