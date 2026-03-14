@@ -130,42 +130,9 @@
             opacity: 0.9;
         }
         
-        .xp-container {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            background-color: rgba(255,255,255,0.8);
-            padding: 10px;
-            border-radius: 5px;
-            display: none;
-            z-index: 100;
-            width: 200px;
-            backdrop-filter: blur(10px);
-        }
+        body.dark-mode
         
-        body.dark-mode .xp-container {
-            background-color: rgba(30,30,30,0.8);
-            color: white;
-        }
-        
-        .xp-bar {
-            height: 20px;
-            background-color: #ddd;
-            border-radius: 10px;
-            margin-top: 5px;
-            overflow: hidden;
-        }
-        
-        body.dark-mode .xp-bar {
-            background-color: #444;
-        }
-        
-        .xp-progress {
-            height: 100%;
-            background-color: var(--theme-color);
-            width: 0%;
-            transition: width 0.3s;
-        }
+        body.dark-mode
         
         .auth-buttons {
             display: none;
@@ -250,12 +217,6 @@
         .profile-info {
             text-align: left;
             flex: 1;
-        }
-        
-        .profile-level {
-            color: var(--theme-color);
-            font-weight: bold;
-            margin-top: 5px;
         }
         
         .profile-actions {
@@ -446,10 +407,6 @@
             display: flex !important;
         }
         
-        .xp-container {
-            display: none !important;
-        }
-        
         .top-icons {
             display: flex !important;
         }
@@ -558,8 +515,6 @@
             <!-- Hidden fields still needed by JS -->
             <h3 id="profileUsername" style="display:none"></h3>
             <img id="profilePicPreview" src="" alt="" style="display:none;">
-            <div class="profile-level" style="display:none">Level <span id="profileLevel">1</span></div>
-            <div style="display:none"><span id="profileXP">0</span>/100 XP</div>
 
             <hr style="margin: 0 0 4px; border: none; border-top: 1px solid #eee;">
             <h4 style="margin: 0 0 4px; text-align:center;">Settings</h4>
@@ -600,13 +555,6 @@
             <span class="username" id="profileUsernameSmall">Player1</span>
         </div>
     </div>
-    
-    <div class="xp-container" id="xpContainer" style="display:none!important">
-        <div>Level <span id="levelValue">1</span></div>
-        <div><span id="xpValue">0</span>/100 XP</div>
-        <div class="xp-bar">
-            <div class="xp-progress" id="xpProgress"></div>
-        </div>
     </div>
     
     <div class="top-icons" id="topIcons"></div>
@@ -671,10 +619,6 @@
         
         if (!users['Player1']) {
             users['Player1'] = {
-                xp: 0,
-                level: 1,
-                lastXPTimestamp: null,
-                playedGames: [],
                 profilePicture: '',
                 settings: {
                     darkMode: false,
@@ -700,7 +644,6 @@
         
         document.addEventListener('DOMContentLoaded', function() {
             updateAuthUI();
-            startXPTimer();
             loadUserSettings();
             loadProfilePicture();
             
@@ -756,15 +699,6 @@
         });
         
         function playGame(gameId, gameName) {
-            if (currentUser) {
-                const user = users[currentUser];
-                if (!user.playedGames) user.playedGames = [];
-                if (!user.playedGames.includes(gameId)) {
-                    user.playedGames.push(gameId);
-                    localStorage.setItem('shaneFunUsers', JSON.stringify(users));
-                }
-            }
-            
             const gameLinks = {
                 'yomom': 'https://jackisanerd.github.io/Jackle/',
                 'infinitescroll': 'https://jackisanerd.github.io/HigherOrLower/',
@@ -815,12 +749,6 @@
             
             document.getElementById('profileUsername').textContent = currentUser;
             document.getElementById('profileUsernameInput').value = currentUser;
-            
-            const currentXP = calculateCurrentLevelXP(user.xp || 0);
-            const level = user.level || 1;
-            
-            document.getElementById('profileLevel').textContent = level;
-            document.getElementById('profileXP').textContent = currentXP;
             
             loadProfilePicture();
         }
@@ -888,10 +816,6 @@
                         const userData = { ...users['Player1'] };
                         users[newUsername] = userData;
                         users['Player1'] = {
-                            xp: 0,
-                            level: 1,
-                            lastXPTimestamp: null,
-                            playedGames: [],
                             profilePicture: '',
                             settings: { darkMode: false, musicEnabled: false, jackyboiCursor: false }
                         };
@@ -925,10 +849,6 @@
             const settings = users[currentUser]?.settings || { darkMode: false, musicEnabled: false, jackyboiCursor: false };
             
             users[currentUser] = {
-                xp: 0,
-                level: 1,
-                lastXPTimestamp: null,
-                playedGames: [],
                 profilePicture: '',
                 settings: settings
             };
@@ -1038,74 +958,12 @@
             jackyboiStyle.textContent = '';
         }
         
-        function calculateLevel(xp) {
-            return Math.floor(xp / 100) + 1;
-        }
-        
-        function calculateCurrentLevelXP(xp) {
-            return xp % 100;
-        }
-        
-        function updateUserLevel(user) {
-            const newLevel = calculateLevel(user.xp);
-            const oldLevel = user.level || 1;
-            user.level = newLevel;
-            
-            if (newLevel > oldLevel) {
-
-            }
-        }
-        
         function updateAuthUI() {
             const user = users[currentUser];
-            
-            const currentXP = calculateCurrentLevelXP(user.xp || 0);
-            const level = user.level || 1;
-            
-            document.getElementById('xpValue').textContent = currentXP;
-            document.getElementById('levelValue').textContent = level;
-            document.getElementById('xpProgress').style.width = `${currentXP}%`;
             
             document.getElementById('profileUsernameSmall').textContent = currentUser;
             
             loadProfilePicture();
-        }
-        
-        let xpInterval;
-        
-        function startXPTimer() {
-            stopXPTimer();
-            xpInterval = setInterval(awardXP, 30000);
-            awardXP();
-        }
-        
-        function stopXPTimer() {
-            if (xpInterval) {
-                clearInterval(xpInterval);
-            }
-        }
-        
-        function awardXP() {
-            if (!currentUser) return;
-            
-            const now = Date.now();
-            const user = users[currentUser];
-            
-            if (user.lastXPTimestamp && (now - user.lastXPTimestamp) < 30000) {
-                return;
-            }
-            
-            user.xp = (user.xp || 0) + 1;
-            user.lastXPTimestamp = now;
-            
-            updateUserLevel(user);
-            
-            localStorage.setItem('shaneFunUsers', JSON.stringify(users));
-            updateAuthUI();
-            
-            if (document.getElementById('profileModal').style.display === 'flex') {
-                loadProfileData();
-            }
         }
         
         window.addEventListener('click', function(event) {
