@@ -15,7 +15,7 @@
       align-items: center;
       text-align: center;
       overflow: hidden;
-      transition: background-color 1s ease;
+      transition: background 1s ease;
     }
 
     #quote-container {
@@ -70,14 +70,8 @@
     }
 
     @keyframes moveParticle {
-      0% {
-        transform: translateY(0) translateX(0);
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(-100px) translateX(100px);
-        opacity: 0;
-      }
+      0% { transform: translateY(0) translateX(0); opacity: 1; }
+      100% { transform: translateY(-100px) translateX(100px); opacity: 0; }
     }
 
     .particle {
@@ -98,204 +92,81 @@
   <div class="particles" id="particles"></div>
 
   <script>
-    // Array of quotes with unique background themes
     const quotes = [
-      { 
-        text: '"Let’s impregnate this young lady!"', 
-        author: '- Jack Massey Welsh',
-        theme: 'innovation'
-      },
-      { 
-        text: '"Give me a big naked gentleman!"', 
-        author: '- Jack Massey Welsh',
-        theme: 'nature'
-      },
-      { 
-        text: '"Lets just drop Becky at the side of the road."', 
-        author: '- Jack Massey Welsh',
-        theme: 'sports'
-      },
-      { 
-        text: '"I think they want us to lick the eggplant."',
-        author: '- Jack Massey Welsh',
-        theme: 'space'
-      },
-      { 
-        text: '"*aggressively humps plant* *rock music plays*"', 
-        author: '- Jack Massey Welsh',
-        theme: 'mountain'
-      },
-      { 
-        text: '"I\'m hiding in your balls."', 
-        author: '- Jack Massey Welsh',
-        theme: 'fire'
-      },
-      { 
-        text: '"You can wiggle it about a bit but individually they/'re hard."', 
-        author: '- Jack Massey Welsh',
-        theme: 'art'
-      },
-      { 
-        text: '"I haven’t had much s-ex."', 
-        author: '- Jack Massey Welsh',
-        theme: 'tech'
-      },
-      { 
-        text: '"I wasn\'t a big fan of when Obama tentacle fiddled with me nipple."',
-        author: '- Jack Massey Welsh',
-        theme: 'ocean'
-      },
-      { 
-        text: '"Do you need me to rub it?<br>I do."',
-        author: '- Jack Massey Welsh and Kai Ross Best',
-        theme: 'clock'
-      },
-      { 
-        text: '"I\'ma munch me face all over that"',
-        author: '- Jack Massey Welsh',
-        theme: 'earth'
-      },
-      { 
-        text: '"Enhance Enhance!"',
-        author: '- Jack Massey Welsh',
-        theme: 'city'
-      },
-      { 
-        text: '"I Jack sucks at life, suck at life"',
-        author: '- Jack Massey Welsh',
-        theme: 'adventure'
-      },
-      { 
-        text: '"I AM A RHOMBUS!"',
-        author: '- Jack Massey Welsh',
-        theme: 'sky'
-      },
-      { 
-        text: '"I\'M A MARRIED WOMAN!"',
-        author: '- Jack Massey Welsh',
-        theme: 'rainbow'
-      }
+      { text: '"Let\'s impregnate this young lady!"', author: '- Jack Massey Welsh', theme: 'innovation' },
+      { text: '"Give me a big naked gentleman!"', author: '- Jack Massey Welsh', theme: 'nature' },
+      { text: '"Lets just drop Becky at the side of the road."', author: '- Jack Massey Welsh', theme: 'sports' },
+      { text: '"I think they want us to lick the eggplant."', author: '- Jack Massey Welsh', theme: 'space' },
+      { text: '"*aggressively humps plant* *rock music plays*"', author: '- Jack Massey Welsh', theme: 'mountain' },
+      { text: '"I\'m hiding in your balls."', author: '- Jack Massey Welsh', theme: 'fire' },
+      { text: '"You can wiggle it about a bit but individually they\'re hard."', author: '- Jack Massey Welsh', theme: 'art' },
+      { text: '"I haven\'t had much s-ex."', author: '- Jack Massey Welsh', theme: 'tech' },
+      { text: '"I wasn\'t a big fan of when Obama tentacle fiddled with me nipple."', author: '- Jack Massey Welsh', theme: 'ocean' },
+      { text: '"Do you need me to rub it?<br>I do."', author: '- Jack Massey Welsh and Kai Ross Best', theme: 'clock' },
+      { text: '"I\'ma munch me face all over that"', author: '- Jack Massey Welsh', theme: 'earth' },
+      { text: '"Enhance Enhance!"', author: '- Jack Massey Welsh', theme: 'city' },
+      { text: '"I Jack sucks at life, suck at life"', author: '- Jack Massey Welsh', theme: 'adventure' },
+      { text: '"I AM A RHOMBUS!"', author: '- Jack Massey Welsh', theme: 'sky' },
+      { text: '"I\'M A MARRIED WOMAN!"', author: '- Jack Massey Welsh', theme: 'rainbow' }
     ];
 
-    // Function to generate a random quote and change background theme
-    function generateQuote() {
-      // Randomly select a quote
-      const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+    const gradients = {
+      innovation: 'linear-gradient(135deg, #3498db, #8e44ad)',
+      nature:     'linear-gradient(135deg, #11998e, #38ef7d)',
+      sports:     'linear-gradient(135deg, #e74c3c, #f39c12)',
+      space:      'linear-gradient(135deg, #0f0c29, #302b63, #24243e)',
+      mountain:   'linear-gradient(135deg, #4b6cb7, #182848)',
+      fire:       'linear-gradient(135deg, #ff7f50, #ff4500)',
+      art:        'linear-gradient(135deg, #f953c6, #b91d73)',
+      tech:       'linear-gradient(135deg, #2980b9, #2ecc71)',
+      ocean:      'linear-gradient(135deg, #1a3a8f, #00b4d8)',
+      clock:      'linear-gradient(135deg, #373b44, #4286f4)',
+      earth:      'linear-gradient(135deg, #5a3e2b, #3a7d44)',
+      city:       'linear-gradient(135deg, #232526, #414345)',
+      adventure:  'linear-gradient(135deg, #c94b4b, #4b134f)',
+      sky:        'linear-gradient(135deg, #56ccf2, #2f80ed)',
+      rainbow:    'linear-gradient(135deg, #FF6347, #FFD700, #32CD32, #1E90FF, #9400D3)'
+    };
 
-      // Get random background and text colors
+    function generateQuote() {
+      const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
       const randomTextColor = getRandomColor();
+
       document.getElementById('quote-text').style.color = randomTextColor;
       document.getElementById('author').style.color = randomTextColor;
-
-      // Update the quote text - use innerHTML to support <br> tags
       document.getElementById('quote-text').innerHTML = randomQuote.text;
       document.getElementById('author').innerText = randomQuote.author;
 
-      // Clear old particles to prevent performance issues
       document.getElementById('particles').innerHTML = '';
-
-      // Trigger the specific background effect based on quote theme
-      changeBackground(randomQuote.theme);
+      document.body.style.background = gradients[randomQuote.theme] || gradients.tech;
+      addParticles();
     }
 
-    // Function to generate a random color (hex format)
     function getRandomColor() {
       const letters = '0123456789ABCDEF';
       let color = '#';
-      for (let i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-      }
+      for (let i = 0; i < 6; i++) color += letters[Math.floor(Math.random() * 16)];
       return color;
     }
 
-    // Function to change background based on theme
-    function changeBackground(theme) {
-      if (theme === 'innovation') {
-        document.body.style.background = 'linear-gradient(45deg, #3498db, #8e44ad)';
-        addParticles('tech');
-      } else if (theme === 'nature') {
-        document.body.style.background = 'url("https://source.unsplash.com/1600x900/?forest") no-repeat center center fixed';
-        document.body.style.backgroundSize = 'cover';
-        addParticles('nature');
-      } else if (theme === 'sports') {
-        document.body.style.background = 'linear-gradient(45deg, #e74c3c, #f39c12)';
-        addParticles('sports');
-      } else if (theme === 'space') {
-        document.body.style.background = 'url("https://source.unsplash.com/1600x900/?space") no-repeat center center fixed';
-        document.body.style.backgroundSize = 'cover';
-        addParticles('space');
-      } else if (theme === 'mountain') {
-        document.body.style.background = 'url("https://source.unsplash.com/1600x900/?mountain") no-repeat center center fixed';
-        document.body.style.backgroundSize = 'cover';
-        addParticles('mountain');
-      } else if (theme === 'fire') {
-        document.body.style.background = 'linear-gradient(45deg, #ff7f50, #ff4500)';
-        addParticles('fire');
-      } else if (theme === 'art') {
-        document.body.style.background = 'url("https://source.unsplash.com/1600x900/?art") no-repeat center center fixed';
-        document.body.style.backgroundSize = 'cover';
-        addParticles('art');
-      } else if (theme === 'tech') {
-        document.body.style.background = 'linear-gradient(45deg, #2980b9, #2ecc71)';
-        addParticles('tech');
-      } else if (theme === 'ocean') {
-        document.body.style.background = 'url("https://source.unsplash.com/1600x900/?ocean") no-repeat center center fixed';
-        document.body.style.backgroundSize = 'cover';
-        addParticles('ocean');
-      } else if (theme === 'clock') {
-        document.body.style.background = 'url("https://source.unsplash.com/1600x900/?clock") no-repeat center center fixed';
-        document.body.style.backgroundSize = 'cover';
-        addParticles('clock');
-      } else if (theme === 'earth') {
-        document.body.style.background = 'url("https://source.unsplash.com/1600x900/?earth") no-repeat center center fixed';
-        document.body.style.backgroundSize = 'cover';
-        addParticles('earth');
-      } else if (theme === 'city') {
-        document.body.style.background = 'url("https://source.unsplash.com/1600x900/?city") no-repeat center center fixed';
-        document.body.style.backgroundSize = 'cover';
-        addParticles('city');
-      } else if (theme === 'adventure') {
-        document.body.style.background = 'url("https://source.unsplash.com/1600x900/?adventure") no-repeat center center fixed';
-        document.body.style.backgroundSize = 'cover';
-        addParticles('adventure');
-      } else if (theme === 'sky') {
-        document.body.style.background = 'url("https://source.unsplash.com/1600x900/?sky") no-repeat center center fixed';
-        document.body.style.backgroundSize = 'cover';
-        addParticles('sky');
-      } else if (theme === 'rainbow') {
-        document.body.style.background = 'linear-gradient(45deg, #FF6347, #FFD700, #32CD32, #1E90FF, #9400D3)';
-        addParticles('rainbow');
+    function addParticles() {
+      const container = document.getElementById('particles');
+      for (let i = 0; i < 100; i++) {
+        const p = document.createElement('div');
+        p.classList.add('particle');
+        p.style.borderRadius = '50%';
+        p.style.width = `${Math.random() * 5 + 5}px`;
+        p.style.height = p.style.width;
+        p.style.backgroundColor = getRandomColor();
+        p.style.animation = `moveParticle ${Math.random() * 5 + 5}s linear infinite`;
+        p.style.top = `${Math.random() * window.innerHeight}px`;
+        p.style.left = `${Math.random() * window.innerWidth}px`;
+        p.addEventListener('animationend', function() { this.remove(); });
+        container.appendChild(p);
       }
     }
 
-    // Function to add particles based on theme
-    function addParticles(theme) {
-      const particlesContainer = document.getElementById('particles');
-      const numParticles = 100;
-      for (let i = 0; i < numParticles; i++) {
-        const particle = document.createElement('div');
-        particle.classList.add('particle');
-        particle.style.position = 'absolute';
-        particle.style.borderRadius = '50%';
-        particle.style.width = `${Math.random() * 5 + 5}px`;
-        particle.style.height = `${Math.random() * 5 + 5}px`;
-        particle.style.backgroundColor = getRandomColor();
-        particle.style.animation = `moveParticle ${Math.random() * 5 + 5}s linear infinite`;
-        particle.style.top = `${Math.random() * window.innerHeight}px`;
-        particle.style.left = `${Math.random() * window.innerWidth}px`;
-        
-        // Remove particle after animation completes to prevent buildup
-        particle.addEventListener('animationend', function() {
-          this.remove();
-        });
-        
-        particlesContainer.appendChild(particle);
-      }
-    }
-
-    // Initialize with a random quote when the page loads
     window.onload = generateQuote;
-
   </script>
 
 </body>
