@@ -478,6 +478,50 @@
                 opacity: 1;
             }
         }
+
+        /* ── Mobile responsive ── */
+        @media (max-width: 600px) {
+            .button {
+                width: calc(100vw - 32px);
+                height: 130px;
+            }
+
+            .container {
+                gap: 12px;
+                padding: 0 16px 40px;
+            }
+
+            .logo {
+                width: 200px;
+                margin: 14px auto;
+            }
+
+            .profile-button {
+                padding: 6px 10px;
+                font-size: 13px;
+            }
+
+            .profile-pic {
+                width: 26px;
+                height: 26px;
+            }
+
+            .auth-content, .profile-content, .settings-content {
+                width: calc(100vw - 32px) !important;
+                max-width: 100% !important;
+                max-height: 90vh;
+                padding: 16px;
+            }
+
+            .profile-modal,
+            .settings-modal {
+                align-items: flex-end;
+            }
+
+            .profile-content {
+                border-radius: 16px 16px 0 0 !important;
+            }
+        }
     </style>
 </head>
 <body>
