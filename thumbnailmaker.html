@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
- <link rel="icon" href="jack4.png" type="image/png">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Thumbnail Generator</title>
@@ -574,6 +573,10 @@ document.getElementById('dl-btn').addEventListener('click', async()=>{
         ctx.save();
         ctx.translate(cx,cy);
         ctx.rotate(rot);
+        ctx.shadowColor="rgba(0,0,0,0.7)";
+        ctx.shadowBlur=32;
+        ctx.shadowOffsetX=6;
+        ctx.shadowOffsetY=12;
         ctx.drawImage(i,-lw/2,-lh/2,lw,lh);
         ctx.restore();
       }catch{}
@@ -591,12 +594,24 @@ document.getElementById('dl-btn').addEventListener('click', async()=>{
   }
 });
 
-function li(src){
+async function toSafeDataURL(src){
+  if(src.startsWith('data:') || src.startsWith('blob:')) return src;
+  try {
+    const resp = await fetch(src);
+    const blob = await resp.blob();
+    return await new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(blob); });
+  } catch(e) {
+    return src; // fallback, may still taint
+  }
+}
+
+async function li(src){
+  const safe = await toSafeDataURL(src);
   return new Promise((res,rej)=>{
-    const i=new Image(); i.crossOrigin='anonymous';
+    const i=new Image();
     i.onload=()=>res(i);
-    i.onerror=()=>{ i.crossOrigin=null; i.onload=()=>res(i); i.onerror=rej; i.src=src; };
-    i.src=src;
+    i.onerror=rej;
+    i.src=safe;
   });
 }
 </script>
