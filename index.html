@@ -559,7 +559,12 @@
     
     <div class="top-icons" id="topIcons"></div>
     
-    <img src="Shane.Fun.png" alt="Shane.fun Logo" class="logo">
+    <img src="Shane.Fun.png" alt="Shane.fun Logo" class="logo" id="mainLogo">
+    <script>
+        if (Math.random() < 1/100) {
+            document.getElementById('mainLogo').src = 'stupif.fun.png';
+        }
+    </script>
     
     <div class="container">
         <div class="button" style="background-image: url('jackle.png');" onclick="playGame('yomom', 'Yo Mama')"></div>
