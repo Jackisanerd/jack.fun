@@ -1,519 +1,504 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link rel="icon" href="https://wheelofnames.com/images/open-graph-image.png"image/png"><meta charset="UTF-8">
+  <link rel="icon" href="https://wheelofnames.com/images/open-graph-image.png" type="image/png">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Interlude Wheel</title>
+  <title>The Interlude Wheel</title>
   <style>
     * {
       box-sizing: border-box;
-      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
-    }
-    body {
-      background: linear-gradient(145deg, #f0f2f5 0%, #e0e5ec 100%);
-      min-height: 100vh;
       margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #dce3ec;
+      min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 20px;
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
     }
+
     .card {
-      max-width: 1000px;
+      max-width: 1080px;
       width: 100%;
-      background: rgba(255,255,255,0.6);
-      backdrop-filter: blur(4px);
-      border-radius: 48px;
-      box-shadow: 20px 20px 40px #b8b9be, -20px -20px 40px #ffffff;
-      padding: 30px 30px 40px;
+      background: #eef2f5;
+      border-radius: 2rem;
+      box-shadow: 16px 16px 28px #bdc1c8, -14px -14px 24px #ffffff;
+      padding: 1.4rem 1.8rem 2rem;
     }
+
+    /* bigger text smaller, smaller text larger */
     h1 {
+      font-size: 1.65rem;
+      font-weight: 700;
       text-align: center;
-      font-weight: 600;
-      font-size: 2.2rem;
-      margin: 0 0 10px;
-      color: #1e2b3a;
-      letter-spacing: -0.5px;
+      color: #1e3a4d;
+      margin-bottom: 6px;
     }
+
     .sub {
       text-align: center;
-      margin: 0 0 25px;
-      color: #3a4a5a;
-      font-weight: 400;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #2c5368;
+      margin-bottom: 1.2rem;
+      background: #e2e8f0;
+      width: fit-content;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 4px 20px;
+      border-radius: 60px;
     }
-    .wheel-container {
+
+    .wheel-box {
       position: relative;
-      width: min(70vw, 600px);
-      height: min(70vw, 600px);
-      margin: 0 auto 25px;
+      width: min(70vw, 560px);
+      height: min(70vw, 560px);
+      margin: 0 auto 18px;
     }
+
     canvas {
       width: 100% !important;
       height: 100% !important;
       display: block;
       border-radius: 50%;
-      box-shadow: 0 20px 30px rgba(0,0,0,0.2), inset 0 0 10px rgba(255,255,255,0.5);
+      box-shadow: 0 18px 25px rgba(0,0,0,0.2), inset 0 2px 6px rgba(255,255,255,0.6);
       cursor: pointer;
-      transition: filter 0.2s;
-      background: #fafafa;
+      background: #fafdff;
     }
     canvas:active {
-      filter: brightness(0.98);
+      filter: brightness(0.97);
     }
+
     .pointer {
       position: absolute;
-      top: -8px;
+      top: -10px;
       left: 50%;
       transform: translateX(-50%);
       width: 0;
       height: 0;
-      border-left: 22px solid transparent;
-      border-right: 22px solid transparent;
-      border-top: 40px solid #c5283d;
-      filter: drop-shadow(0 6px 4px rgba(0,0,0,0.2));
-      z-index: 5;
+      border-left: 24px solid transparent;
+      border-right: 24px solid transparent;
+      border-top: 46px solid #c5283d;
+      filter: drop-shadow(0 5px 6px rgba(0,0,0,0.2));
+      z-index: 10;
     }
-    .action-bar {
+
+    .action-strip {
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 15px;
-      margin: 20px 0 25px;
+      gap: 18px;
+      margin: 20px 0 20px;
       flex-wrap: wrap;
     }
-    .result-badge {
-      background: #2c3e50;
+
+    .result-box {
+      background: #1f2f3c;
       color: white;
-      padding: 12px 30px;
+      padding: 12px 28px;
       border-radius: 60px;
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       font-weight: 600;
-      box-shadow: inset 0 -3px 0 #1a2632, 0 8px 12px rgba(0,0,0,0.1);
-      min-width: 200px;
+      box-shadow: inset 0 -2px 0 #0f1e2a, 0 8px 12px rgba(0,0,0,0.1);
+      min-width: 210px;
       text-align: center;
     }
+
     button {
-      background: #ffffff;
+      background: white;
       border: none;
-      padding: 12px 28px;
-      border-radius: 40px;
-      font-size: 1.2rem;
+      padding: 10px 26px;
+      border-radius: 50px;
+      font-size: 1.15rem;
       font-weight: 600;
-      color: #1e2b3a;
-      box-shadow: 5px 5px 15px #b8b9be, -5px -5px 15px #ffffff;
+      color: #1e2f3a;
+      box-shadow: 6px 6px 14px #b5bac2, -6px -6px 12px #ffffff;
       cursor: pointer;
-      transition: 0.1s ease;
-      border: 1px solid rgba(255,255,255,0.4);
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-    button:hover {
-      box-shadow: 2px 2px 8px #b8b9be, -2px -2px 8px #ffffff;
+      transition: 0.07s linear;
     }
     button:active {
       transform: scale(0.97);
     }
     button:disabled {
-      opacity: 0.4;
+      opacity: 0.45;
       pointer-events: none;
     }
-    .go-button {
-      background: #27ae60;
+
+    .go-btn {
+      background: #2c8c5a;
       color: white;
-      box-shadow: 5px 5px 15px #1e8449, -5px -5px 15px #2ecc71;
     }
-    .editor-panel {
-      background: rgba(255,255,255,0.4);
-      backdrop-filter: blur(4px);
-      border-radius: 40px;
-      padding: 25px;
-      box-shadow: inset 2px 2px 6px #b8b9be, inset -3px -3px 8px #ffffff, 0 10px 15px rgba(0,0,0,0.05);
+
+    .edit-panel {
+      background: #e6ecf2;
+      border-radius: 2rem;
+      padding: 20px 24px;
+      box-shadow: inset 2px 2px 6px #cbd0d8, inset -3px -3px 8px #ffffff, 0 8px 14px rgba(0,0,0,0.05);
+      margin-top: 8px;
     }
-    .editor-panel h3 {
-      margin: 0 0 15px;
-      font-weight: 500;
-      color: #1e2b3a;
+
+    .edit-panel h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 14px;
+      color: #1f3e4f;
     }
-    .interlude-list {
+
+    .interlude-tags {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
-      margin-bottom: 25px;
-      max-height: 180px;
+      margin-bottom: 20px;
+      max-height: 170px;
       overflow-y: auto;
-      padding: 8px 4px;
+      padding: 6px 4px;
     }
-    .interlude-tag {
+
+    .tag {
       background: white;
-      padding: 8px 16px;
-      border-radius: 40px;
+      padding: 6px 14px;
+      border-radius: 60px;
       display: flex;
       align-items: center;
-      gap: 8px;
-      box-shadow: 2px 2px 5px #b8b9be, -2px -2px 5px #ffffff;
-      font-size: 0.9rem;
+      gap: 10px;
+      box-shadow: 3px 3px 8px #b8bdc5, -2px -2px 6px #ffffff;
+      font-size: 0.85rem;
     }
-    .interlude-tag .name {
-      font-weight: 600;
-      max-width: 150px;
+    .tag .item-name {
+      font-weight: 700;
+      max-width: 160px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .remove-btn {
+    .rm-btn {
       background: none;
       border: none;
-      color: #a00;
-      font-weight: bold;
+      color: #b91c2c;
       font-size: 1.2rem;
+      font-weight: bold;
       cursor: pointer;
-      padding: 0 4px;
-      box-shadow: none;
+      padding: 0 6px;
     }
-    .add-form {
+
+    .add-section {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
       align-items: center;
     }
-    .add-form input {
+    .add-section input {
       flex: 1 1 200px;
-      padding: 12px 18px;
+      padding: 10px 18px;
       border: none;
-      border-radius: 40px;
-      background: #f0f2f5;
-      box-shadow: inset 3px 3px 8px #b8b9be, inset -3px -3px 8px #ffffff;
-      font-size: 1rem;
+      border-radius: 50px;
+      background: #eef2f7;
+      box-shadow: inset 3px 3px 8px #c2c7cf, inset -3px -3px 8px #ffffff;
+      font-size: 0.9rem;
       outline: none;
     }
-    .add-form input:focus {
-      background: #ffffff;
-    }
     .small-note {
-      font-size: 0.8rem;
-      color: #3a4a5a;
-      margin: 8px 0 0;
+      font-size: 0.7rem;
+      color: #3e5a6c;
+      margin-top: 10px;
       opacity: 0.8;
     }
   </style>
 </head>
 <body>
 <div class="card">
-  <h1>🎲 INTERLUDE WHEEL</h1>
-  <div class="sub">click the wheel to spin • then use the GO button</div>
+  <h1>interlude wheel</h1>
+  <div class="sub">click wheel to spin / go button opens link</div>
 
-  <div class="wheel-container">
+  <div class="wheel-box">
     <canvas id="wheelCanvas" width="600" height="600"></canvas>
     <div class="pointer"></div>
   </div>
 
-  <!-- clearer action bar -->
-  <div class="action-bar">
-    <div class="result-badge" id="resultDisplay">✨ spin me</div>
-    <button id="goBtn" class="go-button" disabled>▶ GO</button>
+  <div class="action-strip">
+    <div class="result-box" id="resultDisplay">waiting...</div>
+    <button id="goBtn" class="go-btn" disabled>go</button>
   </div>
 
-  <!-- editable list of interludes -->
-  <div class="editor-panel">
-    <h3>✏️ edit interludes (add / remove)</h3>
-    <div class="interlude-list" id="interludeListContainer"></div>
-    <div class="add-form">
-      <input type="text" id="newName" placeholder="name e.g. 'hot interlude'" />
-      <input type="text" id="newLink" placeholder="url (or comma separated, leave blank if none)" />
-      <button id="addInterludeBtn">➕ add</button>
+  <div class="edit-panel">
+    <h3>edit interludes (add / remove)</h3>
+    <div class="interlude-tags" id="tagList"></div>
+    <div class="add-section">
+      <input type="text" id="interludeName" placeholder="name e.g. hot interlude" autocomplete="off">
+      <input type="text" id="interludeLink" placeholder="url or multiple with commas">
+      <button id="addBtn">add</button>
     </div>
     <div class="small-note">
-      • for multiple urls, separate with commas (e.g. https://a.com, https://b.com)<br>
-      • leave link empty for interludes like "Call Kai"
+      commas = multiple links (random pick) | empty = no url challenge
     </div>
   </div>
 </div>
 
 <script>
-(function() {
-  // ---- initial interlude data ----
-  const initialInterludes = [
-    { name: "hot interlude", link: "https://www.reddit.com/r/JackSucksAtLife/hot/" },
-    { name: "Geography Interlude", link: ["https://worldle.teuteuf.fr/", "https://www.flaggle.net/", "https://globle-game.com/"] },
-    { name: "jackle interlude", link: "https://jackisanerd.github.io/Jackle/" },
-    { name: "higher or lower interlude", link: "https://jackisanerd.github.io/HigherOrLower/" },
-    { name: "jack.fun interlude", link: "https://jackisanerd.github.io/jack.fun/" },
-    { name: "Call Kai", link: null },
-    { name: "new interlude", link: "https://www.reddit.com/r/JackSucksAtLife/new/" },
-    { name: "r/JSAG interlude", link: "https://www.reddit.com/r/JackSucksAtGeography/" },
-    { name: "Sitting in the front seat", link: "https://www.reddit.com/r/JackSucksAtLife/comments/1pw2rnj/jack_again_do_it_again_revive_sitting_in_the/" },
-    { name: "complete a promise", link: null },
-    { name: "Hall of Fame interlude", link: ["https://jackisanerd.github.io/jack.fun/JHOF.html", "https://jsalhof.wixsite.com/reddit/halloffame"] },
-    { name: "fan subreddit", link: ["https://www.reddit.com/r/PWKFanClub/", "https://www.reddit.com/r/weeweebush/", "https://www.reddit.com/r/peepeetree/"] }
-  ];
+// welp friction math took forever to get right
+let interludesList = [
+  { name: "hot interlude", link: "https://www.reddit.com/r/JackSucksAtLife/hot/" },
+  { name: "Geography Interlude", link: ["https://worldle.teuteuf.fr/", "https://www.flaggle.net/", "https://globle-game.com/"] },
+  { name: "jackle interlude", link: "https://jackisanerd.github.io/Jackle/" },
+  { name: "higher or lower", link: "https://jackisanerd.github.io/HigherOrLower/" },
+  { name: "jack.fun interlude", link: "https://jackisanerd.github.io/jack.fun/" },
+  { name: "Call Kai", link: null },
+  { name: "new interlude", link: "https://www.reddit.com/r/JackSucksAtLife/new/" },
+  { name: "r/JSAG interlude", link: "https://www.reddit.com/r/JackSucksAtGeography/" },
+  { name: "Sitting in the front seat", link: "https://www.reddit.com/r/JackSucksAtLife/comments/1pw2rnj/jack_again_do_it_again_revive_sitting_in_the/" },
+  { name: "complete a promise", link: null },
+  { name: "Hall of Fame", link: ["https://jackisanerd.github.io/jack.fun/JHOF.html", "https://jsalhof.wixsite.com/reddit/halloffame"] },
+  { name: "fan subreddit", link: ["https://www.reddit.com/r/PWKFanClub/", "https://www.reddit.com/r/weeweebush/", "https://www.reddit.com/r/peepeetree/"] }
+];
 
-  let interludes = [];
-  let segments = [];
-  let currentRotation = 0;
-  let spinVelocity = 0;
-  let spinAnimationFrame = null;
-  let isSpinning = false;
-  let currentResultIndex = -1;
-  const pointerAngle = -Math.PI / 2; // 12 o'clock
+let wheelSegments = [];
+let currentRotation = 0;
+let spinVelocity = 0;
+let animFrame = null;
+let spinningActive = false;
+let currentPickIndex = -1;
+const POINTER_ANGLE = -Math.PI / 2;
 
-  // DOM elements
-  const canvas = document.getElementById('wheelCanvas');
-  const ctx = canvas.getContext('2d');
-  const resultDisplay = document.getElementById('resultDisplay');
-  const goBtn = document.getElementById('goBtn');
-  const interludeListContainer = document.getElementById('interludeListContainer');
-  const newNameInput = document.getElementById('newName');
-  const newLinkInput = document.getElementById('newLink');
-  const addBtn = document.getElementById('addInterludeBtn');
+const canvas = document.getElementById('wheelCanvas');
+const ctx = canvas.getContext('2d');
+const resultDiv = document.getElementById('resultDisplay');
+const goButton = document.getElementById('goBtn');
+const tagContainer = document.getElementById('tagList');
+const nameInput = document.getElementById('interludeName');
+const linkInput = document.getElementById('interludeLink');
+const addItemBtn = document.getElementById('addBtn');
 
-  // helper: short name for wheel
-  function shortNameFrom(name) {
-    if (name.length <= 14) return name;
-    let words = name.split(' ');
-    if (words[0].length < 10) return words[0];
-    return name.substring(0, 12) + '…';
-  }
+function shortName(str) {
+  if (str.length <= 14) return str;
+  let parts = str.split(' ');
+  if (parts[0] && parts[0].length < 10) return parts[0];
+  return str.substring(0, 12) + '..';
+}
 
-  // rebuild segments from interludes
-  function rebuildSegments() {
-    segments = interludes.map((item, idx) => {
-      const short = shortNameFrom(item.name);
-      const hue = (idx * 37) % 360;
-      const color = `hsl(${hue}, 70%, 75%)`;
-      return { name: item.name, short, color, link: item.link };
-    });
-  }
-
-  // initial load
-  function loadInitial() {
-    interludes = initialInterludes.map(item => ({
+function rebuildSegments() {
+  wheelSegments = interludesList.map((item, idx) => {
+    let hue = (idx * 43) % 360;
+    return {
       name: item.name,
-      link: Array.isArray(item.link) ? [...item.link] : item.link
-    }));
-    rebuildSegments();
-  }
-  loadInitial();
-
-  // draw wheel
-  function drawWheel(highlightIndex = -1) {
-    const width = canvas.width;
-    const height = canvas.height;
-    const centerX = width / 2;
-    const centerY = height / 2;
-    const radius = Math.min(width, height) * 0.42;
-
-    ctx.clearRect(0, 0, width, height);
-
-    if (segments.length === 0) {
-      ctx.font = 'bold 20px "Segoe UI"';
-      ctx.fillStyle = '#aaa';
-      ctx.textAlign = 'center';
-      ctx.fillText('no interludes', centerX, centerY);
-      return;
-    }
-
-    const anglePerSegment = (2 * Math.PI) / segments.length;
-
-    for (let i = 0; i < segments.length; i++) {
-      const startAngle = i * anglePerSegment + currentRotation;
-      const endAngle = startAngle + anglePerSegment;
-
-      ctx.beginPath();
-      ctx.moveTo(centerX, centerY);
-      ctx.arc(centerX, centerY, radius, startAngle, endAngle);
-      ctx.closePath();
-      ctx.fillStyle = segments[i].color;
-      if (i === highlightIndex && !isSpinning) {
-        ctx.shadowColor = 'gold';
-        ctx.shadowBlur = 15;
-        ctx.fill();
-        ctx.shadowBlur = 0;
-      } else {
-        ctx.fill();
-      }
-      ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-
-      ctx.save();
-      ctx.translate(centerX, centerY);
-      ctx.rotate(startAngle + anglePerSegment / 2);
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.font = 'bold 16px "Segoe UI", sans-serif';
-      ctx.fillStyle = '#1e2b3a';
-      ctx.shadowColor = 'rgba(255,255,255,0.5)';
-      ctx.shadowBlur = 4;
-      ctx.fillText(segments[i].short, radius * 0.7, 0);
-      ctx.restore();
-    }
-
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, radius * 0.12, 0, 2 * Math.PI);
-    ctx.fillStyle = '#f0f2f5';
-    ctx.shadowBlur = 8;
-    ctx.shadowColor = '#b8b9be';
-    ctx.fill();
-    ctx.shadowBlur = 0;
-    ctx.strokeStyle = '#ccc';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-  }
-
-  // get segment under pointer
-  function getCurrentSegmentIndex() {
-    if (segments.length === 0) return -1;
-    let rawAngle = pointerAngle - currentRotation;
-    rawAngle = ((rawAngle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
-    const anglePer = (2 * Math.PI) / segments.length;
-    return Math.floor(rawAngle / anglePer);
-  }
-
-  // spin animation
-  function spinWheel() {
-    if (isSpinning) return;
-    isSpinning = true;
-    currentResultIndex = -1;
-    goBtn.disabled = true;
-    resultDisplay.innerText = '🌀 spinning...';
-    spinVelocity = 15 + Math.random() * 25;
-    const friction = 0.97;
-
-    function animate() {
-      if (!isSpinning) return;
-      currentRotation += spinVelocity * 0.02;
-      spinVelocity *= friction;
-      drawWheel();
-
-      if (Math.abs(spinVelocity) < 0.05) {
-        isSpinning = false;
-        const landedIdx = getCurrentSegmentIndex();
-        currentResultIndex = landedIdx;
-        const landedName = segments[landedIdx]?.name || '???';
-        resultDisplay.innerText = `🎯 ${landedName}`;
-        drawWheel(landedIdx);
-        goBtn.disabled = false; // enable GO button
-      } else {
-        spinAnimationFrame = requestAnimationFrame(animate);
-      }
-    }
-    spinAnimationFrame = requestAnimationFrame(animate);
-  }
-
-  // open link for current result
-  function goToCurrentInterlude() {
-    if (currentResultIndex < 0 || currentResultIndex >= interludes.length) {
-      alert('No interlude selected – spin first!');
-      return;
-    }
-    const interlude = interludes[currentResultIndex];
-    const link = interlude.link;
-
-    if (!link) {
-      alert(`"${interlude.name}" has no website. Maybe it's a challenge!`);
-      return;
-    }
-
-    if (Array.isArray(link)) {
-      if (link.length === 0) {
-        alert('No links available.');
-        return;
-      }
-      const randomLink = link[Math.floor(Math.random() * link.length)];
-      window.open(randomLink, '_blank');
-    } else {
-      window.open(link, '_blank');
-    }
-  }
-
-  // reset to idle
-  function resetSpinState() {
-    if (isSpinning) {
-      cancelAnimationFrame(spinAnimationFrame);
-      isSpinning = false;
-    }
-    currentResultIndex = -1;
-    goBtn.disabled = true;
-    resultDisplay.innerText = '✨ spin me';
-    drawWheel();
-  }
-
-  // ---- event listeners ----
-  canvas.addEventListener('click', () => {
-    if (segments.length === 0) {
-      alert('Add some interludes first!');
-      return;
-    }
-    if (!isSpinning) {
-      spinWheel(); // wheel click always spins
-    }
+      shortLabel: shortName(item.name),
+      bgColor: `hsl(${hue}, 68%, 72%)`,
+      link: item.link
+    };
   });
+}
 
-  goBtn.addEventListener('click', goToCurrentInterlude);
-
-  // ---- interlude list management ----
-  function renderInterludeList() {
-    let html = '';
-    interludes.forEach((item, idx) => {
-      let linkSummary = '';
-      if (item.link === null) linkSummary = '🚫 no url';
-      else if (Array.isArray(item.link)) linkSummary = `🔗 ${item.link.length} urls`;
-      else linkSummary = '🔗 url';
-      html += `<div class="interlude-tag">
-        <span class="name" title="${item.name}">${item.name}</span>
-        <span style="font-size:0.8rem;opacity:0.8;">${linkSummary}</span>
-        <button class="remove-btn" data-index="${idx}">✕</button>
-      </div>`;
-    });
-    interludeListContainer.innerHTML = html;
-
-    document.querySelectorAll('.remove-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const index = parseInt(e.target.getAttribute('data-index'), 10);
-        if (!isNaN(index) && index >= 0 && index < interludes.length) {
-          interludes.splice(index, 1);
-          rebuildSegments();
-          resetSpinState();
-          renderInterludeList();
-        }
-      });
-    });
+function drawWheel(highlightIdx = -1) {
+  const w = canvas.width, h = canvas.height;
+  const cx = w/2, cy = h/2;
+  const radius = Math.min(w, h) * 0.42;
+  
+  ctx.clearRect(0, 0, w, h);
+  
+  if (wheelSegments.length === 0) {
+    ctx.font = "bold 20px 'Segoe UI'";
+    ctx.fillStyle = "#777";
+    ctx.textAlign = "center";
+    ctx.fillText("no interludes", cx, cy);
+    return;
   }
+  
+  const angleStep = (Math.PI * 2) / wheelSegments.length;
+  
+  for (let i = 0; i < wheelSegments.length; i++) {
+    const start = i * angleStep + currentRotation;
+    const end = start + angleStep;
+    
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, radius, start, end);
+    ctx.closePath();
+    
+    ctx.fillStyle = wheelSegments[i].bgColor;
+    if (highlightIdx === i && !spinningActive) {
+      ctx.shadowBlur = 12;
+      ctx.shadowColor = "#f5b042";
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    } else {
+      ctx.fill();
+    }
+    ctx.strokeStyle = "#fff";
+    ctx.lineWidth = 1.8;
+    ctx.stroke();
+    
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(start + angleStep/2);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.font = "bold 15px 'Segoe UI', sans-serif";
+    ctx.fillStyle = "#1a2c3a";
+    ctx.shadowBlur = 3;
+    ctx.shadowColor = "rgba(255,255,200,0.7)";
+    ctx.fillText(wheelSegments[i].shortLabel, radius * 0.72, 0);
+    ctx.restore();
+  }
+  
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius * 0.1, 0, 2*Math.PI);
+  ctx.fillStyle = "#eef2f5";
+  ctx.fill();
+  ctx.strokeStyle = "#b0b8c2";
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+}
 
-  function addInterlude() {
-    const name = newNameInput.value.trim();
-    if (!name) {
-      alert('Please enter a name');
+function getCurrentSegment() {
+  if (wheelSegments.length === 0) return -1;
+  let rawAngle = POINTER_ANGLE - currentRotation;
+  rawAngle = ((rawAngle % (2*Math.PI)) + 2*Math.PI) % (2*Math.PI);
+  const step = (2*Math.PI) / wheelSegments.length;
+  return Math.floor(rawAngle / step);
+}
+
+// make sure spin stops smoothly - friction loop
+function startSpin() {
+  if (spinningActive) return;
+  if (wheelSegments.length === 0) {
+    resultDiv.innerText = "add items first";
+    return;
+  }
+  spinningActive = true;
+  currentPickIndex = -1;
+  goButton.disabled = true;
+  resultDiv.innerText = "spinning...";
+  spinVelocity = 14 + Math.random() * 28;
+  const friction = 0.97;
+  
+  function stepSpin() {
+    if (!spinningActive) return;
+    currentRotation += spinVelocity * 0.02;
+    spinVelocity *= friction;
+    drawWheel();
+    
+    if (Math.abs(spinVelocity) < 0.08) {
+      spinningActive = false;
+      const landed = getCurrentSegment();
+      if (landed >= 0 && landed < wheelSegments.length) {
+        currentPickIndex = landed;
+        resultDiv.innerText = wheelSegments[landed].name;
+        drawWheel(landed);
+        goButton.disabled = false;
+      } else {
+        resultDiv.innerText = "error";
+        goButton.disabled = true;
+      }
+    } else {
+      animFrame = requestAnimationFrame(stepSpin);
+    }
+  }
+  
+  if (animFrame) cancelAnimationFrame(animFrame);
+  animFrame = requestAnimationFrame(stepSpin);
+}
+
+function openCurrent() {
+  if (currentPickIndex < 0 || currentPickIndex >= interludesList.length) {
+    alert("no selection, spin first");
+    return;
+  }
+  const item = interludesList[currentPickIndex];
+  const linkData = item.link;
+  
+  if (!linkData) {
+    alert(`"${item.name}" has no url. do the challenge.`);
+    return;
+  }
+  
+  if (Array.isArray(linkData)) {
+    if (linkData.length === 0) {
+      alert("no links in array");
       return;
     }
-    const linkInput = newLinkInput.value.trim();
-    let link = null;
-    if (linkInput !== '') {
-      if (linkInput.includes(',')) {
-        link = linkInput.split(',').map(s => s.trim()).filter(s => s.startsWith('http'));
-        if (link.length === 0) link = null;
-      } else {
-        link = linkInput;
-      }
-    }
-    interludes.push({ name, link });
-    rebuildSegments();
-    resetSpinState();
-    renderInterludeList();
-    newNameInput.value = '';
-    newLinkInput.value = '';
+    const randomLink = linkData[Math.floor(Math.random() * linkData.length)];
+    window.open(randomLink, "_blank");
+  } else {
+    window.open(linkData, "_blank");
   }
+}
 
-  addBtn.addEventListener('click', addInterlude);
-  newLinkInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addInterlude(); });
-  newNameInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addInterlude(); });
-
-  // initial render
-  renderInterludeList();
+function resetWheelState() {
+  if (spinningActive) {
+    cancelAnimationFrame(animFrame);
+    spinningActive = false;
+  }
+  currentPickIndex = -1;
+  goButton.disabled = true;
+  resultDiv.innerText = "waiting...";
   drawWheel();
-})();
+}
+
+function renderTagList() {
+  let html = "";
+  interludesList.forEach((item, idx) => {
+    let linkHint = "";
+    if (item.link === null) linkHint = "no url";
+    else if (Array.isArray(item.link)) linkHint = `${item.link.length} urls`;
+    else linkHint = "url";
+    html += `<div class="tag">
+      <span class="item-name" title="${item.name}">${item.name}</span>
+      <span style="font-size:0.7rem; opacity:0.7;">${linkHint}</span>
+      <button class="rm-btn" data-index="${idx}">✕</button>
+    </div>`;
+  });
+  tagContainer.innerHTML = html;
+  
+  document.querySelectorAll('.rm-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const idx = parseInt(e.target.getAttribute('data-index'));
+      if (!isNaN(idx) && idx >= 0 && idx < interludesList.length) {
+        interludesList.splice(idx, 1);
+        rebuildSegments();
+        resetWheelState();
+        renderTagList();
+      }
+    });
+  });
+}
+
+function addInterlude() {
+  const name = nameInput.value.trim();
+  if (!name) {
+    alert("enter a name");
+    return;
+  }
+  const linkRaw = linkInput.value.trim();
+  let link = null;
+  if (linkRaw !== "") {
+    if (linkRaw.includes(",")) {
+      link = linkRaw.split(",").map(s => s.trim()).filter(s => s.startsWith("http"));
+      if (link.length === 0) link = null;
+    } else {
+      link = linkRaw;
+    }
+  }
+  interludesList.push({ name: name, link: link });
+  rebuildSegments();
+  resetWheelState();
+  renderTagList();
+  nameInput.value = "";
+  linkInput.value = "";
+}
+
+canvas.addEventListener('click', startSpin);
+goButton.addEventListener('click', openCurrent);
+addItemBtn.addEventListener('click', addInterlude);
+nameInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addInterlude(); });
+linkInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addInterlude(); });
+
+rebuildSegments();
+renderTagList();
+drawWheel();
 </script>
 </body>
 </html>
