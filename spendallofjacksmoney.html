@@ -125,6 +125,7 @@
 <div id="grid"></div>
 
 <script>
+  //ITEMS (so i can cntrl if i need to change//
 const TOTAL = 8000000;
 const ITEMS = [
   { id: 1,  name: "Pair of Socks",       price: 10,       img: "https://freepngimg.com/save/52976-socks-png-image-high-quality/2062x1500" },
@@ -207,6 +208,7 @@ function updateAllBuyButtons() {
   });
 }
 
+//buying item function
 function buy(id) {
   const item = ITEMS.find(i => i.id === id);
   if (item.price > TOTAL - getSpent()) return;
@@ -215,7 +217,7 @@ function buy(id) {
   updateBanner();
   updateAllBuyButtons();
 }
-
+//selling item function
 function sell(id) {
   if (!qty[id]) return;
   qty[id]--;
@@ -223,7 +225,7 @@ function sell(id) {
   updateBanner();
   updateAllBuyButtons();
 }
-
+  //IMP
 function handleQtyInput(id, inputEl) {
   const item = ITEMS.find(i => i.id === id);
   const raw = parseInt(inputEl.value, 10);
