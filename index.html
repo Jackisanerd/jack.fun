@@ -13,9 +13,6 @@
             transition: background-color 0.3s, color 0.3s;
             min-height: 100vh;
             --theme-color: #4CAF50;
-            display: flex;
-            flex-direction: column;
-            margin: 0;
         }
         
         .rainbow-text {
@@ -54,7 +51,7 @@
             gap: 18px;
             max-width: 1200px;
             margin: auto;
-            padding: 0 20px 0;
+            padding: 0 20px 40px;
         }
         
         .button {
@@ -132,6 +129,10 @@
         button:hover {
             opacity: 0.9;
         }
+        
+        body.dark-mode
+        
+        body.dark-mode
         
         .auth-buttons {
             display: none;
@@ -400,6 +401,8 @@
             border-bottom-color: #444;
         }
         
+        body.dark-mode
+
         .profile-section {
             display: flex !important;
         }
@@ -433,125 +436,7 @@
             }
         }
 
-        .footer {
-            padding: 24px 20px 30px;
-            margin-top: 40px;
-            text-align: center;
-        }
-        
-        .footer-text {
-            font-size: 1rem;
-            margin-bottom: 16px;
-            font-weight: normal;
-            opacity: 0.85;
-        }
-        
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 30px;
-            margin-bottom: 20px;
-        }
-        
-        .footer-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: transparent;
-            color: inherit;
-            padding: 6px 14px;
-            border-radius: 40px;
-            text-decoration: none;
-            font-weight: normal;
-            transition: all 0.2s ease;
-            font-size: 0.95rem;
-            opacity: 0.8;
-        }
-        
-        .footer-button:hover {
-            opacity: 1;
-            transform: translateY(-2px);
-            background: rgba(128,128,128,0.1);
-        }
-        
-        .social-icon {
-            width: 20px;
-            height: 20px;
-            object-fit: contain;
-        }
-        
-        body.dark-mode .social-icon {
-            filter: brightness(0.9);
-        }
-        
-        .support-section {
-            margin: 12px 0 8px;
-            display: flex;
-            justify-content: center;
-        }
-        
-        .patreon-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: #ff424d;
-            color: white !important;
-            padding: 8px 20px;
-            border-radius: 40px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: all 0.2s ease;
-            font-size: 0.95rem;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        
-        .patreon-button:hover {
-            transform: translateY(-2px);
-            background: #e03a44;
-            box-shadow: 0 4px 12px rgba(255,66,77,0.3);
-        }
-        
-        .patreon-icon {
-            width: 20px;
-            height: 20px;
-            filter: brightness(0) invert(1);
-        }
-        
-        body.dark-mode .patreon-icon {
-            filter: brightness(0) invert(1);
-        }
-        
-        .contact-section {
-            margin-top: 16px;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 20px;
-            align-items: center;
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-        
-        .contact-label {
-            font-weight: normal;
-        }
-        
-        .contact-link {
-            color: inherit;
-            text-decoration: none;
-            transition: opacity 0.2s;
-        }
-        
-        .contact-link:hover {
-            opacity: 1;
-            text-decoration: underline;
-        }
-        
-        .separator {
-            opacity: 0.4;
-        }
-        
+        /* ── Mobile responsive ── */
         @media (max-width: 600px) {
             .button {
                 width: calc(100vw - 32px);
@@ -560,7 +445,7 @@
 
             .container {
                 gap: 12px;
-                padding: 0 16px 0;
+                padding: 0 16px 40px;
             }
 
             .logo {
@@ -592,29 +477,6 @@
 
             .profile-content {
                 border-radius: 16px 16px 0 0 !important;
-            }
-            
-            .footer-links {
-                gap: 20px;
-            }
-            
-            .footer-button {
-                padding: 4px 10px;
-                font-size: 0.85rem;
-            }
-            
-            .contact-section {
-                flex-direction: column;
-                gap: 8px;
-            }
-            
-            .separator {
-                display: none;
-            }
-            
-            .patreon-button {
-                padding: 6px 16px;
-                font-size: 0.85rem;
             }
         }
     </style>
@@ -691,6 +553,7 @@
             <span class="username" id="profileUsernameSmall">Player1</span>
         </div>
     </div>
+    </div>
     
     <div class="top-icons" id="topIcons"></div>
     
@@ -751,38 +614,13 @@
 
         <div class="button" style="background-image: url('infinwiki.png');" onclick="playGame('infiwiki', 'infiwiki')"></div>
 
+        <div class="button" style="background-image: url('stopid.png');" onclick="playGame('stupif', 'stupif')"></div>
+
         <div class="button" style="background-image: url('CRDS.png');" onclick="playGame('credits', 'Credits')"></div>
+
+
+
     </div>
-    
-    <footer class="footer">
-        <div class="footer-text">
-            Hi, I'm Geo. This is where I put up websites for the YouTuber JackSucksAtLife.
-        </div>
-        <div class="footer-links">
-            <a href="https://www.youtube.com/@LeGoatedGeo/" target="_blank" class="footer-button">
-                <img class="social-icon" src="https://static.vecteezy.com/system/resources/thumbnails/018/930/572/small/youtube-logo-youtube-icon-transparent-free-png.png" alt="YouTube" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/1024px-YouTube_full-color_icon_%282017%29.svg.png'">
-                YouTube
-            </a>
-            <a href="https://www.reddit.com/user/DeadSubDoc/" target="_blank" class="footer-button">
-                <img class="social-icon" src="https://static.vecteezy.com/system/resources/previews/018/930/582/non_2x/reddit-logo-reddit-icon-transparent-free-png.png" alt="Reddit" onerror="this.src='https://www.redditinc.com/assets/images/site/reddit-logo.png'">
-                Reddit
-            </a>
-        </div>
-        
-        <div class="support-section">
-            <a href="https://patreon.com/DeadSubDoc?utm_medium=unknown&utm_source=join_link&utm_campaign=creatorshare_creator&utm_content=copyLink" target="_blank" class="patreon-button">
-                <img class="patreon-icon" src="https://static.vecteezy.com/system/resources/previews/065/386/606/non_2x/patreon-logo-icon-app-transparent-background-premium-social-media-design-for-digital-download-free-png.png" alt="Patreon" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Patreon_logo.svg/1024px-Patreon_logo.svg.png'">
-                Support me by joining my Patreon!
-            </a>
-        </div>
-        
-        <div class="contact-section">
-            <span class="contact-label">📬 Contact Me:</span>
-            <a href="https://www.reddit.com/user/DeadSubDoc/" target="_blank" class="contact-link">Reddit: DeadSubDoc</a>
-            <span class="separator">|</span>
-            <a href="mailto:notascammer1123@gmail.com" class="contact-link">📧 notascammer1123@gmail.com</a>
-        </div>
-    </footer>
     
     <script>
         let users = JSON.parse(localStorage.getItem('shaneFunUsers')) || {};
@@ -900,6 +738,7 @@
                 'fumnail': 'thumbnailmaker.html',
                 'finite': 'https://jackisanerd.github.io/jackfinitecraft/',
                 'infiwiki': 'jackfiniBrowser.html',
+                'stupif': 'https://stupif.com/',
             };
             
             if (gameLinks[gameId]) {
@@ -921,16 +760,21 @@
         
         function loadProfileData() {
             if (!currentUser) return;
+            
             const user = users[currentUser];
+            
             document.getElementById('profileUsername').textContent = currentUser;
             document.getElementById('profileUsernameInput').value = currentUser;
+            
             loadProfilePicture();
         }
         
         function loadProfilePicture() {
             if (!currentUser) return;
+            
             const user = users[currentUser];
             const profilePic = user.profilePicture || '';
+            
             const profilePicSmall = document.getElementById('profilePicSmall');
             const profilePicLarge = document.getElementById('profilePicLarge');
             const profilePicPreview = document.getElementById('profilePicPreview');
@@ -955,23 +799,32 @@
                 ctx.textBaseline = 'middle';
                 ctx.fillText(initial, 40, 40);
                 const defaultPic = canvas.toDataURL();
+                
                 if (profilePicSmall) profilePicSmall.src = defaultPic;
                 if (profilePicLarge) profilePicLarge.src = defaultPic;
                 if (profilePicPreview) profilePicPreview.src = defaultPic;
             }
+            
             document.getElementById('profileUsernameSmall').textContent = currentUser;
         }
         
         function saveProfile() {
             if (!currentUser) return;
+            
             const newUsername = document.getElementById('profileUsernameInput').value.trim();
+            
             if (!newUsername) {
                 document.getElementById('profilePicError').textContent = 'Please enter a username';
+                document.getElementById('profilePicError').style.color = 'red';
                 return;
             }
+            
             if (newUsername !== currentUser) {
-                if (users[newUsername] && newUsername !== currentUser) {}
+                if (users[newUsername] && newUsername !== currentUser) {
+                }
+                
                 users[newUsername] = { ...users[currentUser] };
+                
                 if (currentUser !== 'Player1') {
                     delete users[currentUser];
                 } else {
@@ -990,64 +843,95 @@
                     }
                 }
             }
+            
             if (currentProfilePic) {
                 users[currentUser].profilePicture = currentProfilePic;
             }
+            
             localStorage.setItem('shaneFunUsers', JSON.stringify(users));
+            
             loadProfilePicture();
             document.getElementById('profilePicError').textContent = 'Profile saved successfully!';
             document.getElementById('profilePicError').style.color = 'green';
+            
             setTimeout(() => {
                 document.getElementById('profilePicError').textContent = '';
             }, 3000);
+            
             updateAuthUI();
         }
         
         function resetProfile() {
             const settings = users[currentUser]?.settings || { darkMode: false, musicEnabled: false, jackyboiCursor: false };
+            
             users[currentUser] = {
                 profilePicture: '',
                 settings: settings
             };
+            
+            if (currentUser !== 'Player1') {
+            }
+            
             localStorage.setItem('shaneFunUsers', JSON.stringify(users));
             currentProfilePic = null;
             loadProfilePicture();
             document.getElementById('profileUsernameInput').value = currentUser;
             document.getElementById('profilePicError').textContent = 'Profile reset to default';
+            document.getElementById('profilePicError').style.color = 'green';
+            
             setTimeout(() => {
                 document.getElementById('profilePicError').textContent = '';
             }, 3000);
+            
             updateAuthUI();
+        }
+        
+        function showSettingsModal() {
+            document.getElementById('settingsModal').style.display = 'flex';
+            loadSettingsToUI();
+        }
+        
+        function hideSettingsModal() {
+            document.getElementById('settingsModal').style.display = 'none';
         }
         
         function loadSettingsToUI() {
             if (currentUser) {
                 const user = users[currentUser];
                 const settings = user.settings || {};
+                
                 document.getElementById('darkModeToggle').checked = settings.darkMode || false;
+                
                 document.getElementById('musicToggle').checked = settings.musicEnabled || false;
+                
                 document.getElementById('cursorToggle').checked = settings.jackyboiCursor || false;
             }
         }
         
         function saveSettings() {
             if (!currentUser) return;
+            
             const user = users[currentUser];
             if (!user.settings) user.settings = {};
+            
             user.settings.darkMode = document.getElementById('darkModeToggle').checked;
             user.settings.musicEnabled = document.getElementById('musicToggle').checked;
             user.settings.jackyboiCursor = document.getElementById('cursorToggle').checked;
+            
             localStorage.setItem('shaneFunUsers', JSON.stringify(users));
+            
             if (user.settings.darkMode) {
                 document.body.classList.add('dark-mode');
             } else {
                 document.body.classList.remove('dark-mode');
             }
+            
             if (user.settings.musicEnabled) {
                 backgroundMusic.play().catch(e => console.log("Audio play failed:", e));
             } else {
                 backgroundMusic.pause();
             }
+            
             if (user.settings.jackyboiCursor) {
                 activateJackyboiCursor();
             } else {
@@ -1057,11 +941,21 @@
         
         function loadUserSettings() {
             if (!currentUser) return;
+            
             const user = users[currentUser];
             const settings = user.settings || {};
-            if (settings.darkMode) document.body.classList.add('dark-mode');
-            if (settings.musicEnabled) backgroundMusic.play().catch(e => console.log("Audio autoplay blocked"));
-            if (settings.jackyboiCursor) activateJackyboiCursor();
+            
+            if (settings.darkMode) {
+                document.body.classList.add('dark-mode');
+            }
+            
+            if (settings.musicEnabled) {
+                backgroundMusic.play().catch(e => console.log("Audio autoplay blocked"));
+            }
+            
+            if (settings.jackyboiCursor) {
+                activateJackyboiCursor();
+            }
         }
         
         const jackyboiStyle = document.createElement('style');
@@ -1081,12 +975,20 @@
         }
         
         function updateAuthUI() {
+            const user = users[currentUser];
+            
+            document.getElementById('profileUsernameSmall').textContent = currentUser;
+            
             loadProfilePicture();
         }
         
         window.addEventListener('click', function(event) {
-            if (event.target === document.getElementById('profileModal')) hideProfileModal();
-            if (event.target === document.getElementById('settingsModal')) hideSettingsModal();
+            if (event.target === document.getElementById('profileModal')) {
+                hideProfileModal();
+            }
+            if (event.target === document.getElementById('settingsModal')) {
+                hideSettingsModal();
+            }
         });
 
         window.showLoginModal = function() {};
@@ -1095,7 +997,6 @@
         window.hideSignupModal = function() {};
         window.login = function() {};
         window.signup = function() {};
-        window.hideSettingsModal = function() {};
     </script>
 </body>
 </html>
